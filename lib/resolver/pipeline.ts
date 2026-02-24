@@ -2,9 +2,9 @@
 // Pipeline: Full parse → resolve → output contract
 // ============================================================================
 
-import type { CanonicalData, AliasEntry, PipelineOutput, ResolutionStatus } from './types.js';
-import { parseProductName } from './parser.js';
-import { buildAliasIndex, resolveEntity } from './resolver.js';
+import type { CanonicalData, AliasEntry, PipelineOutput, ResolutionStatus } from './types';
+import { parseProductName } from './parser';
+import { buildAliasIndex, resolveEntity } from './resolver';
 
 /**
  * Process a raw product name through the full pipeline.
@@ -58,7 +58,7 @@ export function processBatch(
 }
 
 // Re-export everything for clean imports
-export { parseProductName } from './parser.js';
-export { normalize } from './parser.js';
-export { buildAliasIndex, resolveEntity } from './resolver.js';
-export type * from './types.js';
+export { parseProductName } from './parser';
+export { normalize } from './parser';
+export { buildAliasIndex, resolveEntity } from './resolver';
+export type * from './types';

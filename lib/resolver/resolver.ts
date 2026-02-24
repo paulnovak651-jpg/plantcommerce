@@ -11,8 +11,8 @@ import type {
   ParsedProductName,
   ResolutionMethod,
   ResolutionResult,
-} from './types.js';
-import { normalize, parseProductName } from './parser.js';
+} from './types';
+import { normalize, parseProductName } from './parser';
 
 // ── Confidence scores by resolution method ──
 

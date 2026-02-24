@@ -4,7 +4,7 @@
 // Port of resolver_test.py parse_product_name()
 // ============================================================================
 
-import type { ParsedProductName, PropagationMethod, SaleForm } from './types.js';
+import type { ParsedProductName, PropagationMethod, SaleForm } from './types';
 
 /**
  * Normalize text for matching: lowercase, strip symbols, collapse whitespace.

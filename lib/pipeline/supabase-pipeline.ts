@@ -211,7 +211,7 @@ export async function writePipelineResult(
   if (rawErr)
     throw new Error(`Failed to write raw_inventory_row: ${rawErr.message}`);
 
-  // 2. If resolved → upsert inventory_offer (idempotent via source_offer_key)
+  // 2. If resolved → insert or update inventory_offer (idempotent via source_offer_key)
   if (result.resolvedEntityType !== 'unresolved') {
     const isPlantEntity =
       result.resolutionStatus === 'resolved_plant_entity';
@@ -222,7 +222,7 @@ export async function writePipelineResult(
       rawData.rawFormSize
     );
 
-    const offerData = {
+    const offerFields = {
       nursery_id: nurseryId,
       cultivar_id: isPlantEntity ? null : result.resolvedEntityId,
       plant_entity_id: isPlantEntity ? result.resolvedEntityId : null,
@@ -249,48 +249,98 @@ export async function writePipelineResult(
       last_seen_at: new Date().toISOString(),
     };
 
-    const { data: offer, error: offerErr } = await supabase
+    // Check if offer already exists (for idempotent reruns)
+    const { data: existing } = await supabase
       .from('inventory_offers')
-      .upsert(offerData, {
-        onConflict: 'nursery_id,source_offer_key',
-        ignoreDuplicates: false,
-      })
       .select('id')
-      .single();
+      .eq('nursery_id', nurseryId)
+      .eq('source_offer_key', sourceOfferKey)
+      .maybeSingle();
 
-    if (offerErr)
-      throw new Error(`Failed to write inventory_offer: ${offerErr.message}`);
+    let offerId: string;
+
+    if (existing) {
+      // Update existing offer
+      const { data: updated, error: updateErr } = await supabase
+        .from('inventory_offers')
+        .update(offerFields)
+        .eq('id', existing.id)
+        .select('id')
+        .single();
+
+      if (updateErr)
+        throw new Error(`Failed to update inventory_offer: ${updateErr.message}`);
+      offerId = updated!.id;
+    } else {
+      // Insert new offer
+      const { data: inserted, error: insertErr } = await supabase
+        .from('inventory_offers')
+        .insert(offerFields)
+        .select('id')
+        .single();
+
+      if (insertErr)
+        throw new Error(`Failed to insert inventory_offer: ${insertErr.message}`);
+      offerId = inserted!.id;
+    }
 
     // Link raw row to offer
     await supabase
       .from('raw_inventory_rows')
-      .update({ offer_id: offer!.id })
+      .update({ offer_id: offerId })
       .eq('id', rawRow!.id);
 
-    return { offerId: offer!.id, rawRowId: rawRow!.id };
+    return { offerId, rawRowId: rawRow!.id };
   }
 
-  // 3. If unresolved → create unmatched_name
-  const { data: unmatched, error: unmatchedErr } = await supabase
+  // 3. If unresolved → insert or update unmatched_name
+  const { data: existingUnmatched } = await supabase
     .from('unmatched_names')
-    .upsert(
-      {
+    .select('id')
+    .eq('parsed_core_name', result.parsedCoreName)
+    .eq('nursery_id', nurseryId)
+    .maybeSingle();
+
+  let unmatchedId: string;
+
+  if (existingUnmatched) {
+    // Update existing unmatched entry
+    const { data: updated, error: updateErr } = await supabase
+      .from('unmatched_names')
+      .update({
+        raw_product_name: result.rawProductName,
+        import_run_id: importRunId,
+        raw_row_id: rawRow!.id,
+        last_seen_at: new Date().toISOString(),
+      })
+      .eq('id', existingUnmatched.id)
+      .select('id')
+      .single();
+
+    if (updateErr)
+      throw new Error(`Failed to update unmatched_name: ${updateErr.message}`);
+    unmatchedId = updated!.id;
+  } else {
+    // Insert new unmatched entry
+    const { data: inserted, error: insertErr } = await supabase
+      .from('unmatched_names')
+      .insert({
         raw_product_name: result.rawProductName,
         parsed_core_name: result.parsedCoreName,
         nursery_id: nurseryId,
         import_run_id: importRunId,
         raw_row_id: rawRow!.id,
         last_seen_at: new Date().toISOString(),
-      },
-      { onConflict: 'parsed_core_name,nursery_id', ignoreDuplicates: false }
-    )
-    .select('id')
-    .single();
+      })
+      .select('id')
+      .single();
 
-  if (unmatchedErr)
-    throw new Error(`Failed to write unmatched_name: ${unmatchedErr.message}`);
+    if (insertErr)
+      throw new Error(`Failed to insert unmatched_name: ${insertErr.message}`);
+    unmatchedId = inserted!.id;
+  }
 
-  return { unmatchedId: unmatched!.id, rawRowId: rawRow!.id };
+  return { unmatchedId, rawRowId: rawRow!.id };
 }
 
 /**
