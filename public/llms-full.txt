@@ -1,0 +1,81 @@
+# Plant Commerce — Full API & Data Guide
+
+## Overview
+Plant Commerce is a plant database and nursery inventory aggregator focused on permaculture crops. It provides structured data about plant species, cultivars (named varieties), and nursery inventory with pricing/availability.
+
+Current scope: Hazelnuts (Corylus genus) — 7 species, 60+ cultivars, 10 nurseries.
+
+## Data Model
+
+### Plant Entity (Species)
+A botanical species, hybrid, or species group.
+Fields: id, slug, canonical_name, botanical_name, genus, family, entity_type, description.
+Example: European Hazelnut = Corylus avellana.
+
+### Cultivar
+A named plant variety under a species. Types: cultivar_clone, named_seed_strain, breeding_population, geographic_population, species_seedling.
+Fields: id, slug, canonical_name, plant_entity_id, material_type, breeder, origin_location, year_released, patent_status, notes.
+Example: Jefferson = cultivar_clone under Corylus avellana, bred by Oregon State University.
+
+### Nursery
+A business that sells plants.
+Fields: id, slug, name, website_url, location_city, location_state, location_country, sales_type, is_active.
+
+### Inventory Offer
+A current listing of a cultivar at a nursery.
+Fields: nursery_id, cultivar_id, raw_product_name, raw_price_text, product_page_url, propagation_method, sale_form, offer_status.
+
+## API Endpoints
+
+All responses use envelope: { ok: true, data: ..., meta: { total }, links: { self, ... } }
+Errors: { ok: false, error: { code, message } }
+
+### GET /api
+Returns JSON listing all available endpoints with descriptions and parameters.
+
+### GET /api/search?q={query}&limit={n}
+Full-text search across plants and cultivars.
+- q (required): search term
+- limit (optional, default 20): max results
+Returns: { ok, data: [{ index_source, entity_id, slug, canonical_name, material_type, botanical_name, species_slug, active_offer_count }] }
+
+### GET /api/plants/{speciesSlug}
+Get species details with all cultivars.
+Returns: { ok, data: { type: "plant_entity", data: {...}, cultivars: [...] } }
+Example: /api/plants/corylus-avellana
+
+### GET /api/plants/{speciesSlug}/{cultivarSlug}
+Get cultivar with offers, aliases, legal identifiers.
+Returns: { ok, data: { type: "cultivar", data: {...}, offers: [...], aliases: [...], legal_identifiers: [...] } }
+Example: /api/plants/corylus-avellana/jefferson
+
+### GET /api/nurseries
+List all active nurseries.
+Returns: { ok, data: [...], meta: { total } }
+
+### GET /api/nurseries/{nurserySlug}
+Get nursery with inventory.
+Returns: { ok, data: { ...nursery, inventory: [...] }, meta: { total } }
+Example: /api/nurseries/burnt-ridge-nursery
+
+## URL Patterns
+- Species pages: /plants/{species-slug} (e.g., /plants/corylus-avellana)
+- Cultivar pages: /plants/{species-slug}/{cultivar-slug} (e.g., /plants/corylus-avellana/jefferson)
+- Nursery pages: /nurseries/{nursery-slug} (e.g., /nurseries/burnt-ridge-nursery)
+
+## Structured Data
+All pages include JSON-LD (schema.org) structured data:
+- Homepage: WebSite + SearchAction
+- Species: ItemList of cultivars
+- Cultivar: Product + Offer[]
+- Nursery: Organization
+- All: BreadcrumbList
+
+## Search Tips
+- Search by cultivar name: "jefferson", "barcelona"
+- Search by species: "european hazelnut", "corylus avellana"
+- Search by breeder: results include breeder info in cultivar details
+- Partial matches work via trigram similarity
+
+## Rate Limits
+Be polite. No formal rate limit, but please keep requests under 1/second for API endpoints.

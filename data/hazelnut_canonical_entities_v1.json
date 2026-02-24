@@ -1,0 +1,976 @@
+{
+  "meta": {
+    "version": "1.0",
+    "created": "2026-02-23",
+    "source": "Hazelnut Nursery Inventory Research - 10 nursery stress test",
+    "notes": "Canonical entity list for schema validation. All aliases extracted from real nursery listings."
+  },
+  "plant_entities": [
+    {
+      "id": "pe_corylus_avellana",
+      "canonical_name": "European Hazelnut",
+      "botanical_name": "Corylus avellana",
+      "family": "Betulaceae",
+      "genus": "Corylus",
+      "species": "avellana",
+      "entity_type": "species",
+      "common_aliases": ["European Hazel", "European Filbert", "Filbert", "Hazelnut", "Hazel"],
+      "notes": "Primary commercial hazelnut species. Most named cultivars derive from this."
+    },
+    {
+      "id": "pe_corylus_americana",
+      "canonical_name": "American Hazelnut",
+      "botanical_name": "Corylus americana",
+      "family": "Betulaceae",
+      "genus": "Corylus",
+      "species": "americana",
+      "entity_type": "species",
+      "common_aliases": ["American Hazel", "American Filbert", "C. americana"],
+      "notes": "Native North American species. Smaller nuts, greater cold hardiness."
+    },
+    {
+      "id": "pe_corylus_cornuta",
+      "canonical_name": "Beaked Hazelnut",
+      "botanical_name": "Corylus cornuta",
+      "family": "Betulaceae",
+      "genus": "Corylus",
+      "species": "cornuta",
+      "entity_type": "species",
+      "common_aliases": ["Beaked Hazel", "Beaked Filbert"],
+      "notes": "Native species with bristly husks. Blight immune. Shy bearing."
+    },
+    {
+      "id": "pe_corylus_heterophylla",
+      "canonical_name": "Asian Hazelnut",
+      "botanical_name": "Corylus heterophylla",
+      "family": "Betulaceae",
+      "genus": "Corylus",
+      "species": "heterophylla",
+      "entity_type": "species",
+      "common_aliases": ["Asian Hazel", "C. heterophylla"],
+      "notes": "Used in hybrid breeding programs, particularly by Grimo."
+    },
+    {
+      "id": "pe_corylus_colurna",
+      "canonical_name": "Turkish Tree Hazel",
+      "botanical_name": "Corylus colurna",
+      "family": "Betulaceae",
+      "genus": "Corylus",
+      "species": "colurna",
+      "entity_type": "species",
+      "common_aliases": ["Turkish Hazel", "Turkish Tree Hazelnut", "Turkish Filbert"],
+      "notes": "Tree-form hazel. Used in hybrid breeding (e.g., Grand Traverse parentage)."
+    },
+    {
+      "id": "pe_corylus_avellana_x_americana",
+      "canonical_name": "European x American Hazelnut Hybrid",
+      "botanical_name": "Corylus avellana × americana",
+      "family": "Betulaceae",
+      "genus": "Corylus",
+      "species": null,
+      "entity_type": "hybrid_species",
+      "common_aliases": ["avellana x americana hybrid", "EFB-resistant hybrid hazelnut"],
+      "parent_species": ["pe_corylus_avellana", "pe_corylus_americana"],
+      "notes": "Common hybrid cross for EFB resistance + nut quality. Includes The Beast, Somerset, etc."
+    },
+    {
+      "id": "pe_gevuina_avellana",
+      "canonical_name": "Chilean Hazelnut",
+      "botanical_name": "Gevuina avellana",
+      "family": "Proteaceae",
+      "genus": "Gevuina",
+      "species": "avellana",
+      "entity_type": "species",
+      "common_aliases": ["Chilean Hazel", "Gevuin"],
+      "notes": "COMPLETELY DIFFERENT FAMILY from Corylus. Shares 'hazelnut' common name only. Proteaceae, not Betulaceae. Found at One Green World."
+    }
+  ],
+  "cultivars": [
+    {
+      "id": "cv_barcelona",
+      "canonical_name": "Barcelona",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Barcelona Filbert Hazelnut Tree",
+        "Barcelona Filbert Tree",
+        "Barcelona Filbert",
+        "Barcelona Hazelnut"
+      ],
+      "breeder": null,
+      "origin": "Spain",
+      "patent_status": "none",
+      "notes": "Most widely planted commercial variety in PNW. >60% of Oregon acreage."
+    },
+    {
+      "id": "cv_jefferson",
+      "canonical_name": "Jefferson",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "JEFFERSON HAZELNUT",
+        "JEFFERSON HAZELNUT (Corylus avellana)",
+        "Jefferson Filbert",
+        "Jefferson Hazelnut Tree"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "patented",
+      "notes": "EFB immune. Heavy yield, large nuts. Replaces Barcelona."
+    },
+    {
+      "id": "cv_yamhill",
+      "canonical_name": "Yamhill",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Yamhill Hazel (Filbert)",
+        "Yamhill Hazelnut Tree",
+        "Yamhill Hazelnut"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "patented",
+      "notes": "EFB immune. Early ripening. Compact tree."
+    },
+    {
+      "id": "cv_dorris",
+      "canonical_name": "Dorris",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "DORRIS HAZELNUT",
+        "Dorris Hazelnut"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "Complete EFB resistance. Large round nuts. Compact tree."
+    },
+    {
+      "id": "cv_mcdonald",
+      "canonical_name": "McDonald",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "MCDONALD HAZELNUT",
+        "MCDONALD HAZELNUT (Corylus avellana)",
+        "MCDONALD FILBERT HAZELNUT",
+        "McDonald Hazelnut Tree",
+        "McDonald Filbert Hazelnut"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "Highest nut meat to shell ratio. Very early ripening. EFB resistant."
+    },
+    {
+      "id": "cv_polly_o",
+      "canonical_name": "Polly O",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "POLLY O HAZELNUT",
+        "POLLY O HAZELNUT (Corylus avellana)",
+        "Polly O Filbert",
+        "PollyO Hazelnut Tree",
+        "PollyO",
+        "Polly-O"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "2018 OSU release. High yield medium round nuts. Preferred for chocolate industry."
+    },
+    {
+      "id": "cv_wepster",
+      "canonical_name": "Wepster",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Wepster Filbert Hazelnut",
+        "Wepster Hazelnut Tree",
+        "Wepster Filbert"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "Developed for chocolate/baking industry. Kernel size 11-13mm. Early ripening."
+    },
+    {
+      "id": "cv_the_beast",
+      "canonical_name": "The Beast",
+      "plant_entity_id": "pe_corylus_avellana_x_americana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "The Beast Hazelnut Cultivar",
+        "THE BEAST™ FILBERT",
+        "The Beast™ Hazelnut Tree",
+        "The Beast Hazelnut",
+        "Beast"
+      ],
+      "breeder": "Hybrid Hazelnut Research Consortium / Rutgers",
+      "origin": "New Jersey, USA",
+      "patent_status": "patented",
+      "legal_identifiers": [
+        {"type": "plant_patent", "value_raw": "US PP33561 P2", "value_normalized": "USPP33561"}
+      ],
+      "notes": "First HHRC cultivar release. avellana x americana hybrid. 17 lbs nuts at year 6."
+    },
+    {
+      "id": "cv_grand_traverse",
+      "canonical_name": "Grand Traverse",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "GRAND TRAVERSE HAZELNUT",
+        "GRAND TRAVERSE HAZELNUT (Corylus avellana x Cokuma)",
+        "Grand Traverse Hazel Layer",
+        "Grand Traverse Hazelnut Cultivar",
+        "Grand Traverse Hazelnut Tree"
+      ],
+      "breeder": "Cecil Farris",
+      "origin": "Michigan, USA",
+      "patent_status": "none",
+      "notes": "Michigan selection. 25% Turkish Tree Hazel. Near-universal pollinator. EFB tolerant. Originally named 1989. 'Cokuma' parentage notation at Burnt Ridge is non-standard."
+    },
+    {
+      "id": "cv_somerset",
+      "canonical_name": "Somerset",
+      "plant_entity_id": "pe_corylus_avellana_x_americana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "SOMERSET HAZELNUT",
+        "SOMERSET HAZELNUT (Corylus avellana)",
+        "Somerset Filbert",
+        "Somerset Hazelnut Cultivar",
+        "Somerset Hazelnut Cultivar \" The Crazy Productive One\""
+      ],
+      "breeder": "Rutgers University",
+      "origin": "New Jersey, USA",
+      "patent_status": "patented",
+      "legal_identifiers": [
+        {"type": "plant_patent", "value_raw": "USPP 32,494", "value_normalized": "USPP32494"}
+      ],
+      "notes": "Highest EFB resistance of any commercial cultivar. Compact. Up to 53 lbs/tree. Patented."
+    },
+    {
+      "id": "cv_raritan",
+      "canonical_name": "Raritan",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "RARITAN HAZELNUT",
+        "RARITAN HAZELNUT (Corylus avellana)",
+        "Raritan Hazel Layer",
+        "Raritan Filbert",
+        "Raritan Hazelnut Cultivar"
+      ],
+      "breeder": "Rutgers University",
+      "origin": "New Jersey, USA",
+      "patent_status": "patented",
+      "legal_identifiers": [
+        {"type": "plant_patent", "value_raw": "USPP32,460", "value_normalized": "USPP32460"}
+      ],
+      "notes": "First Rutgers cultivar available. S-alleles 3 and 22. EFB resistant (eastern/midwestern strains)."
+    },
+    {
+      "id": "cv_monmouth",
+      "canonical_name": "Monmouth",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "MONMOUTH (TM) HAZELNUT",
+        "MONMOUTH (TM) HAZELNUT (Corylus avellana)",
+        "Monmouth Hazelnut Cultivar"
+      ],
+      "breeder": "Rutgers University",
+      "origin": "New Jersey, USA",
+      "patent_status": "trademarked",
+      "notes": "EFB resistant (multiple eastern strains). Very productive. Round, thin-shelled."
+    },
+    {
+      "id": "cv_hunterdon",
+      "canonical_name": "Hunterdon",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "HUNTERDON HAZELNUT",
+        "HUNTERDON HAZELNUT (Corylus avellana)",
+        "Hunterdon Hazelnut Cultivar"
+      ],
+      "breeder": "Rutgers University (cross of Sacajawea x OSU 616.055)",
+      "origin": "New Jersey, USA",
+      "patent_status": "patented",
+      "notes": "EFB resistant (eastern strains). Pollinates with Grand Traverse and The Beast."
+    },
+    {
+      "id": "cv_halles_giant",
+      "canonical_name": "Hall's Giant",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "HALLES GIANT HAZELNUT",
+        "HALLES GIANT HAZELNUT (Corylus avellana)",
+        "Halls Giant Filbert Hazelnut Tree",
+        "Halls Giant",
+        "Halles Giant",
+        "Hall's Giant Filbert",
+        "Geant de Halle",
+        "Merville de Bollwiller"
+      ],
+      "breeder": null,
+      "origin": "Germany/Alsace",
+      "patent_status": "none",
+      "notes": "Historic cultivar. Large round nuts. Moderate EFB resistance. Suitable universal pollinator."
+    },
+    {
+      "id": "cv_ennis",
+      "canonical_name": "Ennis",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Ennis Filbert Hazelnut Tree",
+        "Ennis Hazel (Filbert)",
+        "Ennis Filbert"
+      ],
+      "breeder": "University of Oregon / OSU",
+      "origin": "Oregon, USA",
+      "patent_status": "none",
+      "notes": "Large oval nuts. Traditionally pollinated by Butler."
+    },
+    {
+      "id": "cv_casina",
+      "canonical_name": "Casina",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Casina Filbert Hazelnut Tree"
+      ],
+      "breeder": null,
+      "origin": "Spain (chance seedling)",
+      "patent_status": "none",
+      "notes": "Prolific yield."
+    },
+    {
+      "id": "cv_clark",
+      "canonical_name": "Clark",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Clark Filbert Hazelnut Tree"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "EFB resistant."
+    },
+    {
+      "id": "cv_lewis",
+      "canonical_name": "Lewis",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Lewis Filbert Hazelnut Tree",
+        "Lewis (Organic)",
+        "Lewis Hazelnut Tree",
+        "Lewis Filbert"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "none",
+      "notes": "1997 OSU release. EFB resistant. Compact. Early ripening."
+    },
+    {
+      "id": "cv_butler",
+      "canonical_name": "Butler",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Butler (Organic)",
+        "Butler Filbert"
+      ],
+      "breeder": null,
+      "origin": "Oregon, USA",
+      "patent_status": "none",
+      "notes": "Standard pollinator for Ennis."
+    },
+    {
+      "id": "cv_sacajawea",
+      "canonical_name": "Sacajawea",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Sacajawea Filbert"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "Flavor similar to prized Italian varieties."
+    },
+    {
+      "id": "cv_tonda_di_giffoni",
+      "canonical_name": "Tonda di Giffoni",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Tonda Di Giffoni Hazelnut Tree",
+        "Tonda di Giffoni"
+      ],
+      "breeder": null,
+      "origin": "Italy",
+      "patent_status": "none",
+      "notes": "Premier Italian cultivar. Round kernels, easy to process."
+    },
+    {
+      "id": "cv_eta",
+      "canonical_name": "Eta",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Eta Filbert",
+        "Eta Hazelnut Tree"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "EFB immune. Compact tree. Medium nuts."
+    },
+    {
+      "id": "cv_theta",
+      "canonical_name": "Theta",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Theta Filbert",
+        "Theta Hazelnut Tree"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "EFB immune. Medium nuts, very flavorful. One of the most desirable Oregon clones."
+    },
+    {
+      "id": "cv_epsilon",
+      "canonical_name": "Epsilon",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Epsilon (Organic)",
+        "Epsilon Hazelnut Tree",
+        "Epsilon Filbert"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "EFB immune. Compact. Good pollinizer."
+    },
+    {
+      "id": "cv_zeta",
+      "canonical_name": "Zeta",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Zeta Filbert"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "EFB immune. Compact. Pollinated with Eta or Theta."
+    },
+    {
+      "id": "cv_delta",
+      "canonical_name": "Delta",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Delta (Organic)",
+        "Delta Filbert"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "EFB resistant. Bud mite resistant. Compact. Good pollinator for Yamhill and Lewis."
+    },
+    {
+      "id": "cv_gamma",
+      "canonical_name": "Gamma",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Gamma Hazel Layer",
+        "Gamma Filbert Tree"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "Selected in Oregon as pollinizer. Medium round nuts."
+    },
+    {
+      "id": "cv_felix",
+      "canonical_name": "Felix",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Felix Hazelnut Tree"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "Late pollinizer for Jefferson, Eta, Theta. Small round nuts."
+    },
+    {
+      "id": "cv_york",
+      "canonical_name": "York",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "York Filbert (organic)",
+        "York Hazelnut Tree",
+        "York Filbert"
+      ],
+      "breeder": "Oregon State University",
+      "origin": "Oregon, USA",
+      "patent_status": "unknown",
+      "notes": "EFB immune. Long pollen season = great universal pollinator."
+    },
+    {
+      "id": "cv_gene",
+      "canonical_name": "Gene",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Gene Hazel Layer",
+        "Geneva",
+        "Geneva Hazel Cultivar",
+        "Geneva Hazelnut"
+      ],
+      "breeder": "Grimo Nut Nursery breeding program",
+      "origin": "Ontario, Canada",
+      "patent_status": "trademarked",
+      "notes": "CRITICAL ALIAS: 'Gene' is the current name; 'Geneva' is the former name. Grimo lists as Gene TM. Z's Nutty Ridge sells as Geneva. Same cultivar. Main pollinizer at Grimo. High blight resistance."
+    },
+    {
+      "id": "cv_alex",
+      "canonical_name": "Alex",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Alex Hazel Layer"
+      ],
+      "breeder": "Grimo (seedling of Faroka)",
+      "origin": "Ontario, Canada",
+      "patent_status": "none",
+      "notes": "Large oval nut. Faroka (Turkish tree hazel hybrid) seedling."
+    },
+    {
+      "id": "cv_carmela",
+      "canonical_name": "Carmela",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Carmela Hazel Layer"
+      ],
+      "breeder": "Grimo Nut Nursery",
+      "origin": "Ontario, Canada",
+      "patent_status": "trademarked",
+      "notes": "Extra large oval nut. Biennial bearing."
+    },
+    {
+      "id": "cv_dermis",
+      "canonical_name": "Dermis",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Dermis Hazel Layer"
+      ],
+      "breeder": "Grimo (Skinner seedling selection)",
+      "origin": "Ontario, Canada",
+      "patent_status": "trademarked",
+      "notes": "Northern hardy. Selected from Skinner seedlings. Superior to parent."
+    },
+    {
+      "id": "cv_edward",
+      "canonical_name": "Edward",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Edward Hazel Layer"
+      ],
+      "breeder": "Grimo",
+      "origin": "Ontario, Canada",
+      "patent_status": "none",
+      "notes": "High yielding. Bud mite resistant. S-alleles 11 and 20."
+    },
+    {
+      "id": "cv_matt",
+      "canonical_name": "Matt",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Matt Hazel Layer",
+        "208D"
+      ],
+      "breeder": "Grimo (Faroka seedling)",
+      "origin": "Ontario, Canada",
+      "patent_status": "trademarked",
+      "notes": "CRITICAL ALIAS: Formerly called '208D' (breeding line number). Large oval nut. Faroka seedling."
+    },
+    {
+      "id": "cv_slate",
+      "canonical_name": "Slate",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Slate Hazel Layer"
+      ],
+      "breeder": "Grimo",
+      "origin": "Ontario, Canada",
+      "patent_status": "trademarked",
+      "notes": "Very productive compact tree. Some years good pollinizer for zone 6b-8."
+    },
+    {
+      "id": "cv_nitka",
+      "canonical_name": "NITKA",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "NITKA® Hazel Layer(cultivar)",
+        "Nitka Hazelnut",
+        "Nitka"
+      ],
+      "breeder": "Z's Nutty Ridge",
+      "origin": "New York, USA",
+      "patent_status": "registered_trademark",
+      "notes": "Extremely hardy zone 4a. No catkin/bud dieback after 25+ years. No EFB signs."
+    },
+    {
+      "id": "cv_photon",
+      "canonical_name": "Photon",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Photon Hazel Grafted(cultivar) US-PP34790-P2"
+      ],
+      "breeder": "Z's Nutty Ridge",
+      "origin": "New York, USA",
+      "patent_status": "patented",
+      "legal_identifiers": [
+        {"type": "plant_patent", "value_raw": "US-PP34790-P2", "value_normalized": "USPP34790"}
+      ],
+      "notes": "First patent for cold hardy hazelnut for native hazelnut regions."
+    },
+    {
+      "id": "cv_truxton",
+      "canonical_name": "Truxton",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Truxton Hazel Layered"
+      ],
+      "breeder": "Z's Nutty Ridge",
+      "origin": "New York, USA",
+      "patent_status": "unknown",
+      "notes": "Large, thin-shelled nuts. Zones 6a+. Proprietary Z's cultivar."
+    },
+    {
+      "id": "cv_crimson",
+      "canonical_name": "Crimson",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Crimson Hazel Layer"
+      ],
+      "breeder": "Grimo (Wisconsin source selection)",
+      "origin": "Wisconsin/Ontario",
+      "patent_status": "none",
+      "notes": "Hardy red leaf hazel. Ornamental. Wisconsin source hybrid."
+    },
+    {
+      "id": "cv_dawn",
+      "canonical_name": "Dawn",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": ["Dawn Hazel Layer"],
+      "breeder": "Grimo (Asian/Quebec source)",
+      "origin": "Ontario, Canada",
+      "patent_status": "none",
+      "notes": "Good blight resistance. Bud mite susceptible."
+    },
+    {
+      "id": "cv_frank",
+      "canonical_name": "Frank",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": ["Frank Hazel Layer"],
+      "breeder": "Grimo (Saskatchewan source)",
+      "origin": "Ontario, Canada",
+      "patent_status": "none",
+      "notes": "Medium tree 3-4m tall x 3m spread."
+    },
+    {
+      "id": "cv_joanne",
+      "canonical_name": "Joanne",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": ["Joanne Hazel Layer"],
+      "breeder": "Grimo (Saskatchewan source)",
+      "origin": "Ontario, Canada",
+      "patent_status": "none",
+      "notes": "Good blight resistance. Bud mite susceptible."
+    },
+    {
+      "id": "cv_kiara",
+      "canonical_name": "Kiara",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": ["Kiara Hazel Layer"],
+      "breeder": "Dr. Les Kerr, Morden Research Station (original cross)",
+      "origin": "Manitoba/Ontario, Canada",
+      "patent_status": "none",
+      "notes": "American hazel hybrid. Originally from Manitoba breeding."
+    },
+    {
+      "id": "cv_marion",
+      "canonical_name": "Marion",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": ["Marion Hazel Layer"],
+      "breeder": "Grimo (Saskatchewan source)",
+      "origin": "Ontario, Canada",
+      "patent_status": "none",
+      "notes": "Medium tree 3-4m tall x 3m spread."
+    },
+    {
+      "id": "cv_northern_blais",
+      "canonical_name": "Northern Blais",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": ["Northern Blais Hazel Layer"],
+      "breeder": "Quebec grower (selected from Grimo seedlings)",
+      "origin": "Quebec, Canada",
+      "patent_status": "trademarked",
+      "notes": "Selected in zone 4 Quebec."
+    },
+    {
+      "id": "cv_aldara",
+      "canonical_name": "Aldara",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "cultivar_clone",
+      "aliases": ["Aldara Hazel Layer"],
+      "breeder": "Grimo (Asian/Quebec source)",
+      "origin": "Ontario, Canada",
+      "patent_status": "trademarked",
+      "notes": "Medium tree 3-4m tall x 3m wide."
+    },
+    {
+      "id": "cv_winkler",
+      "canonical_name": "Winkler",
+      "plant_entity_id": "pe_corylus_americana",
+      "material_type": "cultivar_clone",
+      "aliases": [
+        "Winkler American Hazel Layer",
+        "Winkler American Hazelnut Seeds",
+        "Winkler"
+      ],
+      "breeder": null,
+      "origin": "Iowa, USA (introduced 1918)",
+      "patent_status": "none",
+      "notes": "IMPORTANT: Sold as clonal layers at Grimo but as SEEDS at Oikos. Same cultivar name, different propagation = different genetic guarantee. Larger nuts, more productive than typical native."
+    }
+  ],
+  "named_materials": [
+    {
+      "id": "nm_ny_hazel_seedling",
+      "canonical_name": "NY Hazel Seedling",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "named_seed_strain",
+      "aliases": ["NY Hazel Seedling"],
+      "parentage": "Seed from NY 616 and/or NY 398 (Geneva Experiment Station)",
+      "notes": "NOT a cultivar. Seeds from two superior blight-immune cultivars from George Slate's hazelnut work."
+    },
+    {
+      "id": "nm_grimo_hazel_seedling",
+      "canonical_name": "Grimo Hazel Seedling",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Grimo Hazel Seedling"],
+      "parentage": "2nd generation seed from Gellatly's Faroka Turkish tree hazel hybrid",
+      "notes": "Faroka offspring. EFB resistant and bud mite resistant."
+    },
+    {
+      "id": "nm_cortland_seedling",
+      "canonical_name": "Cortland Hazel Seedling",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Cortland Hazel Seedling"],
+      "parentage": "From a single mother tree at Z's Nutty Ridge",
+      "notes": "Named after Cortland County NY. Not a registered cultivar. Round, thin-shelled, blight resistant mother tree."
+    },
+    {
+      "id": "nm_prodigy_seedling",
+      "canonical_name": "Prodigy Hazel Seedling",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Prodigy Hazel Seedling"],
+      "parentage": "From Z's Nutty Ridge breeding",
+      "notes": "Locally-named seedling line. Not a registered cultivar."
+    },
+    {
+      "id": "nm_cultivar_hazel_seedling",
+      "canonical_name": "Cultivar Hazel Seedling",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Cultivar Hazel Seedling"],
+      "parentage": "From Z's Nutty Ridge",
+      "notes": "CONFUSING NAME: 'Cultivar' is used as a seedling line name, NOT indicating actual cultivar status. Would break naive text matching."
+    },
+    {
+      "id": "nm_dwarf_american",
+      "canonical_name": "Dwarf American Hazelnut",
+      "plant_entity_id": "pe_corylus_americana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Dwarf American Hazelnut Seeds"],
+      "parentage": "Natural dwarf form from Iowa/Michigan populations (Oikos)",
+      "notes": "Natural runner form. Not a formal cultivar."
+    },
+    {
+      "id": "nm_ecos",
+      "canonical_name": "ECOS American Hazelnut",
+      "plant_entity_id": "pe_corylus_americana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Ecos American Hazelnut Seeds", "ECOS"],
+      "parentage": "Selected from most precocious plants at Oikos",
+      "notes": "ECOS = Ecological Crop Opportunity Selection. Acronym used as product name."
+    },
+    {
+      "id": "nm_precocious",
+      "canonical_name": "Precocious Hazelnut",
+      "plant_entity_id": "pe_corylus_avellana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Precocious Hazelnut Seeds"],
+      "parentage": "30-year trial selection (Oikos)",
+      "notes": "Descriptive strain name, not formal cultivar."
+    },
+    {
+      "id": "nm_skinner_seeds",
+      "canonical_name": "Skinner American Hazelnut Seeds",
+      "plant_entity_id": "pe_corylus_americana",
+      "material_type": "named_seed_strain",
+      "aliases": ["Skinner American Hazelnut Seeds"],
+      "parentage": "From Skinner cultivar (sold as seed, not clonal stock)",
+      "notes": "IMPORTANT: Skinner IS a recognized cultivar name but Oikos sells it as SEEDS, not clones. Genetic variation in offspring."
+    }
+  ],
+  "populations": [
+    {
+      "id": "pop_northern_hazel_asian_quebec",
+      "canonical_name": "Northern Hazel (Asian/Quebec Source)",
+      "plant_entity_id": "pe_corylus_heterophylla",
+      "material_type": "geographic_population",
+      "aliases": ["Northern Hazel Sdlg (Asian/Quebec Source)"],
+      "source_nursery": "Grimo Nut Nursery",
+      "notes": "C. heterophylla hybrids from Grimo's mixed orchard. Late August ripening."
+    },
+    {
+      "id": "pop_northern_hazel_saskatchewan",
+      "canonical_name": "Northern Hazel (Saskatchewan Source)",
+      "plant_entity_id": "pe_corylus_heterophylla",
+      "material_type": "geographic_population",
+      "aliases": ["Northern Hazel Sdlg (Saskatchewan Source)"],
+      "source_nursery": "Grimo Nut Nursery",
+      "notes": "Manitoba crosses further selected in Saskatchewan for hardiness."
+    },
+    {
+      "id": "pop_northern_hazel_wisconsin",
+      "canonical_name": "Northern Hazel (Wisconsin Source)",
+      "plant_entity_id": "pe_corylus_heterophylla",
+      "material_type": "geographic_population",
+      "aliases": ["Northern Hazel Sdlg (Wisconsin Source)"],
+      "source_nursery": "Grimo Nut Nursery",
+      "notes": "European hazel hybrids selected in Wisconsin/Minnesota climate."
+    },
+    {
+      "id": "pop_neohybrid",
+      "canonical_name": "NeoHybrid Hazelnut",
+      "plant_entity_id": null,
+      "material_type": "breeding_population",
+      "aliases": [
+        "NeoHybrid Hazelnuts",
+        "Hybrid Hazel Seedlings",
+        "Standard Hazels",
+        "Badgersett Hazelnut"
+      ],
+      "source_nursery": "Badgersett Research Corporation",
+      "component_species": ["pe_corylus_americana", "pe_corylus_cornuta", "pe_corylus_avellana"],
+      "notes": "Multi-generation triple-species hybrid breeding population. No cultivar names. 'NeoHybrid' is a brand name. Breeding since 1978. Sub-categories: Standard, Machine Picked, Select, Experimental."
+    },
+    {
+      "id": "pop_badgersett_machine_picked",
+      "canonical_name": "Badgersett Machine Picked",
+      "plant_entity_id": null,
+      "material_type": "breeding_population",
+      "aliases": ["Machine Picked hazels"],
+      "source_nursery": "Badgersett Research Corporation",
+      "notes": "Subset of NeoHybrid selected for highest kernel production per acre."
+    },
+    {
+      "id": "pop_badgersett_select",
+      "canonical_name": "Badgersett Select Material",
+      "plant_entity_id": null,
+      "material_type": "breeding_population",
+      "aliases": ["Select material"],
+      "source_nursery": "Badgersett Research Corporation",
+      "notes": "From parent plants with best track records. Quality tier, not a biological descriptor."
+    },
+    {
+      "id": "pop_badgersett_experimental",
+      "canonical_name": "Badgersett Experimental Mediums and Larges",
+      "plant_entity_id": null,
+      "material_type": "breeding_population",
+      "aliases": ["Experimental Mediums and Larges"],
+      "source_nursery": "Badgersett Research Corporation",
+      "notes": "Nut size classification within breeding program."
+    }
+  ],
+  "controlled_vocabularies": {
+    "material_types": [
+      "cultivar_clone",
+      "named_seed_strain",
+      "breeding_population",
+      "geographic_population",
+      "species_seedling",
+      "unknown_named_line"
+    ],
+    "propagation_methods": {
+      "layered_clone": ["Hazel Layer", "Hazel Layered", "layer", "layered"],
+      "grafted": ["Grafted", "grafted"],
+      "bare_root": ["Bare root", "Bare-root", "Bare Root", "bare root"],
+      "potted": ["2 Quart Pot", "4x10\" containers", "potted"],
+      "seedling": ["Seedling", "Sdlg", "seedling"],
+      "tubelings": ["Tubelings", "tubelings", "containerized seedlings"],
+      "tissue_cultured": ["tissue cultured"],
+      "seed": ["Seeds", "Nuts", "seeds"]
+    },
+    "common_name_terms": {
+      "hazelnut": ["Hazelnut", "HAZELNUT", "hazelnut"],
+      "filbert": ["Filbert", "FILBERT", "filbert"],
+      "hazel": ["Hazel", "HAZEL", "hazel"]
+    },
+    "strip_terms": [
+      "Tree", "tree",
+      "Hazelnut", "HAZELNUT", "hazelnut",
+      "Filbert", "FILBERT", "filbert",
+      "Hazel", "HAZEL", "hazel",
+      "(Organic)", "(organic)", "(Conventional)", "(conventional)",
+      "Bare root", "Bare-root", "Bare Root", "bare root",
+      "Cultivar", "cultivar",
+      "Layer", "Layered", "layer", "layered",
+      "Grafted", "grafted",
+      "Seedling", "seedling", "Sdlg",
+      "Seeds", "seeds"
+    ],
+    "trademark_patterns": ["™", "®", "(TM)", "TM"],
+    "patent_patterns": ["USPP", "US PP", "US-PP", "PP"]
+  }
+}

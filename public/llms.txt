@@ -1,0 +1,27 @@
+# Plant Commerce
+
+> Plant database and nursery inventory aggregator for the permaculture community.
+
+Plant Commerce helps you find specific plant cultivars and compare availability across nurseries. Currently focused on hazelnuts (Corylus genus).
+
+## Key Pages
+
+- Homepage: https://plantcommerce.app/
+- Search: https://plantcommerce.app/search?q={query}
+- Species: https://plantcommerce.app/plants/{species-slug}
+- Cultivar: https://plantcommerce.app/plants/{species-slug}/{cultivar-slug}
+- Nurseries: https://plantcommerce.app/nurseries
+- Nursery: https://plantcommerce.app/nurseries/{nursery-slug}
+
+## API
+
+- Discovery: https://plantcommerce.app/api
+- Search: https://plantcommerce.app/api/search?q={query}
+- Species: https://plantcommerce.app/api/plants/{species-slug}
+- Cultivar: https://plantcommerce.app/api/plants/{species-slug}/{cultivar-slug}
+- Nurseries: https://plantcommerce.app/api/nurseries
+- Nursery: https://plantcommerce.app/api/nurseries/{nursery-slug}
+
+## Full API Guide
+
+See /llms-full.txt for complete API documentation.
