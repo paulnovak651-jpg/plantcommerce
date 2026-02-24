@@ -369,22 +369,38 @@ export async function createImportRun(
 }
 
 /**
- * Complete an import run with final stats.
+ * Complete an import run with final stats and diagnostics.
  */
 export async function completeImportRun(
   supabase: SupabaseClient,
   importRunId: string,
-  stats: { rowsTotal: number; rowsResolved: number; rowsUnmatched: number }
+  stats: {
+    rowsTotal: number;
+    rowsResolved: number;
+    rowsUnmatched: number;
+    rowsErrored?: number;
+    durationMs?: number;
+    errorSamples?: Array<{ product: string; error: string }>;
+    scraperVersion?: string;
+  }
 ): Promise<void> {
+  const updateData: Record<string, unknown> = {
+    completed_at: new Date().toISOString(),
+    status: 'completed',
+    rows_total: stats.rowsTotal,
+    rows_resolved: stats.rowsResolved,
+    rows_unmatched: stats.rowsUnmatched,
+  };
+
+  // Add observability fields if provided (gracefully degrades if columns don't exist yet)
+  if (stats.rowsErrored !== undefined) updateData.rows_errored = stats.rowsErrored;
+  if (stats.durationMs !== undefined) updateData.duration_ms = stats.durationMs;
+  if (stats.errorSamples !== undefined) updateData.error_samples = stats.errorSamples;
+  if (stats.scraperVersion !== undefined) updateData.scraper_version = stats.scraperVersion;
+
   const { error } = await supabase
     .from('import_runs')
-    .update({
-      completed_at: new Date().toISOString(),
-      status: 'completed',
-      rows_total: stats.rowsTotal,
-      rows_resolved: stats.rowsResolved,
-      rows_unmatched: stats.rowsUnmatched,
-    })
+    .update(updateData)
     .eq('id', importRunId);
 
   if (error)

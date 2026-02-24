@@ -9,6 +9,7 @@ import {
 } from '@/lib/pipeline/supabase-pipeline';
 import { BurntRidgeScraper } from '@/lib/scraper/burnt-ridge';
 import { processProductName } from '@/lib/resolver/pipeline';
+import { pipelineLog, capErrorSamples, SCRAPER_VERSION } from '@/lib/pipeline/logger';
 
 export const maxDuration = 300; // 5 min (Vercel Pro)
 export const dynamic = 'force-dynamic';
@@ -35,17 +36,33 @@ export async function GET(request: NextRequest) {
     const supabase = createPipelineClient();
 
     // 1. Build alias index from live DB
-    console.log('[Pipeline] Building alias index...');
+    pipelineLog('info', 'alias_index_start', {});
     const aliasIndex = await buildAliasIndexFromSupabase(supabase);
-    console.log(`[Pipeline] Alias index: ${aliasIndex.size} entries`);
+    pipelineLog('info', 'alias_index_ready', { entries: aliasIndex.size });
 
     // 2. Scrape Burnt Ridge
-    console.log('[Pipeline] Starting Burnt Ridge scrape...');
+    pipelineLog('info', 'scrape_start', {
+      nursery: 'burnt-ridge-nursery',
+      scraperVersion: SCRAPER_VERSION,
+    });
     const scraper = new BurntRidgeScraper({ delayMs: 2000 });
     const scrapeResult = await scraper.scrapeCategory();
-    console.log(
-      `[Pipeline] Scraped ${scrapeResult.products.length} products, ${scrapeResult.errors.length} errors`
-    );
+    const scrapeMs = Date.now() - startTime;
+    pipelineLog('info', 'scrape_complete', {
+      nursery: 'burnt-ridge-nursery',
+      products: scrapeResult.products.length,
+      scrapeErrors: scrapeResult.errors.length,
+      durationMs: scrapeMs,
+    });
+
+    // Alert: zero products scraped
+    if (scrapeResult.products.length === 0) {
+      pipelineLog('error', 'zero_products_scraped', {
+        nursery: 'burnt-ridge-nursery',
+        sourceUrl: scrapeResult.sourceUrl,
+        errors: scrapeResult.errors,
+      });
+    }
 
     // 3. Look up nursery ID
     const { data: nursery } = await supabase
@@ -55,6 +72,9 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (!nursery) {
+      pipelineLog('error', 'nursery_not_found', {
+        slug: 'burnt-ridge-nursery',
+      });
       return apiError(
         'NOT_FOUND',
         'Burnt Ridge nursery not found in database',
@@ -69,7 +89,7 @@ export async function GET(request: NextRequest) {
       'web_scrape',
       scrapeResult.sourceUrl
     );
-    console.log(`[Pipeline] Import run: ${importRunId}`);
+    pipelineLog('info', 'import_run_created', { importRunId });
 
     // 5. Resolve and write each product
     // canonical data structure needed by processProductName (empty — we use aliasIndex from DB)
@@ -82,7 +102,8 @@ export async function GET(request: NextRequest) {
 
     let resolved = 0;
     let unmatched = 0;
-    const writeErrors: string[] = [];
+    let errored = 0;
+    const errorSamples: Array<{ product: string; error: string }> = [];
 
     for (const product of scrapeResult.products) {
       try {
@@ -107,43 +128,94 @@ export async function GET(request: NextRequest) {
           unmatched++;
         }
       } catch (err) {
-        const msg = `Write error for "${product.rawProductName}": ${err}`;
-        console.error(`[Pipeline] ${msg}`);
-        writeErrors.push(msg);
+        errored++;
+        const errMsg = String(err);
+        errorSamples.push({
+          product: product.rawProductName,
+          error: errMsg,
+        });
+        pipelineLog('error', 'write_error', {
+          product: product.rawProductName,
+          error: errMsg,
+        });
       }
     }
 
-    // 6. Complete import run
+    // 6. Complete import run with diagnostics
+    const durationMs = Date.now() - startTime;
     await completeImportRun(supabase, importRunId, {
       rowsTotal: scrapeResult.products.length,
       rowsResolved: resolved,
       rowsUnmatched: unmatched,
+      rowsErrored: errored,
+      durationMs,
+      errorSamples: capErrorSamples(errorSamples),
+      scraperVersion: SCRAPER_VERSION,
     });
 
     // 7. Refresh materialized view
-    console.log('[Pipeline] Refreshing search index...');
+    pipelineLog('info', 'mv_refresh_start', {});
     const { error: rpcError } = await supabase.rpc('refresh_search_index');
     if (rpcError) {
-      console.error(
-        '[Pipeline] Failed to refresh search index:',
-        rpcError.message
-      );
+      pipelineLog('error', 'mv_refresh_failed', {
+        error: rpcError.message,
+      });
+    } else {
+      pipelineLog('info', 'mv_refresh_complete', {});
     }
 
-    const durationMs = Date.now() - startTime;
-    console.log(`[Pipeline] Complete in ${durationMs}ms`);
+    // 8. Post-run alerts
+    const totalProducts = scrapeResult.products.length;
+    if (totalProducts > 0) {
+      const resolveRate = resolved / totalProducts;
+      const errorRate = errored / totalProducts;
+
+      if (resolveRate < 0.5) {
+        pipelineLog('warn', 'low_resolve_rate', {
+          rate: resolveRate,
+          threshold: 0.5,
+          resolved,
+          total: totalProducts,
+        });
+      }
+
+      if (errorRate > 0.2) {
+        pipelineLog('warn', 'high_error_rate', {
+          rate: errorRate,
+          threshold: 0.2,
+          errored,
+          total: totalProducts,
+        });
+      }
+    }
+
+    pipelineLog('info', 'pipeline_complete', {
+      nursery: 'burnt-ridge-nursery',
+      importRunId,
+      productsScraped: totalProducts,
+      resolved,
+      unmatched,
+      errored,
+      durationMs,
+      scraperVersion: SCRAPER_VERSION,
+    });
 
     return apiSuccess({
       importRunId,
-      productsScraped: scrapeResult.products.length,
+      productsScraped: totalProducts,
       resolved,
       unmatched,
+      errored,
       scrapeErrors: scrapeResult.errors,
-      writeErrors,
+      writeErrors: errorSamples.map((e) => `${e.product}: ${e.error}`),
       durationMs,
+      scraperVersion: SCRAPER_VERSION,
     });
   } catch (err) {
-    console.error('[Pipeline] Fatal error:', err);
+    pipelineLog('error', 'pipeline_fatal', {
+      error: String(err),
+      durationMs: Date.now() - startTime,
+    });
     return apiError('PIPELINE_ERROR', String(err), 500);
   }
 }
