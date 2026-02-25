@@ -37,7 +37,7 @@ export interface NurseryScraper {
   nurserySlug: string;
   nurseryName: string;
   /** Scrape the hazelnut category and return all products found */
-  scrapeCategory(categoryUrl: string): Promise<ScrapeResult>;
+  scrapeCategory(categoryUrl?: string): Promise<ScrapeResult>;
   /** Scrape a single product page for detailed info */
   scrapeProductPage(productUrl: string): Promise<ScrapedProduct>;
 }

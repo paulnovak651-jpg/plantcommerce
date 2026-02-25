@@ -16,6 +16,29 @@ export async function getCultivarBySlug(supabase: SupabaseClient, slug: string) 
   return data;
 }
 
+export async function getCultivarBySpeciesAndSlug(
+  supabase: SupabaseClient,
+  speciesSlug: string,
+  cultivarSlug: string
+) {
+  const cultivar = await getCultivarBySlug(supabase, cultivarSlug);
+  if (!cultivar) return null;
+
+  const species =
+    typeof cultivar === 'object' &&
+    cultivar !== null &&
+    'plant_entities' in cultivar &&
+    typeof cultivar.plant_entities === 'object' &&
+    cultivar.plant_entities !== null &&
+    'slug' in cultivar.plant_entities &&
+    typeof cultivar.plant_entities.slug === 'string'
+      ? cultivar.plant_entities.slug
+      : null;
+
+  if (species !== speciesSlug) return null;
+  return cultivar;
+}
+
 export async function getOffersForCultivar(supabase: SupabaseClient, cultivarId: string) {
   const { data, error } = await supabase
     .from('inventory_offers')

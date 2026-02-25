@@ -1,14 +1,19 @@
+import { NextRequest } from 'next/server';
 import { apiSuccess, apiError } from '@/lib/api-helpers';
 import { createPipelineClient } from '@/lib/pipeline/supabase-pipeline';
+import { requireCronAuth } from '@/lib/pipeline/auth';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/pipeline/status
  * Returns the latest 10 import runs with diagnostic data.
- * Read-only, no auth required (no secrets exposed).
+ * Requires CRON_SECRET bearer token.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireCronAuth(request);
+  if (!auth.ok) return auth.response;
+
   try {
     const supabase = createPipelineClient();
 

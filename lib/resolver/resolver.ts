@@ -33,13 +33,15 @@ const CONFIDENCE: Record<ResolutionMethod, number> = {
 
 // ── Species keyword map ──
 
-const SPECIES_KEYWORDS: Record<string, { id: string; name: string }> = {
-  american: { id: 'pe_corylus_americana', name: 'American Hazelnut' },
-  beaked: { id: 'pe_corylus_cornuta', name: 'Beaked Hazelnut' },
-  chilean: { id: 'pe_gevuina_avellana', name: 'Chilean Hazelnut' },
-  european: { id: 'pe_corylus_avellana', name: 'European Hazelnut' },
-  turkish: { id: 'pe_corylus_colurna', name: 'Turkish Tree Hazel' },
+const SPECIES_KEYWORDS: Record<string, string[]> = {
+  american: ['american hazelnut', 'corylus americana'],
+  beaked: ['beaked hazelnut', 'corylus cornuta'],
+  chilean: ['chilean hazelnut', 'gevuina avellana'],
+  european: ['european hazelnut', 'corylus avellana'],
+  turkish: ['turkish tree hazel', 'corylus colurna'],
 };
+
+const GENERIC_DEFAULT_CANDIDATES = ['european hazelnut', 'corylus avellana'];
 
 /**
  * Build an alias index from canonical entity data (JSON file or Supabase query).
@@ -250,29 +252,38 @@ export function resolveEntity(
 
   // 7. Species keyword match
   if (normCore in SPECIES_KEYWORDS) {
-    const sp = SPECIES_KEYWORDS[normCore];
-    return {
-      resolved: true,
-      method: 'species_keyword',
-      confidence: CONFIDENCE.species_keyword,
-      entityType: 'plant_entity',
-      entityId: sp.id,
-      canonicalName: sp.name,
-      matchSource: `species_keyword: ${normCore}`,
-    };
+    const candidates = SPECIES_KEYWORDS[normCore];
+    const speciesMatch = findPlantEntityByCandidates(aliasIndex, candidates);
+    if (speciesMatch) {
+      return {
+        resolved: true,
+        method: 'species_keyword',
+        confidence: CONFIDENCE.species_keyword,
+        entityType: speciesMatch.entityType,
+        entityId: speciesMatch.entityId,
+        canonicalName: speciesMatch.canonicalName,
+        matchSource: `species_keyword: ${normCore}`,
+      };
+    }
   }
 
-  // 8. Generic/empty core → default to C. avellana
+  // 8. Generic/empty core → default to C. avellana by alias index
   if (!normCore || ['', 'seedling', 'seeds', 'sdlg'].includes(normCore)) {
-    return {
-      resolved: true,
-      method: 'generic_default',
-      confidence: CONFIDENCE.generic_default,
-      entityType: 'plant_entity',
-      entityId: 'pe_corylus_avellana',
-      canonicalName: 'European Hazelnut',
-      matchSource: 'generic hazelnut default',
-    };
+    const defaultMatch =
+      findPlantEntityByCandidates(aliasIndex, GENERIC_DEFAULT_CANDIDATES) ??
+      findFirstPlantEntity(aliasIndex);
+
+    if (defaultMatch) {
+      return {
+        resolved: true,
+        method: 'generic_default',
+        confidence: CONFIDENCE.generic_default,
+        entityType: defaultMatch.entityType,
+        entityId: defaultMatch.entityId,
+        canonicalName: defaultMatch.canonicalName,
+        matchSource: 'generic hazelnut default',
+      };
+    }
   }
 
   // 9. Word match — try each word individually
@@ -313,6 +324,28 @@ export function resolveEntity(
     canonicalName: null,
     matchSource: null,
   };
+}
+
+function findPlantEntityByCandidates(
+  aliasIndex: Map<string, AliasEntry>,
+  candidates: string[]
+): AliasEntry | null {
+  for (const candidate of candidates) {
+    const entry = aliasIndex.get(candidate);
+    if (entry?.entityType === 'plant_entity') {
+      return entry;
+    }
+  }
+  return null;
+}
+
+function findFirstPlantEntity(aliasIndex: Map<string, AliasEntry>): AliasEntry | null {
+  for (const entry of aliasIndex.values()) {
+    if (entry.entityType === 'plant_entity') {
+      return entry;
+    }
+  }
+  return null;
 }
 
 /**

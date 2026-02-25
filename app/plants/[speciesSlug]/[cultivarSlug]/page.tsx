@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import {
-  getCultivarBySlug,
+  getCultivarBySpeciesAndSlug,
   getOffersForCultivar,
   getAliasesForCultivar,
   getLegalIdentifiers,
@@ -24,7 +24,11 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { speciesSlug, cultivarSlug } = await params;
   const supabase = await createClient();
-  const cultivar = await getCultivarBySlug(supabase, cultivarSlug);
+  const cultivar = await getCultivarBySpeciesAndSlug(
+    supabase,
+    speciesSlug,
+    cultivarSlug
+  );
 
   if (!cultivar) {
     return { title: 'Cultivar Not Found' };
@@ -52,7 +56,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CultivarPage({ params }: Props) {
   const { speciesSlug, cultivarSlug } = await params;
   const supabase = await createClient();
-  const cultivar = await getCultivarBySlug(supabase, cultivarSlug);
+  const cultivar = await getCultivarBySpeciesAndSlug(
+    supabase,
+    speciesSlug,
+    cultivarSlug
+  );
 
   if (!cultivar) notFound();
 

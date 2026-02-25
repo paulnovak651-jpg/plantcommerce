@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getPlantEntityBySlug, getCultivarsForSpecies } from '@/lib/queries/plants';
 import {
-  getCultivarBySlug,
+  getCultivarBySpeciesAndSlug,
   getOffersForCultivar,
   getAliasesForCultivar,
   getLegalIdentifiers,
@@ -50,7 +50,11 @@ export async function GET(
   if (slug.length === 2) {
     // Cultivar-level request
     const [speciesSlug, cultivarSlug] = slug;
-    const cultivar = await getCultivarBySlug(supabase, cultivarSlug);
+    const cultivar = await getCultivarBySpeciesAndSlug(
+      supabase,
+      speciesSlug,
+      cultivarSlug
+    );
 
     if (!cultivar) {
       return apiNotFound('Cultivar');
