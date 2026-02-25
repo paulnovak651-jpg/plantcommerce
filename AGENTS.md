@@ -1,7 +1,8 @@
 # Plant Commerce — Agent Instructions
 
-> This file is auto-loaded by Codex CLI on startup. Claude Code maintains this file.
-> For full architecture details see CONTEXT.md in this repo.
+> Auto-loaded by Codex on startup. Read before doing any work.
+> **At session start, fetch and read:** https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
+> Dashboard: http://localhost:3001
 
 ---
 
