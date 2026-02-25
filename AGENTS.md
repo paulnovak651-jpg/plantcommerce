@@ -6,6 +6,25 @@
 
 ---
 
+## Dashboard Protocol — All Agents Must Follow
+
+The **Command Center** at http://localhost:3001 is the single source of truth for all projects, tasks, and agent activity. All agents must treat it as the authoritative task list.
+
+**At the start of every session:**
+1. Fetch the context URL above
+2. Check http://localhost:3001 for the current task priorities for this project
+
+**After completing any task:**
+1. Mark it done in this `AGENTS.md` (strike it out and add ✅)
+2. Add a short note: what you did and any important decisions
+3. Claude Code will sync these changes to the Supabase dashboard
+
+**If you discover something that should be tracked (new bug, new task, blocker):**
+- Add it to the Priority Tasks section in this file
+- Claude Code will add it to the dashboard on next sync
+
+---
+
 ## What This Project Is
 
 Plant comparison platform for permaculture community — "PCPartPicker for nursery stock".
