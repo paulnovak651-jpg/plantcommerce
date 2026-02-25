@@ -14,6 +14,7 @@ import {
   type NurseryScraper,
 } from '@/lib/scraper';
 import { processProductName } from '@/lib/resolver/pipeline';
+import type { CanonicalData } from '@/lib/resolver/types';
 import { pipelineLog, capErrorSamples, SCRAPER_VERSION } from '@/lib/pipeline/logger';
 import { requireCronAuth } from '@/lib/pipeline/auth';
 
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
     const aliasIndex = await buildAliasIndexFromSupabase(supabase);
     pipelineLog('info', 'alias_index_ready', { entries: aliasIndex.size });
 
-    const canonical = {
+    const canonical: CanonicalData = {
       plant_entities: [],
       cultivars: [],
       named_materials: [],
@@ -160,12 +161,7 @@ async function runNurseryPipeline(
   scraper: NurseryScraper,
   supabase: ReturnType<typeof createPipelineClient>,
   aliasIndex: Awaited<ReturnType<typeof buildAliasIndexFromSupabase>>,
-  canonical: {
-    plant_entities: never[];
-    cultivars: never[];
-    named_materials: never[];
-    populations: never[];
-  }
+  canonical: CanonicalData
 ): Promise<NurseryRunSummary> {
   const nurseryStart = Date.now();
   let importRunId: string | null = null;

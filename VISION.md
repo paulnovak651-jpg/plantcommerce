@@ -2,7 +2,6 @@
 
 *Last updated: 2026-02-24. For sharing with collaborators and AI agents.*
 
----
 
 ## What Is This?
 

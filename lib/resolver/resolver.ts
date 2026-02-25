@@ -11,6 +11,7 @@ import type {
   ParsedProductName,
   ResolutionMethod,
   ResolutionResult,
+  ResolutionStatus,
 } from './types';
 import { normalize, parseProductName } from './parser';
 
@@ -351,15 +352,13 @@ function findFirstPlantEntity(aliasIndex: Map<string, AliasEntry>): AliasEntry |
 /**
  * Map entity type to resolution_status enum value.
  */
-export function toResolutionStatus(entityType: EntityType): ResolutionResult['method'] extends string
-  ? string
-  : never {
-  const map: Record<EntityType, string> = {
+export function toResolutionStatus(entityType: EntityType): ResolutionStatus {
+  const map: Record<EntityType, ResolutionStatus> = {
     cultivar: 'resolved_cultivar',
     named_material: 'resolved_named_material',
     population: 'resolved_population',
     plant_entity: 'resolved_plant_entity',
     unresolved: 'unresolved',
   };
-  return map[entityType] as any;
+  return map[entityType];
 }

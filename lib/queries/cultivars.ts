@@ -24,18 +24,8 @@ export async function getCultivarBySpeciesAndSlug(
   const cultivar = await getCultivarBySlug(supabase, cultivarSlug);
   if (!cultivar) return null;
 
-  const species =
-    typeof cultivar === 'object' &&
-    cultivar !== null &&
-    'plant_entities' in cultivar &&
-    typeof cultivar.plant_entities === 'object' &&
-    cultivar.plant_entities !== null &&
-    'slug' in cultivar.plant_entities &&
-    typeof cultivar.plant_entities.slug === 'string'
-      ? cultivar.plant_entities.slug
-      : null;
-
-  if (species !== speciesSlug) return null;
+  const plantEntity = cultivar.plant_entities as { slug: string } | null;
+  if (plantEntity?.slug !== speciesSlug) return null;
   return cultivar;
 }
 
