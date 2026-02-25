@@ -8,20 +8,45 @@
 
 ## Dashboard Protocol — All Agents Must Follow
 
-The **Command Center** at http://localhost:3001 is the single source of truth for all projects, tasks, and agent activity. All agents must treat it as the authoritative task list.
+The **Command Center** at http://localhost:3001/dashboard is the single source of truth for all projects, tasks, and agent activity.
 
-**At the start of every session:**
-1. Fetch the context URL above
-2. Check http://localhost:3001 for the current task priorities for this project
+### At the start of EVERY session — do this first:
 
-**After completing any task:**
-1. Mark it done in this `AGENTS.md` (strike it out and add ✅)
-2. Add a short note: what you did and any important decisions
-3. Claude Code will sync these changes to the Supabase dashboard
+**Step 1 — Register your session** (saves it so dropped sessions are visible):
+```bash
+SESSION=$(curl -s -X POST http://localhost:3001/api/dashboard/sessions \
+  -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
+  -H "Content-Type: application/json" \
+  -d '{"agent":"claude-code","summary":"<one line: what you are doing>","task_id":"<task uuid or omit>"}' \
+  | node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).data.id))")
+echo "Session: $SESSION"
+```
 
-**If you discover something that should be tracked (new bug, new task, blocker):**
-- Add it to the Priority Tasks section in this file
-- Claude Code will add it to the dashboard on next sync
+**Step 2 — Check for dropped sessions:** open http://localhost:3001/dashboard and look for the red alert at the top. If a previous session was dropped mid-task, pick up that task first.
+
+**Step 3 — Check task priorities:** the task board shows what is in_progress and what is next.
+
+### At the end of EVERY session — do this before closing:
+
+```bash
+curl -s -X PATCH http://localhost:3001/api/dashboard/sessions/$SESSION \
+  -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"completed","summary":"<one line: what you accomplished>"}'
+```
+
+If a task is done, mark it:
+```bash
+curl -s -X PATCH http://localhost:3001/api/dashboard/tasks/<task-uuid> \
+  -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"done"}'
+```
+
+**If you drop without running the end-of-session command** — the next agent will see your session flagged in the red alert and know what you were working on. The loop is closed either way.
+
+### Task UUIDs (from Supabase `tasks` table):
+Fetch current task IDs: `GET http://localhost:3001/api/dashboard`
 
 ---
 
