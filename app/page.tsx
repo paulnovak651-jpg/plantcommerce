@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
 import { listPlantEntities } from '@/lib/queries/plants';
 import Link from 'next/link';
-import { SearchForm } from '@/components/SearchForm';
+import { SearchBar } from '@/components/ui/SearchBar';
+import { Surface } from '@/components/ui/Surface';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
 export default async function HomePage() {
@@ -31,33 +33,53 @@ export default async function HomePage() {
         ]}
       />
 
-      <section className="mb-12">
-        <h1 className="mb-2 text-3xl font-bold text-green-900">Plant Commerce</h1>
-        <p className="mb-6 text-lg text-gray-600">
-          Search across nurseries. Find cultivars. Compare availability.
+      {/* Hero: search-first, centered, breathing room */}
+      <section className="flex flex-col items-center py-16 text-center">
+        <h1 className="mb-2 font-serif text-[2.4rem] font-semibold leading-[1.2] text-text-primary">
+          Plant Commerce
+        </h1>
+        <p className="mb-8 text-lg text-text-secondary">
+          Find plants. Compare nurseries.
         </p>
-        <SearchForm size="lg" />
-      </section>
+        <SearchBar />
 
-      <section>
-        <h2 className="mb-4 text-xl font-semibold text-gray-800">Browse by Species</h2>
-        {species.length === 0 ? (
-          <p className="text-gray-500">
-            No plant data loaded yet. Deploy the Wave 1 schema and seed data to Supabase to get started.
-          </p>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Quick-access genus chips */}
+        {species.length > 0 && (
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
             {species.map((pe: any) => (
               <Link
                 key={pe.id}
                 href={`/plants/${pe.slug}`}
-                className="rounded-lg border border-gray-200 p-4 hover:border-green-300 hover:bg-green-50"
+                className="rounded-full border border-border bg-surface-raised px-3 py-1.5 text-sm text-text-secondary hover:border-accent hover:text-accent"
               >
-                <h3 className="font-semibold text-green-800">{pe.canonical_name}</h3>
-                <p className="text-sm italic text-gray-500">{pe.botanical_name}</p>
-                <p className="mt-1 text-xs text-gray-400">
-                  {pe.genus} &middot; {pe.family}
-                </p>
+                {pe.canonical_name}
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Browse by Species grid */}
+      <section className="pb-8">
+        <h2 className="mb-4 font-serif text-[1.25rem] font-semibold text-text-primary">
+          Browse by Species
+        </h2>
+        {species.length === 0 ? (
+          <EmptyState
+            title="No plant data yet"
+            description="Deploy the Wave 1 schema and seed data to Supabase to get started."
+          />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {species.map((pe: any) => (
+              <Link key={pe.id} href={`/plants/${pe.slug}`}>
+                <Surface elevation="raised" padding="default" className="h-full hover:border-accent">
+                  <h3 className="font-medium text-accent">{pe.canonical_name}</h3>
+                  <p className="font-serif text-sm italic text-text-secondary">{pe.botanical_name}</p>
+                  <p className="mt-1 text-xs text-text-tertiary">
+                    {pe.genus} &middot; {pe.family}
+                  </p>
+                </Surface>
               </Link>
             ))}
           </div>

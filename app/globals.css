@@ -1,1 +1,127 @@
 @import "tailwindcss";
+
+/* ============================================================================
+   Plant Commerce — Design System Tokens
+   "The Field Guide" — authoritative, warm, deeply organized.
+
+   Fraunces (serif): display, headings, botanical names
+   Satoshi (sans):   body, interface, navigation
+
+   Colors: Warm linen canvas. Green for interactive/availability.
+   Amber for community/marketplace. Blue for informational/knowledge.
+   ============================================================================ */
+
+@theme {
+  /* ── Surface colors (warm linen, not cold grays) ── */
+  --color-surface-ground: #f5f3ef;
+  --color-surface-primary: #faf9f7;
+  --color-surface-raised: #ffffff;
+  --color-surface-inset: #edeae4;
+
+  /* ── Text hierarchy ── */
+  --color-text-primary: #1a1714;
+  --color-text-secondary: #5c554b;
+  --color-text-tertiary: #8a8279;
+  --color-text-inverse: #faf9f7;
+
+  /* ── Green accent (interactive, availability) ── */
+  --color-accent: #2d6a4f;
+  --color-accent-hover: #1b4332;
+  --color-accent-light: #d8f3dc;
+  --color-accent-subtle: #edf7ef;
+
+  /* ── Amber accent (community, marketplace) ── */
+  --color-community: #b45309;
+  --color-community-hover: #92400e;
+  --color-community-light: #fef3c7;
+  --color-community-subtle: #fffbeb;
+
+  /* ── Blue accent (informational, knowledge) ── */
+  --color-info: #1e6091;
+  --color-info-light: #dbeafe;
+
+  /* ── Status ── */
+  --color-status-active: #2d6a4f;
+  --color-status-limited: #b45309;
+  --color-status-unavailable: #8a8279;
+  --color-status-error: #b91c1c;
+
+  /* ── Borders ── */
+  --color-border: #e2ded6;
+  --color-border-subtle: #ece9e3;
+  --color-border-focus: #2d6a4f;
+
+  /* ── Fonts (set by next/font CSS variables) ── */
+  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, 'Times New Roman', serif;
+
+  /* ── Spacing tiers ── */
+  --spacing-section: 3rem;
+  --spacing-zone: 4rem;
+
+  /* ── Radius ── */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* ============================================================================
+   Base Styles
+   ============================================================================ */
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-ground);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Botanical names always in serif italic */
+.botanical {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: inherit;
+}
+
+/* Disclosure animation: CSS grid trick for smooth height */
+.disclosure-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease-out;
+}
+
+.disclosure-content[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.disclosure-content > div {
+  overflow: hidden;
+}
+
+.disclosure-chevron {
+  transition: transform 200ms ease-out;
+}
+
+.disclosure-chevron[data-open="true"] {
+  transform: rotate(90deg);
+}
+
+/* Focus ring for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--color-accent-light);
+  color: var(--color-accent-hover);
+}
+
+/* Hover transition base */
+a, button {
+  transition: color 150ms, background-color 150ms;
+}
