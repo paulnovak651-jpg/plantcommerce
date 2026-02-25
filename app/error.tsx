@@ -14,16 +14,16 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="mx-auto max-w-2xl py-16 text-center">
-      <h1 className="mb-2 text-4xl font-bold text-red-700">
+    <div className="flex flex-col items-center py-16 text-center">
+      <p className="mb-2 font-serif text-[2rem] font-semibold text-status-error">
         Something went wrong
-      </h1>
-      <p className="mb-8 text-gray-500">
+      </p>
+      <p className="mb-8 text-text-secondary">
         An unexpected error occurred. Please try again.
       </p>
       <button
         onClick={reset}
-        className="rounded-lg bg-green-700 px-6 py-2 font-medium text-white hover:bg-green-800"
+        className="rounded-[var(--radius-md)] bg-accent px-6 py-2 font-medium text-text-inverse hover:bg-accent-hover"
       >
         Try Again
       </button>

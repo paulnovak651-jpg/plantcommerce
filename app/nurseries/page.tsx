@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { listNurseries } from '@/lib/queries/nurseries';
 import Link from 'next/link';
+import { Surface } from '@/components/ui/Surface';
+import { Tag } from '@/components/ui/Tag';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
@@ -43,30 +46,38 @@ export default async function NurseriesPage() {
   };
 
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold text-gray-800">Nurseries</h1>
+    <div className="space-y-[var(--spacing-zone)]">
+      <section>
+        <h1 className="font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
+          Nurseries
+        </h1>
+        <p className="mt-1 text-text-secondary">
+          Browse plant nurseries with live inventory and pricing.
+        </p>
+      </section>
 
       {nurseries.length === 0 ? (
-        <p className="text-gray-500">No nursery data loaded yet.</p>
+        <EmptyState
+          title="No nursery data yet"
+          description="Deploy the schema and run the pipeline to populate nursery data."
+        />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {nurseries.map((n: any) => (
-            <Link
-              key={n.id}
-              href={`/nurseries/${n.slug}`}
-              className="rounded-lg border border-gray-200 p-4 hover:border-green-300 hover:bg-green-50"
-            >
-              <h3 className="font-semibold text-green-800">{n.name}</h3>
-              <p className="text-sm text-gray-500">
-                {[n.location_city, n.location_state, n.location_country]
-                  .filter(Boolean)
-                  .join(', ')}
-              </p>
-              {n.sales_type && (
-                <span className="mt-2 inline-block rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                  {n.sales_type}
-                </span>
-              )}
+            <Link key={n.id} href={`/nurseries/${n.slug}`}>
+              <Surface elevation="raised" padding="default" className="h-full hover:border-accent">
+                <h3 className="font-medium text-accent">{n.name}</h3>
+                <p className="mt-1 text-sm text-text-secondary">
+                  {[n.location_city, n.location_state, n.location_country]
+                    .filter(Boolean)
+                    .join(', ')}
+                </p>
+                {n.sales_type && (
+                  <div className="mt-2">
+                    <Tag type="neutral">{n.sales_type}</Tag>
+                  </div>
+                )}
+              </Surface>
             </Link>
           ))}
         </div>

@@ -4,7 +4,10 @@ import { getPlantEntityBySlug, getCultivarsForSpecies } from '@/lib/queries/plan
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { Badge } from '@/components/Badge';
+import { BotanicalName } from '@/components/ui/BotanicalName';
+import { Tag } from '@/components/ui/Tag';
+import { Surface } from '@/components/ui/Surface';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
 interface Props {
@@ -68,7 +71,7 @@ export default async function SpeciesPage({ params }: Props) {
   };
 
   return (
-    <div>
+    <div className="space-y-[var(--spacing-zone)]">
       <Breadcrumbs
         items={[
           { label: 'Home', href: '/' },
@@ -76,16 +79,22 @@ export default async function SpeciesPage({ params }: Props) {
         ]}
       />
 
-      <h1 className="mb-1 text-3xl font-bold text-green-900">{species.canonical_name}</h1>
-      <p className="mb-1 text-lg italic text-gray-500">{species.botanical_name}</p>
-      <p className="mb-6 text-sm text-gray-400">
-        {species.genus} &middot; {species.family} &middot;{' '}
-        <Badge label={species.entity_type} variant="gray" />
-      </p>
+      <section>
+        <h1 className="font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
+          {species.canonical_name}
+        </h1>
+        <p className="mt-1 font-serif text-base italic text-text-secondary">
+          <BotanicalName>{species.botanical_name}</BotanicalName>
+        </p>
+        <p className="mt-1 text-sm text-text-tertiary">
+          {species.genus} &middot; {species.family} &middot;{' '}
+          <Tag type="neutral">{species.entity_type}</Tag>
+        </p>
 
-      {species.description && (
-        <p className="mb-8 text-gray-700">{species.description}</p>
-      )}
+        {species.description && (
+          <p className="mt-4 leading-[1.6] text-text-secondary">{species.description}</p>
+        )}
+      </section>
 
       {clones.length > 0 && (
         <CultivarSection title="Cultivars" items={clones} speciesSlug={speciesSlug} />
@@ -104,7 +113,10 @@ export default async function SpeciesPage({ params }: Props) {
       )}
 
       {cultivars.length === 0 && (
-        <p className="text-gray-500">No cultivar data loaded for this species yet.</p>
+        <EmptyState
+          title="No cultivar data yet"
+          description="We haven't loaded cultivar data for this species. Check back as we add more sources."
+        />
       )}
 
       <JsonLd data={jsonLd} />
@@ -122,23 +134,23 @@ function CultivarSection({
   speciesSlug: string;
 }) {
   return (
-    <section className="mb-8">
-      <h2 className="mb-3 text-xl font-semibold text-gray-800">
+    <section>
+      <h2 className="mb-4 font-serif text-[1.25rem] font-semibold text-text-primary">
         {title} ({items.length})
       </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((cv: any) => (
-          <Link
-            key={cv.id}
-            href={`/plants/${speciesSlug}/${cv.slug}`}
-            className="rounded-lg border border-gray-200 p-3 hover:border-green-300 hover:bg-green-50"
-          >
-            <h3 className="font-semibold text-green-800">{cv.canonical_name}</h3>
-            {cv.breeder && <p className="text-xs text-gray-500">{cv.breeder}</p>}
-            {cv.notes && <p className="mt-1 text-xs text-gray-400 line-clamp-2">{cv.notes}</p>}
-            {cv.patent_status !== 'unknown' && cv.patent_status !== 'none' && (
-              <Badge label={cv.patent_status} variant="amber" />
-            )}
+          <Link key={cv.id} href={`/plants/${speciesSlug}/${cv.slug}`}>
+            <Surface elevation="raised" padding="compact" className="h-full hover:border-accent">
+              <h3 className="font-medium text-accent">{cv.canonical_name}</h3>
+              {cv.breeder && <p className="text-xs text-text-tertiary">{cv.breeder}</p>}
+              {cv.notes && (
+                <p className="mt-1 text-xs text-text-secondary line-clamp-2">{cv.notes}</p>
+              )}
+              {cv.patent_status !== 'unknown' && cv.patent_status !== 'none' && (
+                <Tag type="community" size="sm">{cv.patent_status.replace(/_/g, ' ')}</Tag>
+              )}
+            </Surface>
           </Link>
         ))}
       </div>

@@ -4,7 +4,9 @@ import { getNurseryBySlug, getInventoryForNursery } from '@/lib/queries/nurserie
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { InfoCard } from '@/components/InfoCard';
+import { Surface } from '@/components/ui/Surface';
+import { Tag } from '@/components/ui/Tag';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
 interface Props {
@@ -66,7 +68,7 @@ export default async function NurseryPage({ params }: Props) {
   };
 
   return (
-    <div>
+    <div className="space-y-[var(--spacing-zone)]">
       <Breadcrumbs
         items={[
           { label: 'Home', href: '/' },
@@ -75,82 +77,103 @@ export default async function NurseryPage({ params }: Props) {
         ]}
       />
 
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-green-900">{nursery.name}</h1>
-        <p className="text-gray-500">{location}</p>
+      {/* Nursery header */}
+      <section>
+        <h1 className="font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
+          {nursery.name}
+        </h1>
+        <p className="mt-1 text-text-secondary">{location}</p>
         {nursery.website_url && (
           <a
             href={nursery.website_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-green-700 hover:underline"
+            className="text-sm text-accent hover:underline"
           >
             {nursery.website_url}
           </a>
         )}
-      </div>
 
-      <div className="mb-8 grid gap-4 sm:grid-cols-3">
-        {nursery.sales_type && <InfoCard label="Sales Type" value={nursery.sales_type} />}
-        <InfoCard label="Active Offers" value={String(inventory.length)} />
-      </div>
-
-      <h2 className="mb-3 text-xl font-semibold text-gray-800">Inventory</h2>
-      {inventory.length > 0 ? (
-        <div className="space-y-2">
-          {inventory.map((offer: any) => {
-            const cv = offer.cultivars;
-            const pe = offer.plant_entities ?? cv?.plant_entities;
-
-            return (
-              <div
-                key={offer.id}
-                className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
-              >
-                <div>
-                  <p className="font-medium text-gray-800">
-                    {cv ? (
-                      <Link
-                        href={`/plants/${pe?.slug ?? 'unknown'}/${cv.slug}`}
-                        className="text-green-800 hover:underline"
-                      >
-                        {cv.canonical_name}
-                      </Link>
-                    ) : pe ? (
-                      <Link
-                        href={`/plants/${pe.slug}`}
-                        className="text-green-800 hover:underline"
-                      >
-                        {pe.canonical_name}
-                      </Link>
-                    ) : (
-                      offer.raw_product_name
-                    )}
-                  </p>
-                  <p className="text-xs text-gray-400">{offer.raw_product_name}</p>
-                </div>
-                <div className="text-right">
-                  {offer.raw_price_text && (
-                    <p className="font-semibold text-gray-700">{offer.raw_price_text}</p>
-                  )}
-                  {offer.product_page_url && (
-                    <a
-                      href={offer.product_page_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-green-700 hover:underline"
-                    >
-                      View &rarr;
-                    </a>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+        {/* Metadata cards */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {nursery.sales_type && (
+            <Surface elevation="raised" padding="compact">
+              <p className="text-xs text-text-tertiary">Sales Type</p>
+              <p className="font-medium text-text-primary">{nursery.sales_type}</p>
+            </Surface>
+          )}
+          <Surface elevation="raised" padding="compact">
+            <p className="text-xs text-text-tertiary">Active Offers</p>
+            <p className="font-medium text-text-primary">{inventory.length}</p>
+          </Surface>
         </div>
-      ) : (
-        <p className="text-gray-500">No active inventory offers found.</p>
-      )}
+      </section>
+
+      {/* Inventory */}
+      <section>
+        <h2 className="mb-4 font-serif text-[1.25rem] font-semibold text-text-primary">
+          Inventory ({inventory.length})
+        </h2>
+        {inventory.length > 0 ? (
+          <div className="space-y-3">
+            {inventory.map((offer: any) => {
+              const cv = offer.cultivars;
+              const pe = offer.plant_entities ?? cv?.plant_entities;
+
+              return (
+                <Surface key={offer.id} elevation="raised" padding="default">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-text-primary">
+                        {cv ? (
+                          <Link
+                            href={`/plants/${pe?.slug ?? 'unknown'}/${cv.slug}`}
+                            className="text-accent hover:underline"
+                          >
+                            {cv.canonical_name}
+                          </Link>
+                        ) : pe ? (
+                          <Link
+                            href={`/plants/${pe.slug}`}
+                            className="text-accent hover:underline"
+                          >
+                            {pe.canonical_name}
+                          </Link>
+                        ) : (
+                          offer.raw_product_name
+                        )}
+                      </p>
+                      <p className="text-xs text-text-tertiary">{offer.raw_product_name}</p>
+                    </div>
+                    <div className="text-right">
+                      {offer.raw_price_text && (
+                        <p className="text-[1.1rem] font-semibold text-text-primary">
+                          {offer.raw_price_text}
+                        </p>
+                      )}
+                      {offer.product_page_url && (
+                        <a
+                          href={offer.product_page_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-accent hover:underline"
+                        >
+                          View at nursery &rarr;
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </Surface>
+              );
+            })}
+          </div>
+        ) : (
+          <EmptyState
+            title="No active inventory"
+            description="We haven't found active offers from this nursery. Check back as we add more sources."
+          />
+        )}
+      </section>
 
       <JsonLd data={orgJsonLd} />
     </div>

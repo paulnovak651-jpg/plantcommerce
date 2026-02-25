@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { searchPlants } from '@/lib/queries/search';
 import Link from 'next/link';
-import { SearchForm } from '@/components/SearchForm';
-import { Badge } from '@/components/Badge';
+import { SearchBar } from '@/components/ui/SearchBar';
+import { Surface } from '@/components/ui/Surface';
+import { Tag } from '@/components/ui/Tag';
+import { BotanicalName } from '@/components/ui/BotanicalName';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 interface Props {
   searchParams: Promise<{ q?: string }>;
@@ -32,16 +35,26 @@ export default async function SearchPage({ searchParams }: Props) {
   const results = q ? await searchPlants(supabase, q) : [];
 
   return (
-    <div>
-      <h1 className="mb-4 text-2xl font-bold text-gray-800">Search</h1>
-      <div className="mb-8">
-        <SearchForm defaultValue={q} size="md" />
-      </div>
+    <div className="space-y-[var(--spacing-zone)]">
+      <section className="flex flex-col items-center py-8 text-center">
+        <h1 className="mb-4 font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
+          Search
+        </h1>
+        <SearchBar defaultValue={q} />
+      </section>
 
       {q && (
-        <p className="mb-4 text-sm text-gray-500">
+        <p className="text-sm text-text-tertiary">
           {results.length} result{results.length !== 1 ? 's' : ''} for &ldquo;{q}&rdquo;
         </p>
+      )}
+
+      {q && results.length === 0 && (
+        <EmptyState
+          title="No results found"
+          description={`We couldn't find anything matching "${q}". Try a different search term.`}
+          action={{ label: 'Browse All Plants', href: '/' }}
+        />
       )}
 
       <div className="space-y-3">
@@ -52,26 +65,28 @@ export default async function SearchPage({ searchParams }: Props) {
               : `/plants/${r.species_slug}/${r.slug}`;
 
           return (
-            <Link
-              key={`${r.index_source}-${r.entity_id}`}
-              href={href}
-              className="block rounded-lg border border-gray-200 p-4 hover:border-green-300 hover:bg-green-50"
-            >
-              <div className="flex items-center gap-2">
-                <Badge label={r.material_type} />
-                <h3 className="font-semibold text-green-800">{r.canonical_name}</h3>
-              </div>
-              {r.botanical_name && (
-                <p className="text-sm italic text-gray-500">{r.botanical_name}</p>
-              )}
-              {r.species_common_name && r.index_source === 'cultivar' && (
-                <p className="text-xs text-gray-400">{r.species_common_name}</p>
-              )}
-              {r.active_offer_count > 0 && (
-                <p className="mt-1 text-xs text-green-600">
-                  {r.active_offer_count} nursery offer{r.active_offer_count !== 1 ? 's' : ''}
-                </p>
-              )}
+            <Link key={`${r.index_source}-${r.entity_id}`} href={href}>
+              <Surface elevation="raised" padding="default" className="hover:border-accent">
+                <div className="flex items-center gap-2">
+                  <Tag type="neutral">{r.material_type.replace(/_/g, ' ')}</Tag>
+                  <h3 className="font-medium text-accent">{r.canonical_name}</h3>
+                </div>
+                {r.botanical_name && (
+                  <p className="mt-1 text-sm text-text-secondary">
+                    <BotanicalName>{r.botanical_name}</BotanicalName>
+                  </p>
+                )}
+                {r.species_common_name && r.index_source === 'cultivar' && (
+                  <p className="text-xs text-text-tertiary">{r.species_common_name}</p>
+                )}
+                {r.active_offer_count > 0 && (
+                  <div className="mt-2">
+                    <Tag type="availability">
+                      {r.active_offer_count} nursery offer{r.active_offer_count !== 1 ? 's' : ''}
+                    </Tag>
+                  </div>
+                )}
+              </Surface>
             </Link>
           );
         })}
