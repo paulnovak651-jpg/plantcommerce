@@ -12,30 +12,24 @@ The **Command Center** at http://localhost:3000/dashboard is the single source o
 
 ### At the start of EVERY session — do this first:
 
-**Step 1 — Register your session** (saves it so dropped sessions are visible):
+**Step 1 — Register your session:**
 ```bash
-SESSION=$(curl -s -X POST http://localhost:3000/api/dashboard/sessions \
-  -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
-  -H "Content-Type: application/json" \
-  -d '{"agent":"claude-code","summary":"<one line: what you are doing>","task_id":"<task uuid or omit>"}' \
-  | node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).data.id))")
-echo "Session: $SESSION"
+source scripts/register-session.sh "claude-code" "Brief description of what you are doing"
+# SESSION_ID is now in your environment
 ```
+Replace `claude-code` with your agent name (`codex`, `claude-opus`, etc.).
 
-**Step 2 — Check for dropped sessions:** open http://localhost:3000/dashboard and look for the red alert at the top. If a previous session was dropped mid-task, pick up that task first.
+**Step 2 — Check for dropped sessions:** http://localhost:3000/dashboard — look for the red alert. If a previous session was dropped mid-task, pick up that task first.
 
 **Step 3 — Check task priorities:** the task board shows what is in_progress and what is next.
 
 ### At the end of EVERY session — do this before closing:
 
 ```bash
-curl -s -X PATCH http://localhost:3000/api/dashboard/sessions/$SESSION \
-  -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
-  -H "Content-Type: application/json" \
-  -d '{"status":"completed","summary":"<one line: what you accomplished>"}'
+bash scripts/end-session.sh "$SESSION_ID" "completed" "One line: what you accomplished"
 ```
 
-If a task is done, mark it:
+If a task is done:
 ```bash
 curl -s -X PATCH http://localhost:3000/api/dashboard/tasks/<task-uuid> \
   -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
@@ -43,10 +37,13 @@ curl -s -X PATCH http://localhost:3000/api/dashboard/tasks/<task-uuid> \
   -d '{"status":"done"}'
 ```
 
-**If you drop without running the end-of-session command** — the next agent will see your session flagged in the red alert and know what you were working on. The loop is closed either way.
+**If you drop without running end-session.sh** — the next agent sees the red alert and picks up your work. The loop is closed either way.
 
-### Task UUIDs (from Supabase `tasks` table):
-Fetch current task IDs: `GET http://localhost:3000/api/dashboard`
+### Get current task IDs:
+```bash
+curl -s http://localhost:3000/api/dashboard \
+  | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>JSON.parse(d).data.tasks.filter(t=>t.status!=='done').forEach(t=>console.log('['+t.priority+'] '+t.status.padEnd(12)+t.id.slice(0,8)+'  '+t.title)))"
+```
 
 ---
 
