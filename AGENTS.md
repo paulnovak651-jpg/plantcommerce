@@ -2,19 +2,19 @@
 
 > Auto-loaded by Codex on startup. Read before doing any work.
 > **At session start, fetch and read:** https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
-> Dashboard: http://localhost:3001
+> Dashboard: http://localhost:3000/dashboard
 
 ---
 
 ## Dashboard Protocol — All Agents Must Follow
 
-The **Command Center** at http://localhost:3001/dashboard is the single source of truth for all projects, tasks, and agent activity.
+The **Command Center** at http://localhost:3000/dashboard is the single source of truth for all projects, tasks, and agent activity.
 
 ### At the start of EVERY session — do this first:
 
 **Step 1 — Register your session** (saves it so dropped sessions are visible):
 ```bash
-SESSION=$(curl -s -X POST http://localhost:3001/api/dashboard/sessions \
+SESSION=$(curl -s -X POST http://localhost:3000/api/dashboard/sessions \
   -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
   -H "Content-Type: application/json" \
   -d '{"agent":"claude-code","summary":"<one line: what you are doing>","task_id":"<task uuid or omit>"}' \
@@ -22,14 +22,14 @@ SESSION=$(curl -s -X POST http://localhost:3001/api/dashboard/sessions \
 echo "Session: $SESSION"
 ```
 
-**Step 2 — Check for dropped sessions:** open http://localhost:3001/dashboard and look for the red alert at the top. If a previous session was dropped mid-task, pick up that task first.
+**Step 2 — Check for dropped sessions:** open http://localhost:3000/dashboard and look for the red alert at the top. If a previous session was dropped mid-task, pick up that task first.
 
 **Step 3 — Check task priorities:** the task board shows what is in_progress and what is next.
 
 ### At the end of EVERY session — do this before closing:
 
 ```bash
-curl -s -X PATCH http://localhost:3001/api/dashboard/sessions/$SESSION \
+curl -s -X PATCH http://localhost:3000/api/dashboard/sessions/$SESSION \
   -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
   -H "Content-Type: application/json" \
   -d '{"status":"completed","summary":"<one line: what you accomplished>"}'
@@ -37,7 +37,7 @@ curl -s -X PATCH http://localhost:3001/api/dashboard/sessions/$SESSION \
 
 If a task is done, mark it:
 ```bash
-curl -s -X PATCH http://localhost:3001/api/dashboard/tasks/<task-uuid> \
+curl -s -X PATCH http://localhost:3000/api/dashboard/tasks/<task-uuid> \
   -H "Authorization: Bearer dev-local-secret-plantcommerce-2026" \
   -H "Content-Type: application/json" \
   -d '{"status":"done"}'
@@ -46,7 +46,7 @@ curl -s -X PATCH http://localhost:3001/api/dashboard/tasks/<task-uuid> \
 **If you drop without running the end-of-session command** — the next agent will see your session flagged in the red alert and know what you were working on. The loop is closed either way.
 
 ### Task UUIDs (from Supabase `tasks` table):
-Fetch current task IDs: `GET http://localhost:3001/api/dashboard`
+Fetch current task IDs: `GET http://localhost:3000/api/dashboard`
 
 ---
 
