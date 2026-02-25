@@ -4,8 +4,8 @@ import { getNurseryBySlug, getInventoryForNursery } from '@/lib/queries/nurserie
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Text } from '@/components/ui/Text';
 import { Surface } from '@/components/ui/Surface';
-import { Tag } from '@/components/ui/Tag';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
@@ -79,10 +79,8 @@ export default async function NurseryPage({ params }: Props) {
 
       {/* Nursery header */}
       <section>
-        <h1 className="font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
-          {nursery.name}
-        </h1>
-        <p className="mt-1 text-text-secondary">{location}</p>
+        <Text variant="h1">{nursery.name}</Text>
+        <Text variant="body" color="secondary" className="mt-1">{location}</Text>
         {nursery.website_url && (
           <a
             href={nursery.website_url}
@@ -98,22 +96,22 @@ export default async function NurseryPage({ params }: Props) {
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           {nursery.sales_type && (
             <Surface elevation="raised" padding="compact">
-              <p className="text-xs text-text-tertiary">Sales Type</p>
-              <p className="font-medium text-text-primary">{nursery.sales_type}</p>
+              <Text variant="caption" color="tertiary">Sales Type</Text>
+              <Text variant="body" className="font-medium">{nursery.sales_type}</Text>
             </Surface>
           )}
           <Surface elevation="raised" padding="compact">
-            <p className="text-xs text-text-tertiary">Active Offers</p>
-            <p className="font-medium text-text-primary">{inventory.length}</p>
+            <Text variant="caption" color="tertiary">Active Offers</Text>
+            <Text variant="body" className="font-medium">{inventory.length}</Text>
           </Surface>
         </div>
       </section>
 
       {/* Inventory */}
       <section>
-        <h2 className="mb-4 font-serif text-[1.25rem] font-semibold text-text-primary">
+        <Text variant="h2" className="mb-4">
           Inventory ({inventory.length})
-        </h2>
+        </Text>
         {inventory.length > 0 ? (
           <div className="space-y-3">
             {inventory.map((offer: any) => {
@@ -124,7 +122,7 @@ export default async function NurseryPage({ params }: Props) {
                 <Surface key={offer.id} elevation="raised" padding="default">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-text-primary">
+                      <Text variant="body" className="font-medium">
                         {cv ? (
                           <Link
                             href={`/plants/${pe?.slug ?? 'unknown'}/${cv.slug}`}
@@ -142,14 +140,12 @@ export default async function NurseryPage({ params }: Props) {
                         ) : (
                           offer.raw_product_name
                         )}
-                      </p>
-                      <p className="text-xs text-text-tertiary">{offer.raw_product_name}</p>
+                      </Text>
+                      <Text variant="caption" color="tertiary">{offer.raw_product_name}</Text>
                     </div>
                     <div className="text-right">
                       {offer.raw_price_text && (
-                        <p className="text-[1.1rem] font-semibold text-text-primary">
-                          {offer.raw_price_text}
-                        </p>
+                        <Text variant="price">{offer.raw_price_text}</Text>
                       )}
                       {offer.product_page_url && (
                         <a
@@ -170,7 +166,7 @@ export default async function NurseryPage({ params }: Props) {
         ) : (
           <EmptyState
             title="No active inventory"
-            description="We haven't found active offers from this nursery. Check back as we add more sources."
+            description="No active inventory scraped yet. Run the pipeline to populate offers."
           />
         )}
       </section>

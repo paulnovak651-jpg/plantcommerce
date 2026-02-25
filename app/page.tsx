@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
 import { listPlantEntities } from '@/lib/queries/plants';
 import Link from 'next/link';
+import { Text } from '@/components/ui/Text';
+import { BotanicalName } from '@/components/ui/BotanicalName';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { Surface } from '@/components/ui/Surface';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
@@ -35,12 +36,12 @@ export default async function HomePage() {
 
       {/* Hero: search-first, centered, breathing room */}
       <section className="flex flex-col items-center py-16 text-center">
-        <h1 className="mb-2 font-serif text-[2.4rem] font-semibold leading-[1.2] text-text-primary">
+        <Text variant="display" className="mb-2">
           Plant Commerce
-        </h1>
-        <p className="mb-8 text-lg text-text-secondary">
+        </Text>
+        <Text variant="body" color="secondary" className="mb-8 text-lg">
           Find plants. Compare nurseries.
-        </p>
+        </Text>
         <SearchBar />
 
         {/* Quick-access genus chips */}
@@ -59,11 +60,14 @@ export default async function HomePage() {
         )}
       </section>
 
+      {/* Visual bridge between hero and browse */}
+      <div className="mx-auto my-12 h-px w-16 bg-border" />
+
       {/* Browse by Species grid */}
       <section className="pb-8">
-        <h2 className="mb-4 font-serif text-[1.25rem] font-semibold text-text-primary">
+        <Text variant="h2" className="mb-4">
           Browse by Species
-        </h2>
+        </Text>
         {species.length === 0 ? (
           <EmptyState
             title="No plant data yet"
@@ -73,13 +77,13 @@ export default async function HomePage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {species.map((pe: any) => (
               <Link key={pe.id} href={`/plants/${pe.slug}`}>
-                <Surface elevation="raised" padding="default" className="h-full hover:border-accent">
-                  <h3 className="font-medium text-accent">{pe.canonical_name}</h3>
-                  <p className="font-serif text-sm italic text-text-secondary">{pe.botanical_name}</p>
-                  <p className="mt-1 text-xs text-text-tertiary">
+                <div className="h-full rounded-[var(--radius-lg)] px-4 py-3 transition-colors hover:bg-surface-raised">
+                  <Text variant="h3" color="accent">{pe.canonical_name}</Text>
+                  <Text variant="sm" color="secondary"><BotanicalName>{pe.botanical_name}</BotanicalName></Text>
+                  <Text variant="caption" color="tertiary" className="mt-1">
                     {pe.genus} &middot; {pe.family}
-                  </p>
-                </Surface>
+                  </Text>
+                </div>
               </Link>
             ))}
           </div>

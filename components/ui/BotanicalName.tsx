@@ -5,7 +5,7 @@ interface BotanicalNameProps {
 
 export function BotanicalName({ children, className = '' }: BotanicalNameProps) {
   return (
-    <em className={`font-serif italic text-inherit not-italic-[&>*] ${className}`} style={{ fontStyle: 'italic' }}>
+    <em className={`font-serif italic ${className}`}>
       {children}
     </em>
   );

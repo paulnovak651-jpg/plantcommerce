@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Text } from '@/components/ui/Text';
 
 export default function Error({
   error,
@@ -15,12 +16,12 @@ export default function Error({
 
   return (
     <div className="flex flex-col items-center py-16 text-center">
-      <p className="mb-2 font-serif text-[2rem] font-semibold text-status-error">
+      <Text variant="h1" as="p" className="mb-2 text-status-error">
         Something went wrong
-      </p>
-      <p className="mb-8 text-text-secondary">
+      </Text>
+      <Text variant="body" color="secondary" className="mb-8">
         An unexpected error occurred. Please try again.
-      </p>
+      </Text>
       <button
         onClick={reset}
         className="rounded-[var(--radius-md)] bg-accent px-6 py-2 font-medium text-text-inverse hover:bg-accent-hover"

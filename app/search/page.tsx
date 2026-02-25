@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { searchPlants } from '@/lib/queries/search';
 import Link from 'next/link';
+import { Text } from '@/components/ui/Text';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { Surface } from '@/components/ui/Surface';
 import { Tag } from '@/components/ui/Tag';
 import { BotanicalName } from '@/components/ui/BotanicalName';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -37,27 +37,25 @@ export default async function SearchPage({ searchParams }: Props) {
   return (
     <div className="space-y-[var(--spacing-zone)]">
       <section className="flex flex-col items-center py-8 text-center">
-        <h1 className="mb-4 font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
-          Search
-        </h1>
+        <Text variant="h1" className="mb-4">Search</Text>
         <SearchBar defaultValue={q} />
       </section>
 
       {q && (
-        <p className="text-sm text-text-tertiary">
+        <Text variant="sm" color="tertiary">
           {results.length} result{results.length !== 1 ? 's' : ''} for &ldquo;{q}&rdquo;
-        </p>
+        </Text>
       )}
 
       {q && results.length === 0 && (
         <EmptyState
           title="No results found"
-          description={`We couldn't find anything matching "${q}". Try a different search term.`}
+          description={`No matches for "${q}". Try a broader term or browse by species.`}
           action={{ label: 'Browse All Plants', href: '/' }}
         />
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-0">
         {results.map((r: any) => {
           const href =
             r.index_source === 'plant_entity'
@@ -66,18 +64,18 @@ export default async function SearchPage({ searchParams }: Props) {
 
           return (
             <Link key={`${r.index_source}-${r.entity_id}`} href={href}>
-              <Surface elevation="raised" padding="default" className="hover:border-accent">
+              <div className="border-b border-border-subtle py-4 transition-colors hover:bg-surface-primary">
                 <div className="flex items-center gap-2">
                   <Tag type="neutral">{r.material_type.replace(/_/g, ' ')}</Tag>
-                  <h3 className="font-medium text-accent">{r.canonical_name}</h3>
+                  <Text variant="h3" color="accent">{r.canonical_name}</Text>
                 </div>
                 {r.botanical_name && (
-                  <p className="mt-1 text-sm text-text-secondary">
+                  <Text variant="sm" color="secondary" className="mt-1">
                     <BotanicalName>{r.botanical_name}</BotanicalName>
-                  </p>
+                  </Text>
                 )}
                 {r.species_common_name && r.index_source === 'cultivar' && (
-                  <p className="text-xs text-text-tertiary">{r.species_common_name}</p>
+                  <Text variant="caption" color="tertiary">{r.species_common_name}</Text>
                 )}
                 {r.active_offer_count > 0 && (
                   <div className="mt-2">
@@ -86,7 +84,7 @@ export default async function SearchPage({ searchParams }: Props) {
                     </Tag>
                   </div>
                 )}
-              </Surface>
+              </div>
             </Link>
           );
         })}

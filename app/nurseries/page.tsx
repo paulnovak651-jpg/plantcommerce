@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { listNurseries } from '@/lib/queries/nurseries';
 import Link from 'next/link';
-import { Surface } from '@/components/ui/Surface';
+import { Text } from '@/components/ui/Text';
 import { Tag } from '@/components/ui/Tag';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
@@ -48,12 +48,10 @@ export default async function NurseriesPage() {
   return (
     <div className="space-y-[var(--spacing-zone)]">
       <section>
-        <h1 className="font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
-          Nurseries
-        </h1>
-        <p className="mt-1 text-text-secondary">
+        <Text variant="h1">Nurseries</Text>
+        <Text variant="body" color="secondary" className="mt-1">
           Browse plant nurseries with live inventory and pricing.
-        </p>
+        </Text>
       </section>
 
       {nurseries.length === 0 ? (
@@ -65,19 +63,19 @@ export default async function NurseriesPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {nurseries.map((n: any) => (
             <Link key={n.id} href={`/nurseries/${n.slug}`}>
-              <Surface elevation="raised" padding="default" className="h-full hover:border-accent">
-                <h3 className="font-medium text-accent">{n.name}</h3>
-                <p className="mt-1 text-sm text-text-secondary">
+              <div className="h-full rounded-[var(--radius-lg)] px-4 py-3 transition-colors hover:bg-surface-raised">
+                <Text variant="h3" color="accent">{n.name}</Text>
+                <Text variant="sm" color="secondary" className="mt-1">
                   {[n.location_city, n.location_state, n.location_country]
                     .filter(Boolean)
                     .join(', ')}
-                </p>
+                </Text>
                 {n.sales_type && (
                   <div className="mt-2">
                     <Tag type="neutral">{n.sales_type}</Tag>
                   </div>
                 )}
-              </Surface>
+              </div>
             </Link>
           ))}
         </div>

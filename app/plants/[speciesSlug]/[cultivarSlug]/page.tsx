@@ -9,6 +9,8 @@ import {
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Text } from '@/components/ui/Text';
+import { BotanicalName } from '@/components/ui/BotanicalName';
 import { Tag } from '@/components/ui/Tag';
 import { Surface } from '@/components/ui/Surface';
 import { Disclosure } from '@/components/ui/Disclosure';
@@ -106,15 +108,13 @@ export default async function CultivarPage({ params }: Props) {
         <div className="flex items-start gap-3">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="font-serif text-[1.8rem] font-semibold leading-[1.2] text-text-primary">
-                {cultivar.canonical_name}
-              </h1>
+              <Text variant="h1">{cultivar.canonical_name}</Text>
               <Tag type="neutral">{cultivar.material_type.replace(/_/g, ' ')}</Tag>
             </div>
             {species && (
-              <p className="mt-1 font-serif text-base italic text-text-secondary">
-                {species.botanical_name}
-              </p>
+              <Text variant="body" color="secondary" className="mt-1">
+                <BotanicalName>{species.botanical_name}</BotanicalName>
+              </Text>
             )}
           </div>
         </div>
@@ -123,40 +123,42 @@ export default async function CultivarPage({ params }: Props) {
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {cultivar.breeder && (
             <Surface elevation="raised" padding="compact">
-              <p className="text-xs text-text-tertiary">Breeder</p>
-              <p className="font-medium text-text-primary">{cultivar.breeder}</p>
+              <Text variant="caption" color="tertiary">Breeder</Text>
+              <Text variant="body" className="font-medium">{cultivar.breeder}</Text>
             </Surface>
           )}
           {cultivar.origin_location && (
             <Surface elevation="raised" padding="compact">
-              <p className="text-xs text-text-tertiary">Origin</p>
-              <p className="font-medium text-text-primary">{cultivar.origin_location}</p>
+              <Text variant="caption" color="tertiary">Origin</Text>
+              <Text variant="body" className="font-medium">{cultivar.origin_location}</Text>
             </Surface>
           )}
           {cultivar.year_released && (
             <Surface elevation="raised" padding="compact">
-              <p className="text-xs text-text-tertiary">Released</p>
-              <p className="font-medium text-text-primary">{String(cultivar.year_released)}</p>
+              <Text variant="caption" color="tertiary">Released</Text>
+              <Text variant="body" className="font-medium">{String(cultivar.year_released)}</Text>
             </Surface>
           )}
           {cultivar.patent_status !== 'unknown' && (
             <Surface elevation="raised" padding="compact">
-              <p className="text-xs text-text-tertiary">Patent Status</p>
-              <p className="font-medium text-text-primary">{cultivar.patent_status.replace(/_/g, ' ')}</p>
+              <Text variant="caption" color="tertiary">Patent Status</Text>
+              <Text variant="body" className="font-medium">{cultivar.patent_status.replace(/_/g, ' ')}</Text>
             </Surface>
           )}
         </div>
 
         {cultivar.notes && (
-          <p className="mt-4 leading-[1.6] text-text-secondary">{cultivar.notes}</p>
+          <Text variant="body" color="secondary" className="mt-4">
+            {cultivar.notes}
+          </Text>
         )}
       </section>
 
       {/* ZONE 2: WHERE TO GET IT */}
       <section>
-        <h2 className="mb-4 font-serif text-[1.25rem] font-semibold text-text-primary">
+        <Text variant="h2" className="mb-4">
           Nursery Offers ({offers.length})
-        </h2>
+        </Text>
         {offers.length > 0 ? (
           <div className="space-y-3">
             {offers.map((offer: any) => (
@@ -169,19 +171,19 @@ export default async function CultivarPage({ params }: Props) {
                     >
                       {offer.nurseries?.name}
                     </Link>
-                    <p className="text-sm text-text-secondary">
+                    <Text variant="sm" color="secondary">
                       {offer.nurseries?.location_state}, {offer.nurseries?.location_country}
-                    </p>
-                    <p className="text-xs text-text-tertiary">
+                    </Text>
+                    <Text variant="caption" color="tertiary">
                       {offer.propagation_method !== 'unknown' &&
                         offer.propagation_method.replace(/_/g, ' ')}
                       {offer.sale_form !== 'unknown' &&
                         ` \u00b7 ${offer.sale_form.replace(/_/g, ' ')}`}
-                    </p>
+                    </Text>
                   </div>
                   <div className="text-right">
                     {offer.raw_price_text && (
-                      <p className="text-[1.1rem] font-semibold text-text-primary">{offer.raw_price_text}</p>
+                      <Text variant="price">{offer.raw_price_text}</Text>
                     )}
                     {offer.product_page_url && (
                       <a
@@ -201,7 +203,7 @@ export default async function CultivarPage({ params }: Props) {
         ) : (
           <EmptyState
             title="No offers yet"
-            description="We haven't found this cultivar at any nurseries. Check back as we add more sources."
+            description="No nursery offers yet. We're adding new sources regularly."
           />
         )}
       </section>
@@ -223,9 +225,9 @@ export default async function CultivarPage({ params }: Props) {
                     className="rounded-full bg-surface-inset px-3 py-1 text-sm text-text-secondary"
                   >
                     {a.alias_text}
-                    <span className="ml-1 text-xs text-text-tertiary">
+                    <Text variant="caption" color="tertiary" as="span" className="ml-1">
                       ({a.alias_type.replace(/_/g, ' ')})
-                    </span>
+                    </Text>
                   </span>
                 ))}
               </div>
@@ -241,12 +243,14 @@ export default async function CultivarPage({ params }: Props) {
             >
               <div className="space-y-1">
                 {legal.map((l: any) => (
-                  <div key={l.id} className="text-sm text-text-secondary">
+                  <Text key={l.id} variant="sm" color="secondary" as="div">
                     <span className="font-medium">{l.id_type}:</span> {l.value_raw}
                     {l.status && (
-                      <span className="ml-2 text-xs text-text-tertiary">({l.status})</span>
+                      <Text variant="caption" color="tertiary" as="span" className="ml-2">
+                        ({l.status})
+                      </Text>
                     )}
-                  </div>
+                  </Text>
                 ))}
               </div>
             </Disclosure>
