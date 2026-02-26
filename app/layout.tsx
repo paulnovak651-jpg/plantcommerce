@@ -84,6 +84,9 @@ export default async function RootLayout({
               <Link href="/search" className="hover:text-accent">
                 Search
               </Link>
+              <Link href="/browse" className="hover:text-accent">
+                Browse
+              </Link>
 
               {/* Species dropdown */}
               <div className="group relative">
@@ -142,6 +145,11 @@ export default async function RootLayout({
                   <li>
                     <Link href="/search" className="text-text-tertiary hover:text-accent">
                       Search
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/browse" className="text-text-tertiary hover:text-accent">
+                      Browse by Taxonomy
                     </Link>
                   </li>
                   <li>
