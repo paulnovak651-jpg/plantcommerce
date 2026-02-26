@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { Fraunces } from 'next/font/google';
 import localFont from 'next/font/local';
-import { unstable_cache } from 'next/cache';
 import Link from 'next/link';
 import { SkipNav } from '@/components/SkipNav';
 import { MobileMenu } from '@/components/MobileMenu';
-import { createAnonClient } from '@/lib/supabase/server';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -42,31 +40,11 @@ export const metadata: Metadata = {
   },
 };
 
-/**
- * Cache the species list so the layout nav doesn't make the entire app dynamic.
- * Revalidates every hour — plenty fresh for a relatively static catalog.
- */
-const getNavSpecies = unstable_cache(
-  async () => {
-    const supabase = createAnonClient();
-    const { data } = await supabase
-      .from('plant_entities')
-      .select('slug, canonical_name')
-      .eq('curation_status', 'published')
-      .order('canonical_name');
-    return data ?? [];
-  },
-  ['nav-species'],
-  { revalidate: 3600 }
-);
-
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const species = await getNavSpecies();
-
   return (
     <html lang="en" className={`${fraunces.variable} ${satoshi.variable}`}>
       <body className="bg-surface-ground text-text-primary antialiased">
@@ -87,47 +65,15 @@ export default async function RootLayout({
                 Search
               </Link>
               <Link href="/browse" className="hover:text-accent">
-                Browse
+                Explore
               </Link>
-
-              {/* Species dropdown */}
-              <div className="group relative">
-                <button
-                  className="flex items-center gap-1 hover:text-accent"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  Plants
-                  <svg
-                    className="h-3 w-3 transition-transform group-hover:rotate-180"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div className="invisible absolute right-0 top-full z-40 mt-1 min-w-[200px] rounded-[var(--radius-lg)] border border-border bg-surface-raised py-1 shadow-lg group-hover:visible">
-                  {species.map((s: { slug: string; canonical_name: string }) => (
-                    <Link
-                      key={s.slug}
-                      href={`/plants/${s.slug}`}
-                      className="block px-4 py-2 text-sm text-text-secondary hover:bg-accent-subtle hover:text-accent"
-                    >
-                      {s.canonical_name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
               <Link href="/nurseries" className="hover:text-accent">
                 Nurseries
               </Link>
             </div>
 
             {/* Mobile hamburger */}
-            <MobileMenu species={species} />
+            <MobileMenu />
           </nav>
         </header>
 
@@ -157,7 +103,7 @@ export default async function RootLayout({
                 </a>
               </div>
               <div>
-                <h3 className="mb-2 text-sm font-semibold text-text-primary">Browse</h3>
+                <h3 className="mb-2 text-sm font-semibold text-text-primary">Explore</h3>
                 <ul className="space-y-1 text-xs">
                   <li>
                     <Link href="/search" className="text-text-tertiary hover:text-accent">
@@ -166,7 +112,7 @@ export default async function RootLayout({
                   </li>
                   <li>
                     <Link href="/browse" className="text-text-tertiary hover:text-accent">
-                      Browse by Taxonomy
+                      Explore Plants
                     </Link>
                   </li>
                   <li>
@@ -174,13 +120,6 @@ export default async function RootLayout({
                       Nurseries
                     </Link>
                   </li>
-                  {species.map((s: { slug: string; canonical_name: string }) => (
-                    <li key={s.slug}>
-                      <Link href={`/plants/${s.slug}`} className="text-text-tertiary hover:text-accent">
-                        {s.canonical_name}
-                      </Link>
-                    </li>
-                  ))}
                 </ul>
               </div>
               <div>

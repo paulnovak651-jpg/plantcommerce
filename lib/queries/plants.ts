@@ -69,6 +69,39 @@ export async function listPlantEntitiesForBrowse(supabase: SupabaseClient) {
   }));
 }
 
+/**
+ * Returns per-cultivar nursery counts and species-level nursery count for a species.
+ * Single query: fetches all active offers for the given cultivar IDs.
+ */
+export async function getOfferStatsForSpecies(
+  supabase: SupabaseClient,
+  cultivarIds: string[]
+): Promise<{ nurseryCount: number; perCultivar: Record<string, number> }> {
+  if (cultivarIds.length === 0) return { nurseryCount: 0, perCultivar: {} };
+
+  const { data } = await supabase
+    .from('inventory_offers')
+    .select('cultivar_id, nursery_id')
+    .in('cultivar_id', cultivarIds)
+    .eq('offer_status', 'active');
+
+  const perCultivar: Record<string, Set<string>> = {};
+  const allNurseries = new Set<string>();
+
+  for (const offer of data ?? []) {
+    if (!perCultivar[offer.cultivar_id]) perCultivar[offer.cultivar_id] = new Set();
+    perCultivar[offer.cultivar_id].add(offer.nursery_id);
+    allNurseries.add(offer.nursery_id);
+  }
+
+  return {
+    nurseryCount: allNurseries.size,
+    perCultivar: Object.fromEntries(
+      Object.entries(perCultivar).map(([id, nurseries]) => [id, nurseries.size])
+    ),
+  };
+}
+
 export async function getCultivarsForSpecies(supabase: SupabaseClient, plantEntityId: string) {
   const { data, error } = await supabase
     .from('cultivars')

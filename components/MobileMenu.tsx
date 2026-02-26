@@ -3,11 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-interface Props {
-  species: { slug: string; canonical_name: string }[];
-}
-
-export function MobileMenu({ species }: Props) {
+export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -37,19 +33,8 @@ export function MobileMenu({ species }: Props) {
         <div className="absolute inset-x-0 top-full z-50 border-b border-border-subtle bg-surface-raised shadow-lg">
           <div className="px-4 py-3">
             <MobileLink href="/search" onClick={close}>Search</MobileLink>
-            <MobileLink href="/browse" onClick={close}>Browse</MobileLink>
+            <MobileLink href="/browse" onClick={close}>Explore</MobileLink>
             <MobileLink href="/nurseries" onClick={close}>Nurseries</MobileLink>
-
-            <div className="mt-3 border-t border-border-subtle pt-3">
-              <p className="px-2 pb-1 text-xs font-medium uppercase tracking-widest text-text-tertiary">
-                Plants
-              </p>
-              {species.map((s) => (
-                <MobileLink key={s.slug} href={`/plants/${s.slug}`} onClick={close} indent>
-                  {s.canonical_name}
-                </MobileLink>
-              ))}
-            </div>
           </div>
         </div>
       )}
@@ -60,19 +45,17 @@ export function MobileMenu({ species }: Props) {
 function MobileLink({
   href,
   onClick,
-  indent,
   children,
 }: {
   href: string;
   onClick: () => void;
-  indent?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className={`block py-2.5 text-sm text-text-secondary hover:text-accent ${indent ? 'pl-5' : 'px-2'}`}
+      className="block px-2 py-2.5 text-sm text-text-secondary hover:text-accent"
     >
       {children}
     </Link>
