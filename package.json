@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "scraper:new": "tsx scripts/scraper/new-scraper.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

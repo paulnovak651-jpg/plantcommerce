@@ -1,10 +1,12 @@
 export { BurntRidgeScraper } from './burnt-ridge';
 export { GrimoScraper } from './grimo';
+export { RaintreeScraper } from './raintree';
 export type { NurseryScraper, ScrapedProduct, ScrapeResult } from './types';
 export { fetchPage } from './fetch-utils';
 
 import { BurntRidgeScraper } from './burnt-ridge';
 import { GrimoScraper } from './grimo';
+import { RaintreeScraper } from './raintree';
 import type { NurseryScraper } from './types';
 
 type ScraperFactory = () => NurseryScraper;
@@ -12,6 +14,7 @@ type ScraperFactory = () => NurseryScraper;
 const SCRAPER_REGISTRY: Record<string, ScraperFactory> = {
   'burnt-ridge-nursery': () => new BurntRidgeScraper({ delayMs: 2000 }),
   'grimo-nut-nursery': () => new GrimoScraper({ delayMs: 2000 }),
+  'raintree-nursery': () => new RaintreeScraper({ delayMs: 2000 }),
 };
 
 export function listRegisteredScraperSlugs(): string[] {

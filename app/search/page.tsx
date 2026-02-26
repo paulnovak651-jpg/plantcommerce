@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import { searchPlants } from '@/lib/queries/search';
+import { searchPlants, type SearchResult } from '@/lib/queries/search';
+import { parseSearchUrlStateFromRecord } from '@/lib/contracts/ux';
 import Link from 'next/link';
 import { Text } from '@/components/ui/Text';
 import { SearchBar } from '@/components/ui/SearchBar';
@@ -9,11 +10,19 @@ import { BotanicalName } from '@/components/ui/BotanicalName';
 import { EmptyState } from '@/components/ui/EmptyState';
 
 interface Props {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    page?: string;
+    limit?: string;
+    materialType?: string;
+    availability?: string;
+    sort?: string;
+  }>;
 }
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { q = '' } = await searchParams;
+  const state = parseSearchUrlStateFromRecord(await searchParams);
+  const q = state.q;
 
   if (!q) {
     return {
@@ -30,9 +39,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function SearchPage({ searchParams }: Props) {
-  const { q = '' } = await searchParams;
+  const state = parseSearchUrlStateFromRecord(await searchParams);
+  const q = state.q;
   const supabase = await createClient();
-  const results = q ? await searchPlants(supabase, q) : [];
+  const results = q ? await searchPlants(supabase, q, state.limit) : [];
 
   return (
     <div className="space-y-[var(--spacing-zone)]">
@@ -56,7 +66,7 @@ export default async function SearchPage({ searchParams }: Props) {
       )}
 
       <div className="space-y-0">
-        {results.map((r: any) => {
+        {results.map((r: SearchResult) => {
           const href =
             r.index_source === 'plant_entity'
               ? `/plants/${r.slug}`

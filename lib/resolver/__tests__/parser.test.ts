@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseProductName, normalize } from '../parser';
+import { DEFAULT_PARSER_CONFIG } from '../parser-config';
 import testData from '@/data/hazelnut_raw_offers_testset.json';
 
 // ── normalize() ──
@@ -111,6 +112,21 @@ describe('parseProductName — edge cases', () => {
     const result = parseProductName('');
     expect(result.coreName).toBe('');
     expect(result.strippedTokens).toBeDefined();
+  });
+
+  it('supports config-driven botanical and noise terms for new plant families', () => {
+    const chestnutConfig = {
+      ...DEFAULT_PARSER_CONFIG,
+      noiseTerms: [/\bChestnut\b/gi, /\bTree\b/gi],
+    };
+
+    const result = parseProductName(
+      'Marron Chestnut Tree (Castanea sativa)',
+      chestnutConfig
+    );
+
+    expect(result.botanicalExtracted).toBe('Castanea sativa');
+    expect(result.coreName).toBe('Marron');
   });
 });
 

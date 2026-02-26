@@ -4,6 +4,8 @@
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder
+> **Live URL:** https://plantfinder-cyan.vercel.app
+> **Vercel project:** plantfinder (paulnovak651-jpgs-projects)
 
 ---
 
@@ -18,11 +20,11 @@ No e-commerce. No payments. No accounts. Purely informational for v1.
 ## Current State (Honest Assessment)
 
 - **Foundation:** Solid. Database schema stress-tested with hazelnuts (104 real product names, 100% resolution accuracy).
-- **Live data:** 1 nursery (Burnt Ridge, 18 offers in DB). Grimo scraper built but not run live yet.
-- **Deployment:** Localhost only. No Vercel deployment yet. No cron running.
+- **Live data:** 2 nurseries live in DB (Burnt Ridge + Grimo). Raintree scraper built, pending live run.
+- **Deployment:** ✅ Live at https://plantfinder-cyan.vercel.app (Vercel Hobby plan). Cron registered: Monday 6am UTC → `/api/pipeline/scrape`.
 - **Pipeline:** Works end-to-end manually. Not tested with Grimo yet.
 - **Search:** Materialized view exists, needs manual refresh after scrapes (automated in code, untested e2e).
-- **Admin tools:** None. Unmatched names queue has no UI. Resolution rate across real data is unknown.
+- **Admin tools:** Unmatched names admin UI is live at `/admin/unmatched` (token-protected). Resolution tracking is now operational.
 - **User stickiness:** Zero. No accounts, saved searches, price alerts, or notifications.
 
 ---
@@ -33,7 +35,7 @@ No e-commerce. No payments. No accounts. Purely informational for v1.
 |-------|-----------|
 | Database | Supabase PostgreSQL |
 | Frontend | Next.js 16 (App Router), server-rendered |
-| Hosting (planned) | Vercel |
+| Hosting | Vercel (live) — https://plantfinder-cyan.vercel.app |
 | Design system | "The Field Guide" — warm linen palette, Fraunces + Satoshi fonts, 7 shared components |
 | External services | Supabase only. No Stripe, shipping, auth, or email. |
 
@@ -89,8 +91,8 @@ Scraper (fetches nursery HTML)
 | Nursery | Status |
 |---------|--------|
 | Burnt Ridge | ✅ Live, 18 offers in DB |
-| Grimo | 🔨 Built (by Codex), not run live |
-| Raintree | ❌ Needs scraper |
+| Grimo | ✅ Live (run completed 2026-02-26) |
+| Raintree | 🔨 Built, pending live run |
 | One Green World | ❌ Needs scraper |
 | 6 others | ❌ In DB, nothing built |
 
@@ -117,14 +119,14 @@ Scraper (fetches nursery HTML)
 ## Known Gaps & Open Questions
 
 ### Immediate blockers
-1. **Vercel deployment** — app is localhost only, blocks real users, cron, and feedback
-2. **Unmatched names queue** — no admin UI, nobody reviewing, resolution rate unknown
+1. ~~**Vercel deployment**~~ ✅ Done — live at plantfinder-cyan.vercel.app
+2. ~~**Unmatched names queue**~~ ✅ Admin UI implemented and operational
 3. **Parser generalization** — hazelnut-specific, needs work before expanding to other plant families
-4. **Cron automation** — pipeline trigger is manual, no scheduled runs
+4. ~~**Cron automation**~~ ✅ Done — Vercel cron registered, runs Monday 6am UTC
 5. **Search refresh** — materialized view refresh after scrapes untested end-to-end with Grimo
 
 ### Architecture gaps
-6. **No admin interface** — no way to review unmatched names, monitor pipeline health, or see resolution rates
+6. ~~**No admin interface**~~ ✅ `/admin/unmatched` implemented for unmatched review workflow
 7. **No user accounts or engagement features** — no saved searches, price alerts, stock notifications
 8. **No error monitoring** — if a scraper breaks, nobody knows
 
@@ -137,12 +139,43 @@ Scraper (fetches nursery HTML)
 
 ## Priority Order
 
-1. **Deploy to Vercel** — everything else is blocked by localhost-only
-2. **Admin UI for unmatched queue** — flying blind on data quality
-3. **Run Grimo scraper live** — validates multi-nursery pipeline
-4. **Set up Vercel Cron** — automate pipeline runs
+1. ~~**Deploy to Vercel**~~ ✅ Live at plantfinder-cyan.vercel.app
+2. ~~**Admin UI for unmatched queue**~~ ✅ Implemented
+3. ~~**Run Grimo scraper live**~~ ✅ Completed (2026-02-26)
+4. ~~**Set up Vercel Cron**~~ ✅ Registered, runs Monday 6am UTC
 5. **Generalize the parser** — required before non-hazelnut expansion
 6. **Build remaining scrapers** — Raintree, One Green World, 6 others
+
+---
+
+## Future Projects Backlog
+
+1. **Facebook consented ingestion adapter (official API only, no scraping)**  
+   Plan doc: `docs/facebook-consented-ingestion-roadmap.md`
+2. **Cross-platform source adapters** (e.g., forum/import adapters) through the same listing quality gate.
+3. **Unified ingestion observability** for source health, sync lag, and moderation throughput.
+
+---
+
+## Scraper Scaling Kit
+
+- Playbook: `docs/nursery-scraper-playbook.md`
+- Scaffold command:
+
+```bash
+npm run scraper:new -- --slug <nursery-slug> --class <ClassName> --name "<Nursery Name>" --category-url "<url>"
+```
+
+This keeps scraper onboarding consistent: scaffold -> fixture tests -> registry wiring -> pipeline validation.
+
+---
+
+## UX Contracts
+
+- Foundation spec: `docs/ux-foundation-spec.md`
+- Shared contract code: `lib/contracts/ux.ts`
+
+Use these as the source of truth for search URL state, result card fields, listing card fields, and moderation queue fields.
 
 ---
 
@@ -152,7 +185,7 @@ Scraper (fetches nursery HTML)
 [User Browser]
       │
       ▼
-[Next.js App (localhost / Vercel planned)]
+[Next.js App — plantfinder-cyan.vercel.app]
       │
       ├── Pages: home, search, species, cultivar, nursery index, nursery detail
       │   └── Server-rendered, pulls from Supabase directly
@@ -189,6 +222,8 @@ Interactive system map available at `/system-map` (dev tool, not linked in nav).
 | Pre-2026 | 12-method resolver priority chain | Maximizes match accuracy across messy nursery naming conventions |
 | 2026-02 | Codex for scraper implementation, Claude Code for architecture | Play to each tool's strengths |
 | 2026-02 | Shared context repo for cross-AI sync | Single source of truth across Claude Code, Codex, Claude Opus, ChatGPT |
+| 2026-02-25 | Deployed to Vercel (Hobby plan, direct push) | plantfinder-cyan.vercel.app — cron registered Monday 6am UTC |
+| 2026-02-25 | Vercel project "plantfinder" (diverged from plantcommerce repo) | GitHub integration points at old plantfinder repo; direct CLI deploy used for now |
 
 ---
 

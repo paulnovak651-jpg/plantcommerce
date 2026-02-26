@@ -48,6 +48,24 @@ export async function GET() {
         description:
           'Get nursery details with current inventory offers, including cultivar links and pricing',
       },
+      admin_unmatched_queue: {
+        url: '/api/admin/unmatched',
+        method: 'GET',
+        auth: 'Bearer ADMIN_STATUS_SECRET (or CRON_SECRET fallback)',
+        params: {
+          status: 'pending | resolved | ignored | all (default all)',
+          limit: 'number (optional, default 100, max 500)',
+        },
+        description:
+          'Protected moderation queue endpoint for unresolved scraper names',
+      },
+      admin_unmatched_update: {
+        url: '/api/admin/unmatched/{id}',
+        method: 'PATCH',
+        auth: 'Bearer ADMIN_STATUS_SECRET (or CRON_SECRET fallback)',
+        description:
+          'Protected endpoint to set unmatched review outcome (pending/resolved/ignored)',
+      },
     },
     data_types: {
       plant_entity:
