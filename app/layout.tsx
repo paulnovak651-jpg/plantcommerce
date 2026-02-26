@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import { unstable_cache } from 'next/cache';
 import Link from 'next/link';
 import { SkipNav } from '@/components/SkipNav';
+import { MobileMenu } from '@/components/MobileMenu';
 import { createAnonClient } from '@/lib/supabase/server';
 import './globals.css';
 
@@ -71,16 +72,17 @@ export default async function RootLayout({
       <body className="bg-surface-ground text-text-primary antialiased">
         <SkipNav />
 
-        <header className="border-b border-border-subtle bg-surface-raised">
+        <header className="relative border-b border-border-subtle bg-surface-raised">
           <nav
             className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4"
             aria-label="Main navigation"
           >
-            <Link href="/" className="font-serif text-xl font-semibold text-accent">
+            <Link href="/" className="whitespace-nowrap font-serif text-xl font-semibold text-accent">
               Plant Commerce
             </Link>
 
-            <div className="flex items-center gap-6 text-sm text-text-secondary">
+            {/* Desktop nav */}
+            <div className="hidden items-center gap-6 text-sm text-text-secondary md:flex">
               <Link href="/search" className="hover:text-accent">
                 Search
               </Link>
@@ -123,6 +125,9 @@ export default async function RootLayout({
                 Nurseries
               </Link>
             </div>
+
+            {/* Mobile hamburger */}
+            <MobileMenu species={species} />
           </nav>
         </header>
 

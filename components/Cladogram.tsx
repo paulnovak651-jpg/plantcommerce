@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 
 export interface CladogramSpecies {
   id: string;
@@ -151,7 +152,41 @@ export function Cladogram({ species }: { species: CladogramSpecies[] }) {
           No species in this category yet.
         </p>
       ) : (
-        <div className="mt-6 overflow-x-auto">
+        <>
+          {/* ── Mobile list view ── */}
+          <div className="mt-6 space-y-5 md:hidden">
+            {groups.map((group) => (
+              <div key={group.family}>
+                <p className="mb-2 text-xs font-medium uppercase tracking-widest text-text-tertiary">
+                  {group.family}
+                </p>
+                {group.genera.map((genusGroup) => (
+                  <div key={genusGroup.genus} className="mb-3 ml-3">
+                    <p className="mb-1 text-sm italic text-text-secondary">{genusGroup.genus}</p>
+                    <div className="ml-3">
+                      {genusGroup.rows.map(({ species: s }) => (
+                        <Link
+                          key={s.id}
+                          href={`/plants/${s.slug}`}
+                          className="flex items-center gap-2 py-2 text-sm font-medium text-accent hover:text-accent"
+                        >
+                          {s.canonical_name}
+                          {s.nursery_count > 0 && (
+                            <span className="rounded-full bg-accent-light px-2 py-0.5 text-xs font-semibold text-accent">
+                              {s.nursery_count}
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* ── Desktop SVG cladogram ── */}
+          <div className="mt-6 hidden overflow-x-auto md:block">
           <svg
             width={SVG_W}
             height={svgHeight}
@@ -312,7 +347,8 @@ export function Cladogram({ species }: { species: CladogramSpecies[] }) {
               </g>
             ))}
           </svg>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
