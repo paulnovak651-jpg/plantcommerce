@@ -12,6 +12,8 @@ import { Tag } from '@/components/ui/Tag';
 import { TraitGrid } from '@/components/ui/TraitGrid';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
+import { ListingCard } from '@/components/ListingCard';
+import { getApprovedListingsForSpecies } from '@/lib/queries/listings';
 
 interface Props {
   params: Promise<{ speciesSlug: string }>;
@@ -53,10 +55,11 @@ export default async function SpeciesPage({ params }: Props) {
   const cultivars = await getCultivarsForSpecies(supabase, species.id);
   const cultivarIds = cultivars.map((c: { id: string }) => c.id);
 
-  const [taxonomyPath, growingProfile, offerStats] = await Promise.all([
+  const [taxonomyPath, growingProfile, offerStats, communityListings] = await Promise.all([
     getTaxonomyPath(supabase, species.id),
     getGrowingProfile(supabase, species.id),
     getOfferStatsForSpecies(supabase, cultivarIds),
+    getApprovedListingsForSpecies(supabase, species.id),
   ]);
 
   // Group cultivars by material type
@@ -177,6 +180,19 @@ export default async function SpeciesPage({ params }: Props) {
           title="No cultivar data yet"
           description="No cultivar data for this species yet."
         />
+      )}
+
+      {communityListings.length > 0 && (
+        <section>
+          <Text variant="h2" className="mb-3">
+            Community Listings ({communityListings.length})
+          </Text>
+          <div className="space-y-3">
+            {communityListings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+        </section>
       )}
 
       <JsonLd data={jsonLd} />

@@ -20,6 +20,8 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 import { NurseryMap } from '@/components/NurseryMap';
 import type { NurseryPin } from '@/components/NurseryMap';
+import { ListingCard } from '@/components/ListingCard';
+import { getApprovedListingsForCultivar } from '@/lib/queries/listings';
 
 interface Props {
   params: Promise<{ speciesSlug: string; cultivarSlug: string }>;
@@ -104,11 +106,12 @@ export default async function CultivarPage({ params }: Props) {
 
   const species = (cultivar as any).plant_entities;
 
-  const [offers, aliases, legal, growingProfile] = await Promise.all([
+  const [offers, aliases, legal, growingProfile, communityListings] = await Promise.all([
     getOffersForCultivar(supabase, cultivar.id),
     getAliasesForCultivar(supabase, cultivar.id),
     getLegalIdentifiers(supabase, cultivar.id),
     species?.id ? getGrowingProfile(supabase, species.id) : Promise.resolve(null),
+    getApprovedListingsForCultivar(supabase, cultivar.id),
   ]);
 
   const seen = new Set<string>();
@@ -314,6 +317,43 @@ export default async function CultivarPage({ params }: Props) {
           <NurseryMap nurseries={nurseryPins} height="200px" />
         </section>
       )}
+
+      {/* COMMUNITY LISTINGS */}
+      <section>
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <Text variant="h2">
+            Community Listings
+            {communityListings.length > 0 && (
+              <span className="ml-2 text-base font-normal text-text-tertiary">
+                ({communityListings.length})
+              </span>
+            )}
+          </Text>
+          <a
+            href={`/listings/new?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
+            className="text-sm text-accent hover:underline"
+          >
+            + List {cultivar.canonical_name}
+          </a>
+        </div>
+        {communityListings.length > 0 ? (
+          <div className="space-y-3">
+            {communityListings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-text-tertiary">
+            No community listings yet.{' '}
+            <a
+              href={`/listings/new?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
+              className="text-accent hover:underline"
+            >
+              Be the first to list this cultivar →
+            </a>
+          </p>
+        )}
+      </section>
 
       {/* ZONE 3: KNOWLEDGE (disclosure sections) */}
       {(aliases.length > 0 || legal.length > 0 || growingProfile != null) && (
