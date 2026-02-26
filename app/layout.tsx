@@ -141,8 +141,20 @@ export default async function RootLayout({
               <div>
                 <h3 className="mb-2 font-serif text-sm font-semibold text-text-primary">Plant Commerce</h3>
                 <p className="text-xs text-text-tertiary">
-                  Plant database and nursery inventory aggregator for the permaculture community.
+                  Free plant comparison tool for the permaculture community.
                 </p>
+                <p className="mt-1 text-xs text-text-tertiary">
+                  Built by Even Flow Nursery LLC in Cannon Falls, Minnesota.
+                </p>
+                <p className="mt-1 text-xs text-text-tertiary">
+                  All purchases happen directly on nursery websites.
+                </p>
+                <a
+                  href="mailto:paul@evenflownursery.com"
+                  className="mt-2 inline-block text-xs text-accent hover:text-accent-hover"
+                >
+                  Contact: paul@evenflownursery.com
+                </a>
               </div>
               <div>
                 <h3 className="mb-2 text-sm font-semibold text-text-primary">Browse</h3>

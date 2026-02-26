@@ -13,6 +13,27 @@ interface Props {
   params: Promise<{ nurserySlug: string }>;
 }
 
+function formatNurseryUpdateLabel(iso: string | null): string {
+  if (!iso) return 'Not yet scraped';
+
+  const completedAt = new Date(iso);
+  const now = new Date();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const daysAgo = Math.floor(
+    (now.getTime() - completedAt.getTime()) / msPerDay
+  );
+
+  if (daysAgo <= 0) return 'Today';
+  if (daysAgo === 1) return 'Yesterday';
+  if (daysAgo < 7) return `${daysAgo} days ago`;
+
+  return completedAt.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { nurserySlug } = await params;
   const supabase = await createClient();
@@ -47,11 +68,25 @@ export default async function NurseryPage({ params }: Props) {
 
   if (!nursery) notFound();
 
-  const inventory = await getInventoryForNursery(supabase, nursery.id);
+  const [inventory, { data: latestCompletedRun }] = await Promise.all([
+    getInventoryForNursery(supabase, nursery.id),
+    supabase
+      .from('import_runs')
+      .select('completed_at')
+      .eq('nursery_id', nursery.id)
+      .eq('status', 'completed')
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   const location = [nursery.location_city, nursery.location_state, nursery.location_country]
     .filter(Boolean)
     .join(', ');
+  const lastUpdatedLabel = formatNurseryUpdateLabel(
+    latestCompletedRun?.completed_at ?? null
+  );
 
   // JSON-LD: Organization
   const orgJsonLd = {
@@ -103,6 +138,10 @@ export default async function NurseryPage({ params }: Props) {
           <Surface elevation="raised" padding="compact">
             <Text variant="caption" color="tertiary">Active Offers</Text>
             <Text variant="body" className="font-medium">{inventory.length}</Text>
+          </Surface>
+          <Surface elevation="raised" padding="compact">
+            <Text variant="caption" color="tertiary">Last Updated</Text>
+            <Text variant="body" className="font-medium">{lastUpdatedLabel}</Text>
           </Surface>
         </div>
       </section>

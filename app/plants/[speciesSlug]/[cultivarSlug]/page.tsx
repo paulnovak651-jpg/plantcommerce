@@ -21,6 +21,40 @@ interface Props {
   params: Promise<{ speciesSlug: string; cultivarSlug: string }>;
 }
 
+function getAvailabilityTag(rawAvailability: string | null): {
+  label: string;
+  className: string;
+} | null {
+  if (!rawAvailability) return null;
+
+  const value = rawAvailability.toLowerCase();
+  if (value.includes('pre-order') || value.includes('preorder')) {
+    return {
+      label: 'Pre-Order',
+      className: 'bg-accent-subtle text-accent',
+    };
+  }
+
+  if (value.includes('sold out') || value.includes('out of stock')) {
+    return {
+      label: 'Sold Out',
+      className: 'bg-surface-inset text-status-unavailable',
+    };
+  }
+
+  if (value.includes('in stock') || value.includes('available')) {
+    return {
+      label: 'In Stock',
+      className: 'bg-accent-light text-status-active',
+    };
+  }
+
+  return {
+    label: rawAvailability,
+    className: 'bg-surface-inset text-text-secondary',
+  };
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { speciesSlug, cultivarSlug } = await params;
   const supabase = await createClient();
@@ -169,44 +203,77 @@ export default async function CultivarPage({ params }: Props) {
         </Text>
         {offers.length > 0 ? (
           <div className="space-y-3">
-            {offers.map((offer: any) => (
-              <Surface key={offer.id} elevation="raised" padding="default">
-                <div className="flex items-center justify-between">
-                  <div>
+            {offers.map((offer: any) => {
+              const availability = getAvailabilityTag(offer.raw_availability);
+              const offerDetails = [
+                offer.propagation_method,
+                offer.sale_form,
+              ]
+                .filter(
+                  (value: string | null | undefined) =>
+                    value && value !== 'unknown'
+                )
+                .map((value: string) => value.replace(/_/g, ' '));
+              const location = [
+                offer.nurseries?.location_state,
+                offer.nurseries?.location_country,
+              ]
+                .filter(Boolean)
+                .join(', ');
+
+              return (
+                <Surface key={offer.id} elevation="raised" padding="default">
+                  <div className="flex items-center justify-between">
+                    <div>
                     <Link
                       href={`/nurseries/${offer.nurseries?.slug}`}
                       className="font-medium text-accent hover:underline"
                     >
                       {offer.nurseries?.name}
                     </Link>
-                    <Text variant="sm" color="secondary">
-                      {offer.nurseries?.location_state}, {offer.nurseries?.location_country}
-                    </Text>
-                    <Text variant="caption" color="tertiary">
-                      {offer.propagation_method !== 'unknown' &&
-                        offer.propagation_method.replace(/_/g, ' ')}
-                      {offer.sale_form !== 'unknown' &&
-                        ` \u00b7 ${offer.sale_form.replace(/_/g, ' ')}`}
-                    </Text>
+                      {location && (
+                        <Text variant="sm" color="secondary">
+                          {location}
+                        </Text>
+                      )}
+                      {offerDetails.length > 0 && (
+                        <Text variant="caption" color="tertiary">
+                          {offerDetails.join(' · ')}
+                        </Text>
+                      )}
+                      {availability && (
+                        <div className="mt-2">
+                          <span
+                            className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${availability.className}`}
+                          >
+                            {availability.label}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      {offer.raw_price_text ? (
+                        <Text variant="price">{offer.raw_price_text}</Text>
+                      ) : (
+                        <Text variant="sm" color="tertiary">
+                          Contact nursery for pricing
+                        </Text>
+                      )}
+                      {offer.product_page_url && (
+                        <a
+                          href={offer.product_page_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-block rounded-[var(--radius-md)] bg-accent px-3 py-1.5 text-sm font-medium text-text-inverse hover:bg-accent-hover"
+                        >
+                          View at nursery
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-right">
-                    {offer.raw_price_text && (
-                      <Text variant="price">{offer.raw_price_text}</Text>
-                    )}
-                    {offer.product_page_url && (
-                      <a
-                        href={offer.product_page_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-accent hover:underline"
-                      >
-                        View at nursery &rarr;
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </Surface>
-            ))}
+                </Surface>
+              );
+            })}
           </div>
         ) : (
           <EmptyState
