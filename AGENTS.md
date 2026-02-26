@@ -1,32 +1,62 @@
-# Plant Commerce — Agent Instructions
+# Plant Commerce - Agent Instructions
 
 > Auto-loaded by Codex on startup. Read before doing any work.
-> **At session start, fetch and read:** https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
+> At session start, fetch and read: https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
 > Dashboard: http://localhost:3000/dashboard
 
 ---
 
-## Dashboard Protocol — All Agents Must Follow
+## Cold Restart Checklist (2 Minutes)
 
-The **Command Center** at http://localhost:3000/dashboard is the single source of truth for all projects, tasks, and agent activity.
+1. Read `AGENTS.md` and `CONTEXT.md` for local state.
+2. Register a Command Center session.
+3. Run one dashboard snapshot and check dropped sessions.
+4. Continue only after choosing the top open task.
 
-### At the start of EVERY session — do this first:
-
-**Step 1 — Register your session:**
-```bash
-source scripts/register-session.sh "claude-code" "Brief description of what you are doing"
-# SESSION_ID is now in your environment
+PowerShell (Windows default):
+```powershell
+.\scripts\register-session.ps1 -Agent "codex" -Summary "Brief description of your task"
+.\scripts\dashboard-snapshot.ps1
 ```
-Replace `claude-code` with your agent name (`codex`, `claude-opus`, etc.).
 
-**Step 2 — Check for dropped sessions:** http://localhost:3000/dashboard — look for the red alert. If a previous session was dropped mid-task, pick up that task first.
-
-**Step 3 — Check task priorities:** the task board shows what is in_progress and what is next.
-
-### At the end of EVERY session — do this before closing:
-
+Bash (if available):
 ```bash
-bash scripts/end-session.sh "$SESSION_ID" "completed" "One line: what you accomplished"
+source scripts/register-session.sh "codex" "Brief description of your task"
+curl -s http://localhost:3000/api/dashboard | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const j=JSON.parse(d).data;console.log('tasks='+j.tasks.length+' active='+j.activeSessions.length+' dropped='+j.droppedSessions.length)})"
+```
+
+---
+
+## Dashboard Protocol - Required
+
+The Command Center at http://localhost:3000/dashboard is the source of truth for task status and agent activity.
+
+### Start of every session
+
+PowerShell:
+```powershell
+.\scripts\register-session.ps1 -Agent "codex" -Summary "Brief description" [-TaskId "<task-uuid>"]
+```
+
+Bash:
+```bash
+source scripts/register-session.sh "codex" "Brief description" [task-uuid]
+```
+
+Then check:
+- dropped sessions (red alert)
+- open tasks by priority
+
+### End of every session
+
+PowerShell:
+```powershell
+.\scripts\end-session.ps1 -SessionId $env:SESSION_ID -Status completed -Summary "One line on what you finished"
+```
+
+Bash:
+```bash
+bash scripts/end-session.sh "$SESSION_ID" "completed" "One line on what you finished"
 ```
 
 If a task is done:
@@ -37,54 +67,45 @@ curl -s -X PATCH http://localhost:3000/api/dashboard/tasks/<task-uuid> \
   -d '{"status":"done"}'
 ```
 
-**If you drop without running end-session.sh** — the next agent sees the red alert and picks up your work. The loop is closed either way.
-
-### Get current task IDs:
-```bash
-curl -s http://localhost:3000/api/dashboard \
-  | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>JSON.parse(d).data.tasks.filter(t=>t.status!=='done').forEach(t=>console.log('['+t.priority+'] '+t.status.padEnd(12)+t.id.slice(0,8)+'  '+t.title)))"
-```
-
 ---
 
 ## What This Project Is
 
-Plant comparison platform for permaculture community — "PCPartPicker for nursery stock".
-Users search for a plant cultivar, see which nurseries carry it, compare prices/availability.
+Plant comparison platform for the permaculture community: "PCPartPicker for nursery stock."
+Users search for a cultivar, see which nurseries carry it, and compare prices and availability.
 
-**Business entity:** Even Flow Nursery LLC
-**Stack:** Next.js 16.1.6 (App Router), React 19.2.4, TypeScript 5.9.3 strict, Tailwind CSS 4.2.1, Supabase (PostgreSQL + RLS), Cheerio 1.2.0
-**Tests:** Vitest, 65 tests — all must stay passing
-**CI:** GitHub Actions
+Business entity: Even Flow Nursery LLC
+Stack: Next.js 16.1.6 (App Router), React 19.2.4, TypeScript 5.9.3 strict, Tailwind CSS 4.2.1, Supabase (PostgreSQL + RLS), Cheerio 1.2.0
+Tests: Vitest, 65 tests (must stay passing)
+CI: GitHub Actions
 
 ---
 
 ## Current State
 
-- Waves 1–3 complete: pipeline, tests, CI, design system, UI polish, observability
+- Waves 1-3 complete: pipeline, tests, CI, design system, UI polish, observability
 - 8 API endpoints, 7 UI pages, design system "The Field Guide"
-- Only 1 of 10 nurseries has live inventory (Burnt Ridge, 18 offers)
+- 2 nurseries live in DB (Burnt Ridge + Grimo); Raintree scraper is built but not run live
+- Deployment is live: https://plantfinder-cyan.vercel.app
 
 ---
 
-## Next Priorities
+## Current Priorities
 
-1. Add nursery scrapers for Grimo, One Green World, Raintree (already in DB)
-2. Scraper registry — remove hardcoded `BurntRidgeScraper` from `app/api/pipeline/scrape/route.ts`
-3. Parser generalization — move noise terms/botanical patterns to config
-4. Vercel cron for weekly automated scraping
-5. Admin UI for unmatched names review
+1. Run Raintree scraper live and validate pipeline/search refresh end-to-end
+2. Build One Green World scraper
+3. Add basic scraper failure monitoring/alerting
+4. Generalize parser beyond hazelnut-specific patterns
 
 ---
 
-## Hard Rules — Do Not Violate
+## Hard Rules - Do Not Violate
 
-- **TypeScript strict mode** — no `any`, no `@ts-ignore`
-- **App Router only** — all routes under `src/app/`, do not use Pages Router
-- **RLS enforced** — all DB writes use `createServiceClient()`, public reads use anon client
-- **Tests must pass** — run `npm test` before finishing any task; fix failures before stopping
-- **No hardcoded colors/fonts** — use Tailwind design tokens from config
-- **No secrets in code** — env vars only, never commit `.env*.local`
+- TypeScript strict mode: no `any`, no `@ts-ignore`
+- App Router only: routes under `app/`
+- RLS enforced: service client for writes, anon client for public reads
+- Tests must pass: run `npm test` before wrapping a coding task
+- No secrets in code: env vars only, never commit `.env*.local`
 
 ---
 
@@ -93,7 +114,7 @@ Users search for a plant cultivar, see which nurseries carry it, compare prices/
 | What | Where |
 |------|-------|
 | Scraper interface + registry | `lib/scraper/index.ts` |
-| Burnt Ridge scraper (reference impl) | `lib/scraper/burnt-ridge.ts` |
+| Burnt Ridge scraper (reference) | `lib/scraper/burnt-ridge.ts` |
 | Pipeline trigger | `app/api/pipeline/scrape/route.ts` |
 | Parser logic | `lib/resolver/parser.ts` |
 | Resolver (12-method chain) | `lib/resolver/resolver.ts` |
@@ -101,4 +122,3 @@ Users search for a plant cultivar, see which nurseries carry it, compare prices/
 | Supabase clients | `lib/supabase/server.ts` |
 | API envelope helpers | `lib/api-helpers.ts` |
 | Full context + architecture | `CONTEXT.md` |
-

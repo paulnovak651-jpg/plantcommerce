@@ -1,6 +1,6 @@
 # PlantCommerce — Project Context
 
-> **Last updated:** 2026-02-25
+> **Last updated:** 2026-02-26
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder
@@ -22,7 +22,7 @@ No e-commerce. No payments. No accounts. Purely informational for v1.
 - **Foundation:** Solid. Database schema stress-tested with hazelnuts (104 real product names, 100% resolution accuracy).
 - **Live data:** 2 nurseries live in DB (Burnt Ridge + Grimo). Raintree scraper built, pending live run.
 - **Deployment:** ✅ Live at https://plantfinder-cyan.vercel.app (Vercel Hobby plan). Cron registered: Monday 6am UTC → `/api/pipeline/scrape`.
-- **Pipeline:** Works end-to-end manually. Not tested with Grimo yet.
+- **Pipeline:** Works end-to-end manually. Grimo live run completed; search refresh still needs explicit end-to-end verification.
 - **Search:** Materialized view exists, needs manual refresh after scrapes (automated in code, untested e2e).
 - **Admin tools:** Unmatched names admin UI is live at `/admin/unmatched` (token-protected). Resolution tracking is now operational.
 - **User stickiness:** Zero. No accounts, saved searches, price alerts, or notifications.
@@ -133,7 +133,7 @@ Scraper (fetches nursery HTML)
 ### Strategic questions (unanswered)
 9. What's the user retention story beyond v1?
 10. How does the parser generalize across plant families without becoming a maintenance nightmare?
-11. When do we deploy to Vercel and start getting real users?
+11. What is the first concrete growth loop to reach 50 recurring users?
 
 ---
 

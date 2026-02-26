@@ -31,7 +31,7 @@ interface AgentSession {
   ended_at: string | null;
   status: 'active' | 'completed' | 'dropped';
   summary: string | null;
-  tasks: { title: string } | null;
+  tasks: { title: string } | { title: string }[] | null;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -159,7 +159,8 @@ function TaskCard({ task }: { task: Task }) {
 }
 
 function SessionRow({ session, isDropped }: { session: AgentSession; isDropped: boolean }) {
-  const taskTitle = session.tasks?.title ?? (session.task_id ? `task ${session.task_id.slice(0, 8)}` : '—');
+  const taskRef = Array.isArray(session.tasks) ? session.tasks[0] : session.tasks;
+  const taskTitle = taskRef?.title ?? (session.task_id ? `task ${session.task_id.slice(0, 8)}` : '—');
   const statusColor = isDropped ? C.red : STATUS_COLOR[session.status] ?? C.muted;
   const statusLabel = isDropped ? 'DROPPED?' : session.status;
 
@@ -268,25 +269,28 @@ export default async function DashboardPage() {
                 ⚠ {droppedSessions.length} DROPPED SESSION{droppedSessions.length > 1 ? 'S' : ''} DETECTED
               </span>
             </div>
-            {droppedSessions.map((s) => (
-              <div key={s.id} style={{ marginBottom: 8, paddingLeft: 4 }}>
-                <div style={{ fontSize: 13, color: C.text }}>
-                  <span style={{ color: agentColor(s.agent), fontWeight: 600 }}>{s.agent}</span>
-                  {s.tasks?.title && <> was working on <span style={{ color: C.amber }}>"{s.tasks.title}"</span></>}
+            {droppedSessions.map((s) => {
+              const taskRef = Array.isArray(s.tasks) ? s.tasks[0] : s.tasks;
+              return (
+                <div key={s.id} style={{ marginBottom: 8, paddingLeft: 4 }}>
+                  <div style={{ fontSize: 13, color: C.text }}>
+                    <span style={{ color: agentColor(s.agent), fontWeight: 600 }}>{s.agent}</span>
+                    {taskRef?.title && <> was working on <span style={{ color: C.amber }}>"{taskRef.title}"</span></>}
+                  </div>
+                  <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>
+                    Started {timeAgo(s.started_at)} — session ended unexpectedly
+                    {s.summary && <> · Last note: "{s.summary}"</>}
+                  </div>
+                  <div style={{ fontSize: 11, color: C.red, marginTop: 3 }}>
+                    → Pick up this task and mark the session dropped:
+                    {' '}
+                    <code style={{ background: '#1a0808', padding: '1px 6px', borderRadius: 3, fontFamily: 'monospace', fontSize: 10 }}>
+                      PATCH /api/dashboard/sessions/{s.id.slice(0, 8)}... &#123;"status":"dropped"&#125;
+                    </code>
+                  </div>
                 </div>
-                <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>
-                  Started {timeAgo(s.started_at)} — session ended unexpectedly
-                  {s.summary && <> · Last note: "{s.summary}"</>}
-                </div>
-                <div style={{ fontSize: 11, color: C.red, marginTop: 3 }}>
-                  → Pick up this task and mark the session dropped:
-                  {' '}
-                  <code style={{ background: '#1a0808', padding: '1px 6px', borderRadius: 3, fontFamily: 'monospace', fontSize: 10 }}>
-                    PATCH /api/dashboard/sessions/{s.id.slice(0, 8)}... &#123;"status":"dropped"&#125;
-                  </code>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -296,14 +300,17 @@ export default async function DashboardPage() {
             <div style={{ fontSize: 12, fontWeight: 700, color: C.green, marginBottom: 8 }}>
               ● {healthySessions.length} ACTIVE SESSION{healthySessions.length > 1 ? 'S' : ''}
             </div>
-            {healthySessions.map((s) => (
-              <div key={s.id} style={{ fontSize: 12, color: C.text, marginBottom: 4 }}>
-                <span style={{ color: agentColor(s.agent), fontWeight: 600 }}>{s.agent}</span>
-                {s.tasks?.title && <> → <span style={{ color: C.muted }}>{s.tasks.title}</span></>}
-                {s.summary && <> · {s.summary}</>}
-                <span style={{ color: C.dim }}> ({timeAgo(s.started_at)})</span>
-              </div>
-            ))}
+            {healthySessions.map((s) => {
+              const taskRef = Array.isArray(s.tasks) ? s.tasks[0] : s.tasks;
+              return (
+                <div key={s.id} style={{ fontSize: 12, color: C.text, marginBottom: 4 }}>
+                  <span style={{ color: agentColor(s.agent), fontWeight: 600 }}>{s.agent}</span>
+                  {taskRef?.title && <> → <span style={{ color: C.muted }}>{taskRef.title}</span></>}
+                  {s.summary && <> · {s.summary}</>}
+                  <span style={{ color: C.dim }}> ({timeAgo(s.started_at)})</span>
+                </div>
+              );
+            })}
           </div>
         )}
 

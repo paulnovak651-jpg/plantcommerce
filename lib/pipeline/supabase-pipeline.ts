@@ -219,7 +219,8 @@ export async function writePipelineResult(
       nurseryId,
       rawData.productPageUrl,
       rawData.rawSku,
-      rawData.rawFormSize
+      rawData.rawFormSize,
+      result.rawProductName
     );
 
     const offerFields = {
@@ -427,12 +428,27 @@ function materialTypeToEntityType(
   }
 }
 
-function generateSourceOfferKey(
+/**
+ * Generate a stable key for idempotent offer upserts.
+ *
+ * WARNING: If a nursery redesigns their URLs, all products will get new keys,
+ * creating duplicate offers. When building new scrapers, prefer including SKU
+ * or a stable product identifier alongside the URL. The raw product name is
+ * used as a last-resort fallback when all other identifiers are empty.
+ */
+export function generateSourceOfferKey(
   nurseryId: string,
   productUrl?: string,
   sku?: string,
-  formSize?: string
+  formSize?: string,
+  rawProductName?: string
 ): string {
   const parts = [nurseryId, productUrl ?? '', sku ?? '', formSize ?? ''];
-  return parts.join('|');
+  const key = parts.join('|');
+
+  if (!productUrl && !sku && !formSize && rawProductName) {
+    return [nurseryId, rawProductName].join('|');
+  }
+
+  return key;
 }
