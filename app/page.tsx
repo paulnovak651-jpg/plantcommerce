@@ -61,7 +61,7 @@ export default async function HomePage() {
       </section>
 
       {/* Visual bridge between hero and browse */}
-      <div className="mx-auto my-12 h-px w-16 bg-border" />
+      <div className="mx-auto my-6 h-px w-16 bg-border" />
 
       {/* Browse by Species grid */}
       <section className="pb-8">

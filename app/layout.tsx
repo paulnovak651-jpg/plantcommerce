@@ -167,14 +167,14 @@ export default async function RootLayout({
                     </Link>
                   </li>
                   <li>
-                    <Link href="/llms.txt" className="text-text-tertiary hover:text-accent">
+                    <a href="/llms.txt" className="text-text-tertiary hover:text-accent">
                       llms.txt
-                    </Link>
+                    </a>
                   </li>
                   <li>
-                    <Link href="/llms-full.txt" className="text-text-tertiary hover:text-accent">
+                    <a href="/llms-full.txt" className="text-text-tertiary hover:text-accent">
                       llms-full.txt (API Guide)
-                    </Link>
+                    </a>
                   </li>
                   <li>
                     <Link href="/sitemap.xml" className="text-text-tertiary hover:text-accent">

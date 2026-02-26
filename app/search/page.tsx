@@ -75,9 +75,14 @@ export default async function SearchPage({ searchParams }: Props) {
           return (
             <Link key={`${r.index_source}-${r.entity_id}`} href={href}>
               <div className="border-b border-border-subtle py-4 transition-colors hover:bg-surface-primary">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Tag type="neutral">{r.material_type.replace(/_/g, ' ')}</Tag>
                   <Text variant="h3" color="accent">{r.canonical_name}</Text>
+                  {r.active_offer_count > 0 && (
+                    <Tag type="availability">
+                      {r.active_offer_count} {r.active_offer_count === 1 ? 'nursery' : 'nurseries'}
+                    </Tag>
+                  )}
                 </div>
                 {r.botanical_name && (
                   <Text variant="sm" color="secondary" className="mt-1">
@@ -86,13 +91,6 @@ export default async function SearchPage({ searchParams }: Props) {
                 )}
                 {r.species_common_name && r.index_source === 'cultivar' && (
                   <Text variant="caption" color="tertiary">{r.species_common_name}</Text>
-                )}
-                {r.active_offer_count > 0 && (
-                  <div className="mt-2">
-                    <Tag type="availability">
-                      {r.active_offer_count} nursery offer{r.active_offer_count !== 1 ? 's' : ''}
-                    </Tag>
-                  </div>
                 )}
               </div>
             </Link>

@@ -61,23 +61,28 @@ export default async function NurseriesPage() {
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {nurseries.map((n: any) => (
-            <Link key={n.id} href={`/nurseries/${n.slug}`}>
-              <div className="h-full rounded-[var(--radius-lg)] px-4 py-3 transition-colors hover:bg-surface-raised">
-                <Text variant="h3" color="accent">{n.name}</Text>
-                <Text variant="sm" color="secondary" className="mt-1">
-                  {[n.location_city, n.location_state, n.location_country]
-                    .filter(Boolean)
-                    .join(', ')}
-                </Text>
-                {n.sales_type && (
-                  <div className="mt-2">
-                    <Tag type="neutral">{n.sales_type}</Tag>
+          {nurseries.map((n: any) => {
+            const hasInventory = n.offer_count > 0;
+            return (
+              <Link key={n.id} href={`/nurseries/${n.slug}`}>
+                <div className={`h-full rounded-[var(--radius-lg)] px-4 py-3 transition-colors hover:bg-surface-raised ${!hasInventory ? 'opacity-50' : ''}`}>
+                  <Text variant="h3" color={hasInventory ? 'accent' : 'secondary'}>{n.name}</Text>
+                  <Text variant="sm" color="secondary" className="mt-1">
+                    {[n.location_city, n.location_state, n.location_country]
+                      .filter(Boolean)
+                      .join(', ')}
+                  </Text>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {n.sales_type && <Tag type="neutral">{n.sales_type}</Tag>}
+                    {hasInventory
+                      ? <Tag type="availability">{n.offer_count} {n.offer_count === 1 ? 'offer' : 'offers'}</Tag>
+                      : <Tag type="neutral">no inventory yet</Tag>
+                    }
                   </div>
-                )}
-              </div>
-            </Link>
-          ))}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
 
