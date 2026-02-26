@@ -13,7 +13,7 @@ import { buildAliasIndex, resolveEntity } from './resolver';
 export function processProductName(
   rawProductName: string,
   aliasIndex: Map<string, AliasEntry>,
-  canonical: CanonicalData
+  canonical?: CanonicalData
 ): PipelineOutput {
   const parsed = parseProductName(rawProductName);
   const resolution = resolveEntity(parsed, aliasIndex, canonical);
@@ -52,7 +52,7 @@ export function processProductName(
 export function processBatch(
   rawNames: string[],
   aliasIndex: Map<string, AliasEntry>,
-  canonical: CanonicalData
+  canonical?: CanonicalData
 ): PipelineOutput[] {
   return rawNames.map((name) => processProductName(name, aliasIndex, canonical));
 }

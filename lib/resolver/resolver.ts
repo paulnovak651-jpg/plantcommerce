@@ -200,7 +200,7 @@ export function buildAliasIndex(canonical: CanonicalData): Map<string, AliasEntr
 export function resolveEntity(
   parsed: ParsedProductName,
   aliasIndex: Map<string, AliasEntry>,
-  canonical: CanonicalData
+  canonical?: CanonicalData
 ): ResolutionResult {
   const normCore = normalize(parsed.coreName);
 

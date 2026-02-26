@@ -14,7 +14,6 @@ import {
   type NurseryScraper,
 } from '@/lib/scraper';
 import { processProductName } from '@/lib/resolver/pipeline';
-import type { CanonicalData } from '@/lib/resolver/types';
 import { pipelineLog, capErrorSamples, SCRAPER_VERSION } from '@/lib/pipeline/logger';
 import { requireCronAuth } from '@/lib/pipeline/auth';
 
@@ -70,19 +69,12 @@ export async function GET(request: NextRequest) {
     const aliasIndex = await buildAliasIndexFromSupabase(supabase);
     pipelineLog('info', 'alias_index_ready', { entries: aliasIndex.size });
 
-    const canonical: CanonicalData = {
-      plant_entities: [],
-      cultivars: [],
-      named_materials: [],
-      populations: [],
-    };
-
     const results: NurseryRunSummary[] = [];
     let anyImportsCompleted = false;
 
     for (const scraper of scrapers) {
       results.push(
-        await runNurseryPipeline(scraper, supabase, aliasIndex, canonical)
+        await runNurseryPipeline(scraper, supabase, aliasIndex)
       );
       if (results[results.length - 1].importRunId) {
         anyImportsCompleted = true;
@@ -160,8 +152,7 @@ function selectScrapers(nurseryFilter: string | null): NurseryScraper[] {
 async function runNurseryPipeline(
   scraper: NurseryScraper,
   supabase: ReturnType<typeof createPipelineClient>,
-  aliasIndex: Awaited<ReturnType<typeof buildAliasIndexFromSupabase>>,
-  canonical: CanonicalData
+  aliasIndex: Awaited<ReturnType<typeof buildAliasIndexFromSupabase>>
 ): Promise<NurseryRunSummary> {
   const nurseryStart = Date.now();
   let importRunId: string | null = null;
@@ -234,8 +225,7 @@ async function runNurseryPipeline(
       try {
         const output = processProductName(
           product.rawProductName,
-          aliasIndex,
-          canonical
+          aliasIndex
         );
 
         await writePipelineResult(supabase, output, nursery.id, importRunId, {
