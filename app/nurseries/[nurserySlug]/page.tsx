@@ -13,8 +13,15 @@ interface Props {
   params: Promise<{ nurserySlug: string }>;
 }
 
-function formatNurseryUpdateLabel(iso: string | null): string {
-  if (!iso) return 'Not yet scraped';
+function displayNurseryName(name: string): string {
+  if (name === name.toUpperCase() && /[A-Z]/.test(name)) {
+    return name.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+  return name;
+}
+
+function formatNurseryUpdateLabel(iso: string | null): string | null {
+  if (!iso) return null;
 
   const completedAt = new Date(iso);
   const now = new Date();
@@ -46,14 +53,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const location = [nursery.location_city, nursery.location_state, nursery.location_country]
     .filter(Boolean)
     .join(', ');
-  const title = `${nursery.name} — Inventory & Info`;
-  const description = `Browse inventory and availability at ${nursery.name}${location ? ` in ${location}` : ''}. Compare plant pricing and find what you need.`;
+  const displayName = displayNurseryName(nursery.name);
+  const title = `${displayName} — Inventory & Info`;
+  const description = `Browse inventory and availability at ${displayName}${location ? ` in ${location}` : ''}. Compare plant pricing and find what you need.`;
 
   return {
     title,
     description,
     openGraph: {
-      title: `${nursery.name} | Plant Commerce`,
+      title: `${displayName} | Plant Commerce`,
       description,
       url: `https://plantcommerce.app/nurseries/${nurserySlug}`,
     },
@@ -81,6 +89,7 @@ export default async function NurseryPage({ params }: Props) {
       .maybeSingle(),
   ]);
 
+  const displayName = displayNurseryName(nursery.name);
   const location = [nursery.location_city, nursery.location_state, nursery.location_country]
     .filter(Boolean)
     .join(', ');
@@ -100,7 +109,7 @@ export default async function NurseryPage({ params }: Props) {
   const orgJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: nursery.name,
+    name: displayName,
     url: nursery.website_url || `https://plantcommerce.app/nurseries/${nurserySlug}`,
     address: {
       '@type': 'PostalAddress',
@@ -116,13 +125,13 @@ export default async function NurseryPage({ params }: Props) {
         items={[
           { label: 'Home', href: '/' },
           { label: 'Nurseries', href: '/nurseries' },
-          { label: nursery.name },
+          { label: displayName },
         ]}
       />
 
       {/* Nursery header */}
       <section>
-        <Text variant="h1">{nursery.name}</Text>
+        <Text variant="h1">{displayName}</Text>
         <Text variant="body" color="secondary" className="mt-1">{location}</Text>
         {nursery.website_url && (
           <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -143,21 +152,17 @@ export default async function NurseryPage({ params }: Props) {
         )}
 
         {/* Metadata cards */}
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          {nursery.sales_type && (
-            <Surface elevation="raised" padding="compact">
-              <Text variant="caption" color="tertiary">Sales Type</Text>
-              <Text variant="body" className="font-medium">{nursery.sales_type}</Text>
-            </Surface>
-          )}
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <Surface elevation="raised" padding="compact">
             <Text variant="caption" color="tertiary">Active Offers</Text>
             <Text variant="body" className="font-medium">{inventory.length}</Text>
           </Surface>
-          <Surface elevation="raised" padding="compact">
-            <Text variant="caption" color="tertiary">Last Updated</Text>
-            <Text variant="body" className="font-medium">{lastUpdatedLabel}</Text>
-          </Surface>
+          {lastUpdatedLabel && (
+            <Surface elevation="raised" padding="compact">
+              <Text variant="caption" color="tertiary">Last Updated</Text>
+              <Text variant="body" className="font-medium">{lastUpdatedLabel}</Text>
+            </Surface>
+          )}
         </div>
       </section>
 

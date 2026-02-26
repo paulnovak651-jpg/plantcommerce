@@ -35,7 +35,7 @@ export async function getOffersForCultivar(supabase: SupabaseClient, cultivarId:
     .select(`
       *,
       nurseries (
-        id, slug, name, website_url, location_state, location_country
+        id, slug, name, website_url, location_state, location_country, latitude, longitude
       )
     `)
     .eq('cultivar_id', cultivarId)

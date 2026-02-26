@@ -6,6 +6,8 @@ import { Text } from '@/components/ui/Text';
 import { Tag } from '@/components/ui/Tag';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
+import { NurseryMap } from '@/components/NurseryMap';
+import type { NurseryPin } from '@/components/NurseryMap';
 
 export const metadata: Metadata = {
   title: 'Nurseries',
@@ -19,6 +21,13 @@ export const metadata: Metadata = {
   },
 };
 
+function displayNurseryName(name: string): string {
+  if (name === name.toUpperCase() && /[A-Z]/.test(name)) {
+    return name.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+  return name;
+}
+
 export default async function NurseriesPage() {
   const supabase = await createClient();
   const nurseries = await listNurseries(supabase);
@@ -26,6 +35,16 @@ export default async function NurseriesPage() {
   const comingSoonNurseries = nurseries.filter(
     (nursery: any) => nursery.offer_count === 0
   );
+
+  const nurseryPins: NurseryPin[] = liveNurseries
+    .filter((n: any) => n.latitude != null && n.longitude != null)
+    .map((n: any) => ({
+      id: n.id as string,
+      name: displayNurseryName(n.name as string),
+      slug: n.slug as string,
+      latitude: n.latitude as number,
+      longitude: n.longitude as number,
+    }));
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -65,18 +84,21 @@ export default async function NurseriesPage() {
         />
       ) : (
         <div className="space-y-6">
+          {nurseryPins.length > 0 && (
+            <NurseryMap nurseries={nurseryPins} height="300px" />
+          )}
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {liveNurseries.map((n: any) => (
               <Link key={n.id} href={`/nurseries/${n.slug}`}>
                 <div className="h-full rounded-[var(--radius-lg)] px-4 py-3 transition-colors hover:bg-surface-raised">
-                  <Text variant="h3" color="accent">{n.name}</Text>
+                  <Text variant="h3" color="accent">{displayNurseryName(n.name)}</Text>
                   <Text variant="sm" color="secondary" className="mt-1">
                     {[n.location_city, n.location_state, n.location_country]
                       .filter(Boolean)
                       .join(', ')}
                   </Text>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {n.sales_type && <Tag type="neutral">{n.sales_type}</Tag>}
                     <Tag type="availability">{n.offer_count} {n.offer_count === 1 ? 'offer' : 'offers'}</Tag>
                   </div>
                 </div>
@@ -86,10 +108,10 @@ export default async function NurseriesPage() {
 
           {comingSoonNurseries.length > 0 && (
             <section className="rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary px-4 py-3">
-              <Text variant="h3">Coming Soon</Text>
+              <Text variant="h3">More Nurseries Coming Soon</Text>
               <Text variant="sm" color="secondary" className="mt-1">
-                We're adding inventory from:{' '}
-                {comingSoonNurseries.map((nursery: any) => nursery.name).join(', ')}.
+                We&rsquo;re expanding our network. More nurseries will appear here as we add
+                inventory sources.
               </Text>
             </section>
           )}

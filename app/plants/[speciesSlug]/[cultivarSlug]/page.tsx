@@ -18,6 +18,8 @@ import { Disclosure } from '@/components/ui/Disclosure';
 import { TraitGrid } from '@/components/ui/TraitGrid';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
+import { NurseryMap } from '@/components/NurseryMap';
+import type { NurseryPin } from '@/components/NurseryMap';
 
 interface Props {
   params: Promise<{ speciesSlug: string; cultivarSlug: string }>;
@@ -108,6 +110,23 @@ export default async function CultivarPage({ params }: Props) {
     getLegalIdentifiers(supabase, cultivar.id),
     species?.id ? getGrowingProfile(supabase, species.id) : Promise.resolve(null),
   ]);
+
+  const seen = new Set<string>();
+  const nurseryPins: NurseryPin[] = offers
+    .filter(
+      (o: any) =>
+        o.nurseries?.latitude != null &&
+        o.nurseries?.longitude != null &&
+        !seen.has(o.nurseries.id) &&
+        seen.add(o.nurseries.id)
+    )
+    .map((o: any) => ({
+      id: o.nurseries.id as string,
+      name: o.nurseries.name as string,
+      slug: o.nurseries.slug as string,
+      latitude: o.nurseries.latitude as number,
+      longitude: o.nurseries.longitude as number,
+    }));
 
   // JSON-LD: Product + Offer[]
   const productJsonLd = {
@@ -285,6 +304,16 @@ export default async function CultivarPage({ params }: Props) {
           />
         )}
       </section>
+
+      {/* MINI MAP */}
+      {nurseryPins.length > 0 && (
+        <section>
+          <Text variant="h2" className="mb-3">
+            Where to Buy
+          </Text>
+          <NurseryMap nurseries={nurseryPins} height="200px" />
+        </section>
+      )}
 
       {/* ZONE 3: KNOWLEDGE (disclosure sections) */}
       {(aliases.length > 0 || legal.length > 0 || growingProfile != null) && (
