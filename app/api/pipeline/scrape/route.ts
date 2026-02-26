@@ -186,7 +186,7 @@ async function runNurseryPipeline(
 
     const { data: nursery } = await supabase
       .from('nurseries')
-      .select('id')
+      .select('id, consent_status')
       .eq('slug', scraper.nurserySlug)
       .single();
 
@@ -207,6 +207,31 @@ async function runNurseryPipeline(
         writeErrors: [],
         durationMs: Date.now() - nurseryStart,
         error: errorMsg,
+      };
+    }
+
+    // Consent gate: skip nurseries that have explicitly declined.
+    // Nurseries with 'pending' status still run — all 3 existing nurseries are pending
+    // until outreach emails are sent and responses come in.
+    // TODO: Once outreach is complete and responses are recorded, tighten this to:
+    //   if (nursery.consent_status !== 'approved') { ... skip ... }
+    if (nursery.consent_status === 'declined') {
+      pipelineLog('warn', 'nursery_skipped_consent_declined', {
+        nursery: scraper.nurserySlug,
+        consent_status: nursery.consent_status,
+      });
+      return {
+        nurserySlug: scraper.nurserySlug,
+        nurseryName: scraper.nurseryName,
+        importRunId: null,
+        productsScraped: 0,
+        resolved: 0,
+        unmatched: 0,
+        errored: 0,
+        scrapeErrors: [],
+        writeErrors: [],
+        durationMs: Date.now() - nurseryStart,
+        error: null,
       };
     }
 

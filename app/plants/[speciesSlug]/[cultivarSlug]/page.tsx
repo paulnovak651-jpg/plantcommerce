@@ -6,6 +6,7 @@ import {
   getAliasesForCultivar,
   getLegalIdentifiers,
 } from '@/lib/queries/cultivars';
+import { getGrowingProfile } from '@/lib/queries/growing';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -19,6 +20,65 @@ import { JsonLd } from '@/components/JsonLd';
 
 interface Props {
   params: Promise<{ speciesSlug: string; cultivarSlug: string }>;
+}
+
+function fmtEnum(val: string): string {
+  return val
+    .split('_')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function GrowingProfileGrid({ profile }: { profile: Record<string, unknown> }) {
+  const rows: Array<{ label: string; value: string }> = [];
+
+  if (profile.usda_zone_min != null && profile.usda_zone_max != null) {
+    const zones = `Zone ${profile.usda_zone_min}–${profile.usda_zone_max}`;
+    rows.push({
+      label: 'USDA Zones',
+      value: profile.usda_zone_notes ? `${zones} — ${profile.usda_zone_notes}` : zones,
+    });
+  }
+  if (profile.chill_hours_min != null && profile.chill_hours_max != null) {
+    rows.push({ label: 'Chill Hours', value: `${profile.chill_hours_min}–${profile.chill_hours_max} hrs` });
+  }
+  if (profile.mature_height_min_ft != null && profile.mature_height_max_ft != null) {
+    rows.push({ label: 'Mature Height', value: `${profile.mature_height_min_ft}–${profile.mature_height_max_ft} ft` });
+  }
+  if (profile.mature_spread_min_ft != null && profile.mature_spread_max_ft != null) {
+    rows.push({ label: 'Mature Spread', value: `${profile.mature_spread_min_ft}–${profile.mature_spread_max_ft} ft` });
+  }
+  if (profile.sun_requirement != null) {
+    rows.push({ label: 'Sun', value: fmtEnum(profile.sun_requirement as string) });
+  }
+  if (profile.water_needs != null) {
+    rows.push({ label: 'Water', value: fmtEnum(profile.water_needs as string) });
+  }
+  if (profile.soil_ph_min != null && profile.soil_ph_max != null) {
+    rows.push({ label: 'Soil pH', value: `${profile.soil_ph_min}–${profile.soil_ph_max}` });
+  }
+  if (profile.years_to_bearing_min != null && profile.years_to_bearing_max != null) {
+    rows.push({ label: 'Years to Bearing', value: `${profile.years_to_bearing_min}–${profile.years_to_bearing_max} yrs` });
+  }
+  if (profile.growth_rate != null) {
+    rows.push({ label: 'Growth Rate', value: fmtEnum(profile.growth_rate as string) });
+  }
+  if (profile.native_range_description != null) {
+    rows.push({ label: 'Native Range', value: profile.native_range_description as string });
+  }
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+      {rows.map(({ label, value }) => (
+        <div key={label}>
+          <Text variant="caption" color="tertiary">{label}</Text>
+          <Text variant="body">{value}</Text>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function getAvailabilityTag(rawAvailability: string | null): {
@@ -98,13 +158,14 @@ export default async function CultivarPage({ params }: Props) {
 
   if (!cultivar) notFound();
 
-  const [offers, aliases, legal] = await Promise.all([
+  const species = (cultivar as any).plant_entities;
+
+  const [offers, aliases, legal, growingProfile] = await Promise.all([
     getOffersForCultivar(supabase, cultivar.id),
     getAliasesForCultivar(supabase, cultivar.id),
     getLegalIdentifiers(supabase, cultivar.id),
+    species?.id ? getGrowingProfile(supabase, species.id) : Promise.resolve(null),
   ]);
-
-  const species = (cultivar as any).plant_entities;
 
   // JSON-LD: Product + Offer[]
   const productJsonLd = {
@@ -149,7 +210,7 @@ export default async function CultivarPage({ params }: Props) {
       <section>
         <div className="flex items-start gap-3">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Text variant="h1">{cultivar.canonical_name}</Text>
               <Tag type="neutral">{cultivar.material_type.replace(/_/g, ' ')}</Tag>
             </div>
@@ -223,7 +284,7 @@ export default async function CultivarPage({ params }: Props) {
 
               return (
                 <Surface key={offer.id} elevation="raised" padding="default">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                     <Link
                       href={`/nurseries/${offer.nurseries?.slug}`}
@@ -251,7 +312,7 @@ export default async function CultivarPage({ params }: Props) {
                         </div>
                       )}
                     </div>
-                    <div className="text-right">
+                    <div className="sm:text-right">
                       {offer.raw_price_text ? (
                         <Text variant="price">{offer.raw_price_text}</Text>
                       ) : (
@@ -284,8 +345,14 @@ export default async function CultivarPage({ params }: Props) {
       </section>
 
       {/* ZONE 3: KNOWLEDGE (disclosure sections) */}
-      {(aliases.length > 0 || legal.length > 0) && (
+      {(aliases.length > 0 || legal.length > 0 || growingProfile != null) && (
         <section>
+          {growingProfile != null && (
+            <Disclosure title="Growing Requirements">
+              <GrowingProfileGrid profile={growingProfile} />
+            </Disclosure>
+          )}
+
           {aliases.length > 0 && (
             <Disclosure
               title="Also Known As"
