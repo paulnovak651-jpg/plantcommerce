@@ -69,6 +69,11 @@ export async function GET(request: NextRequest) {
     const aliasIndex = await buildAliasIndexFromSupabase(supabase);
     pipelineLog('info', 'alias_index_ready', { entries: aliasIndex.size });
 
+    // TODO: When multi-genus is active, detect genus from scraper metadata
+    // and load the appropriate GenusConfig from lib/resolver/genus-config.ts.
+    // For now, all products use the default hazelnut config (Corylus).
+    // The getGenusConfig('corylus') pattern is ready to use when needed.
+
     const results: NurseryRunSummary[] = [];
     let anyImportsCompleted = false;
 

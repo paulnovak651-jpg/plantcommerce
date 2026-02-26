@@ -14,6 +14,7 @@ import type {
   ResolutionStatus,
 } from './types';
 import { normalize, parseProductName } from './parser';
+import { DEFAULT_RESOLVER_CONFIG, type ResolverConfig } from './resolver-config';
 
 // ── Confidence scores by resolution method ──
 
@@ -32,17 +33,7 @@ const CONFIDENCE: Record<ResolutionMethod, number> = {
   none: 0.0,
 };
 
-// ── Species keyword map ──
-
-const SPECIES_KEYWORDS: Record<string, string[]> = {
-  american: ['american hazelnut', 'corylus americana'],
-  beaked: ['beaked hazelnut', 'corylus cornuta'],
-  chilean: ['chilean hazelnut', 'gevuina avellana'],
-  european: ['european hazelnut', 'corylus avellana'],
-  turkish: ['turkish tree hazel', 'corylus colurna'],
-};
-
-const GENERIC_DEFAULT_CANDIDATES = ['european hazelnut', 'corylus avellana'];
+// Species keywords and generic defaults are now in resolver-config.ts.
 
 /**
  * Build an alias index from canonical entity data (JSON file or Supabase query).
@@ -200,8 +191,11 @@ export function buildAliasIndex(canonical: CanonicalData): Map<string, AliasEntr
 export function resolveEntity(
   parsed: ParsedProductName,
   aliasIndex: Map<string, AliasEntry>,
-  canonical?: CanonicalData
+  canonical?: CanonicalData,
+  resolverConfig?: ResolverConfig
 ): ResolutionResult {
+  const { speciesKeywords, genericDefaultCandidates } =
+    resolverConfig ?? DEFAULT_RESOLVER_CONFIG;
   const normCore = normalize(parsed.coreName);
 
   function hit(method: ResolutionMethod, entry: AliasEntry): ResolutionResult {
@@ -252,8 +246,8 @@ export function resolveEntity(
   }
 
   // 7. Species keyword match
-  if (normCore in SPECIES_KEYWORDS) {
-    const candidates = SPECIES_KEYWORDS[normCore];
+  if (normCore in speciesKeywords) {
+    const candidates = speciesKeywords[normCore];
     const speciesMatch = findPlantEntityByCandidates(aliasIndex, candidates);
     if (speciesMatch) {
       return {
@@ -271,7 +265,7 @@ export function resolveEntity(
   // 8. Generic/empty core → default to C. avellana by alias index
   if (!normCore || ['', 'seedling', 'seeds', 'sdlg'].includes(normCore)) {
     const defaultMatch =
-      findPlantEntityByCandidates(aliasIndex, GENERIC_DEFAULT_CANDIDATES) ??
+      findPlantEntityByCandidates(aliasIndex, genericDefaultCandidates) ??
       findFirstPlantEntity(aliasIndex);
 
     if (defaultMatch) {

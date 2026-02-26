@@ -5,6 +5,7 @@
 import type { CanonicalData, AliasEntry, PipelineOutput, ResolutionStatus } from './types';
 import { parseProductName } from './parser';
 import { buildAliasIndex, resolveEntity } from './resolver';
+import { type ResolverConfig } from './resolver-config';
 
 /**
  * Process a raw product name through the full pipeline.
@@ -13,10 +14,11 @@ import { buildAliasIndex, resolveEntity } from './resolver';
 export function processProductName(
   rawProductName: string,
   aliasIndex: Map<string, AliasEntry>,
-  canonical?: CanonicalData
+  canonical?: CanonicalData,
+  resolverConfig?: ResolverConfig
 ): PipelineOutput {
   const parsed = parseProductName(rawProductName);
-  const resolution = resolveEntity(parsed, aliasIndex, canonical);
+  const resolution = resolveEntity(parsed, aliasIndex, canonical, resolverConfig);
 
   // Map entity type → resolution_status
   const statusMap: Record<string, ResolutionStatus> = {
@@ -52,13 +54,16 @@ export function processProductName(
 export function processBatch(
   rawNames: string[],
   aliasIndex: Map<string, AliasEntry>,
-  canonical?: CanonicalData
+  canonical?: CanonicalData,
+  resolverConfig?: ResolverConfig
 ): PipelineOutput[] {
-  return rawNames.map((name) => processProductName(name, aliasIndex, canonical));
+  return rawNames.map((name) => processProductName(name, aliasIndex, canonical, resolverConfig));
 }
 
 // Re-export everything for clean imports
 export { parseProductName } from './parser';
 export { normalize } from './parser';
 export { buildAliasIndex, resolveEntity } from './resolver';
+export type { ResolverConfig } from './resolver-config';
+export { DEFAULT_RESOLVER_CONFIG } from './resolver-config';
 export type * from './types';

@@ -158,29 +158,28 @@ export function parseProductName(
     working = working.slice(0, marketing.index!);
   }
 
-  // Strip "The Crazy Productive One" nickname.
-  const nickname = working.match(/["\s]*The\s+Crazy\s+Productive\s+One["\s]*/);
-  if (nickname) {
-    result.marketingText = 'The Crazy Productive One';
-    working =
-      working.slice(0, nickname.index!) +
-      working.slice(nickname.index! + nickname[0].length);
+  // Strip nickname text (config-driven) — matched text is saved as marketingText.
+  for (const configuredPattern of config.nicknamePatterns ?? []) {
+    const pattern = cloneRegex(configuredPattern);
+    const match = working.match(pattern);
+    if (match) {
+      result.marketingText = match[0].replace(/^["\s]+|["\s]+$/g, '');
+      working =
+        working.slice(0, match.index!) +
+        working.slice(match.index! + match[0].length);
+      break;
+    }
   }
 
-  // Strip informal text: "We now have..."
-  const informal = working.match(/We now have.*$/);
-  if (informal) {
-    working = working.slice(0, informal.index!);
+  // Strip suffix text patterns (config-driven) — trailing noise, stripped silently.
+  for (const configuredPattern of config.suffixStripPatterns ?? []) {
+    const pattern = cloneRegex(configuredPattern);
+    const match = working.match(pattern);
+    if (match) {
+      working = working.slice(0, match.index!);
+      break;
+    }
   }
-
-  // Strip "Start your own orchard" suffixes.
-  const suffix = working.match(/[-–]\s*Start\s+your\s+.*$/i);
-  if (suffix) {
-    working = working.slice(0, suffix.index!);
-  }
-
-  // Strip remaining (Filbert) parenthetical.
-  working = working.replace(/\((Filbert|filbert)\)/g, '');
 
   // Strip slash compound names: keep first part.
   const slash = working.match(/\s*\/\s*.*$/);
@@ -194,7 +193,6 @@ export function parseProductName(
   // Clean up.
   working = working.replace(/^[\s,\-–]+|[\s,\-–]+$/g, '');
   working = working.replace(/[''ʼ']/g, '');
-  working = working.replace(/,?\s*Medium\/Short Bush/g, '');
   working = working.replace(/\s+/g, ' ').trim();
 
   result.coreName = working;

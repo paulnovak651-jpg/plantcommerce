@@ -15,6 +15,10 @@ export interface ParserConfig {
   propagationPatterns: PropagationPattern[];
   saleFormPatterns: SaleFormPattern[];
   noiseTerms: RegExp[];
+  /** Patterns for product nicknames — matched text is saved as marketingText. */
+  nicknamePatterns?: RegExp[];
+  /** Patterns for trailing text that should be stripped silently. */
+  suffixStripPatterns?: RegExp[];
 }
 
 export const DEFAULT_PARSER_CONFIG: ParserConfig = {
@@ -56,11 +60,20 @@ export const DEFAULT_PARSER_CONFIG: ParserConfig = {
     /\bFilbert\s+Hazelnut\b/gi,
     /\bHazelnut\b/gi,
     /\bHAZELNUT\b/g,
+    /\(Filbert\)/gi,            // parenthetical form — must precede bare \bFilbert\b
     /\bFilbert\b/gi,
     /\bFILBERT\b/g,
     /\bHazel\b/gi,
     /\bHAZEL\b/g,
     /\bTree\b/gi,
     // NOTE: "Cultivar" intentionally not stripped; valid name token at Z's.
+    /,?\s*Medium\/Short Bush/g, // Grimo growth habit descriptor
+  ],
+  nicknamePatterns: [
+    /["\s]*The\s+Crazy\s+Productive\s+One["\s]*/,
+  ],
+  suffixStripPatterns: [
+    /We now have.*$/,
+    /[-–]\s*Start\s+your\s+.*$/i,
   ],
 };
