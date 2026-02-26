@@ -38,10 +38,16 @@ export async function getTaxonomyPath(
 
     if (!node) break;
 
-    const rankRow = node.taxonomy_ranks as unknown as { rank_name: string } | null;
+    // PostgREST may return the FK join as an array or object depending on
+    // whether the client has generated types. Handle both cases safely.
+    const rankRaw = node.taxonomy_ranks as unknown;
+    const rankName =
+      Array.isArray(rankRaw)
+        ? (rankRaw[0] as { rank_name?: string } | undefined)?.rank_name
+        : (rankRaw as { rank_name?: string } | null)?.rank_name;
     path.unshift({
       id: node.id,
-      rank: rankRow?.rank_name ?? 'unknown',
+      rank: rankName ?? 'unknown',
       name: node.name,
       botanical_name: node.botanical_name ?? null,
       slug: node.slug,
