@@ -94,27 +94,26 @@ Live: https://plantfinder-cyan.vercel.app
 
 - Sprint 4 Phase 1 ✅ complete — RangeBar, IconRating, TraitGrid visual components; species + cultivar pages show growing bars; homepage cleaned up
 - Sprint 4 Phase 2 ✅ complete — Explorer page at `/browse`, FilterBar (zone/category/availability), enhanced Cladogram (mini zone bars, cultivar counts, category dimming), detail panel, nav simplified to Search | Explore | Nurseries, species page stats + availability badges
+- Sprint 4 Phase 3 ✅ complete — Leaflet nursery maps on index (300px) + cultivar mini-map (200px); nursery detail cleanup (ALL CAPS names, hide null Last Updated, remove Sales Type)
+- Sprint 4 Phase 4 ✅ complete — `community_listings` table (migration 013), POST/GET `/api/listings`, ListingCard + ListingForm components, `/listings/new` submission page, `/admin/listings` moderation queue, listing sections on cultivar + species pages
 - 3 nurseries live: Burnt Ridge (18 offers), Grimo (28 offers), Raintree (validated)
 - Knowledge graph: taxonomy tree + growing profiles for 4 Corylus species
-- Deployment live at https://plantfinder-cyan.vercel.app (commit 37f7b95)
+- Deployment live at https://plantfinder-cyan.vercel.app (commit 4b57a89)
 
 ---
 
 ## Current Priorities
 
-**Sprint 4 Phase 3 — Nursery Maps (Codex)**
-1. Install Leaflet: `npm install leaflet react-leaflet && npm install -D @types/leaflet`
-2. Apply migration `012_nursery_coordinates.sql` (add lat/lng to nurseries, seed 3 live nurseries)
-3. Build `components/NurseryMap.tsx` — `'use client'` + `next/dynamic` with `ssr:false`, OSM tiles, green pins, fitBounds
-4. Add map to nursery index page (`app/nurseries/page.tsx`) — above cards, 300px mobile / 400px desktop
-5. Add mini-map to cultivar page (`app/plants/[speciesSlug]/[cultivarSlug]/page.tsx`) — 200px, shows nurseries carrying this cultivar
-6. Nursery detail page cleanup: hide null "Last Updated", remove "Sales Type" card, clean ALL CAPS names
+**Next Up — Nursery Outreach & Consent**
+- Draft outreach email template for Burnt Ridge, Grimo, Raintree
+- Polish site before contacting nurseries (site is now ready)
+- Contact existing 3 nurseries for retroactive consent
 
-**After Phase 3 — Phase 4 Marketplace (Claude Code + Codex)**
-- Migration 013: `community_listings` table with RLS
-- Listing submission API + form
-- Listing cards on cultivar/species pages
-- Moderation admin at `/admin/listings`
+**After Outreach — Phase 5 (TBD)**
+- Supabase Auth + lightweight user accounts (tie listings to accounts, trust tier progression)
+- Price alerts / stock notifications
+- Build remaining scrapers (One Green World + others, consent required first)
+- Parser generalization beyond hazelnut
 
 ---
 
@@ -150,6 +149,13 @@ Live: https://plantfinder-cyan.vercel.app
 | Cladogram | `components/Cladogram.tsx` |
 | TraitGrid | `components/ui/TraitGrid.tsx` |
 | RangeBar | `components/ui/RangeBar.tsx` |
+| Nursery map (dynamic wrapper) | `components/NurseryMap.tsx` |
+| Nursery map (Leaflet client) | `components/NurseryMapClient.tsx` |
+| Listing card | `components/ListingCard.tsx` |
+| Listing submission form | `components/ListingForm.tsx` |
+| Listings API | `app/api/listings/route.ts` |
+| Listings submission page | `app/listings/new/page.tsx` |
+| Listings moderation admin | `app/admin/listings/page.tsx` |
+| Listings DB queries | `lib/queries/listings.ts` |
 | SQL migrations | `sql/migrations/` |
 | Full context + architecture | `CONTEXT.md` |
-| Sprint 4 spec | `SPRINT4.md` |

@@ -1,6 +1,6 @@
 # PlantCommerce — Project Context
 
-> **Last updated:** 2026-02-26 (Sprint 4 Phase 2)
+> **Last updated:** 2026-02-26 (Sprint 4 Phase 4)
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder
@@ -11,24 +11,26 @@
 
 ## What This Is
 
-A read-only plant comparison platform that aggregates nursery inventory from across North America, resolves messy product names into structured botanical data, and lets users search/compare availability and pricing. Think "Kayak for plants."
+A plant comparison and community marketplace platform for the permaculture community. Users search for a cultivar, see which nurseries carry it, compare prices and availability, and post WTS/WTB community listings. Think "Kayak for plants" with a community trading layer.
 
-No e-commerce. No payments. No accounts. Purely informational for v1.
+No user accounts (v1). No payments. Nursery offers are read-only aggregated data; community listings are anon-submitted and admin-moderated.
 
 ---
 
 ## Current State (Honest Assessment)
 
-- **Foundation:** Solid. 99 tests passing, TypeScript strict, CI green. 29 routes (API + UI).
+- **Foundation:** Solid. 99 tests passing, TypeScript strict, CI green. 33 routes (API + UI).
 - **Live data:** 3 nurseries live (Burnt Ridge 18 offers, Grimo 28 offers, Raintree validated). Pipeline consent-gated.
-- **Deployment:** ✅ Live at https://plantfinder-cyan.vercel.app (commit 37f7b95). Cron: Monday 6am UTC.
+- **Deployment:** ✅ Live at https://plantfinder-cyan.vercel.app (commit 4b57a89). Cron: Monday 6am UTC.
 - **Knowledge graph:** Taxonomy tree (37 nodes, Kingdom→Genus) + growing profiles for 4 Corylus species in Supabase.
 - **Visual data:** Sprint 4 Phase 1 ✅ — RangeBar, IconRating, TraitGrid components. Species + cultivar pages show visual growing bars.
-- **Explorer:** Sprint 4 Phase 2 ✅ — `/browse` is now the Explorer: FilterBar (zone/category/availability), enhanced Cladogram (mini zone bars, cultivar counts, category dimming), detail panel with TraitGrid, nav simplified to Search | Explore | Nurseries.
+- **Explorer:** Sprint 4 Phase 2 ✅ — `/browse` Explorer: FilterBar (zone/category/availability), enhanced Cladogram (mini zone bars, cultivar counts, category dimming), detail panel with TraitGrid, nav: Search | Explore | Nurseries.
 - **Species pages:** Stats line (N cultivars · N nurseries with stock), availability badges on cultivar cards.
+- **Nursery maps:** Sprint 4 Phase 3 ✅ — Leaflet + OpenStreetMap, green pins, fitBounds. 300px map on nursery index, 200px mini-map on cultivar page. Nursery detail cleanup (ALL CAPS names → title case, no Sales Type card, Last Updated hidden if null).
+- **Community marketplace:** Sprint 4 Phase 4 ✅ — `community_listings` table (migration 013, RLS), anonymous WTS/WTB submissions at `/listings/new`, auto-resolver (ilike cultivar match), 90-day expiry. Admin moderation at `/admin/listings`. ListingCard + ListingForm components. Listing sections on cultivar + species pages.
 - **Search:** Zone-aware materialized view — "zone 4 hazelnut" returns results.
-- **Admin tools:** `/admin/unmatched` (token-protected). Resolution tracking operational.
-- **User stickiness:** Zero. No accounts, saved searches, price alerts, or notifications.
+- **Admin tools:** `/admin/unmatched` + `/admin/listings` (both token-protected).
+- **User stickiness:** Low. Community listings are the first user-generated content hook. No accounts yet.
 
 ---
 
@@ -53,8 +55,11 @@ No e-commerce. No payments. No accounts. Purely informational for v1.
 - **legal_identifiers** — patent/trademark info
 
 ### Commerce tables
-- **nurseries** — 10 in DB currently
+- **nurseries** — 10 in DB (lat/lng added migration 012); 3 live with inventory
 - **inventory_offers** — what a nursery sells, linked to cultivar or plant_entity
+
+### Community tables
+- **community_listings** — user-submitted WTS/WTB listings (migration 013); anonymous v1, admin-moderated; RLS: anon can insert + read approved, service role bypasses
 
 ### Pipeline tables
 - **import_runs** — tracks each scrape session
@@ -73,9 +78,9 @@ No e-commerce. No payments. No accounts. Purely informational for v1.
 
 ## API
 
-8 endpoints with consistent response envelope, HATEOAS links, and structured data (llms.txt + JSON-LD) for AI agent discoverability.
+9 endpoints with consistent response envelope, HATEOAS links, and structured data (llms.txt + JSON-LD) for AI agent discoverability.
 
-Endpoints cover: plants, cultivars, nurseries, search, pipeline trigger.
+Endpoints cover: plants, cultivars, nurseries, search, pipeline trigger, community listings (POST submit + GET approved).
 
 ---
 
@@ -135,7 +140,7 @@ Scraper (fetches nursery HTML)
 
 ### Architecture gaps
 6. ~~**No admin interface**~~ ✅ `/admin/unmatched` implemented for unmatched review workflow
-7. **No user accounts or engagement features** — no saved searches, price alerts, stock notifications
+7. **No user accounts yet** — community listings work without auth (v1); next step is Supabase Auth for trust tier progression, saved searches, price alerts
 8. ~~**No error monitoring**~~ ✅ `/api/pipeline/health` endpoint implemented
 9. **No nursery consent tracking** — need `consent_status` on nurseries table before scaling scraper count
 
@@ -159,10 +164,11 @@ Scraper (fetches nursery HTML)
 8. ~~**Sprint 3: "Depth Before Breadth"**~~ ✅ Complete (2026-02-26) — taxonomy, growing profiles, UI polish deployed
 9. ~~**Sprint 4 Phase 1**~~ ✅ Done — RangeBar, IconRating, TraitGrid; species + cultivar pages show visual bars; homepage cleanup
 10. ~~**Sprint 4 Phase 2**~~ ✅ Done (2026-02-26) — Explorer page, FilterBar, enhanced Cladogram, nav simplified, species page stats + badges
-11. **Sprint 4 Phase 3** ← NEXT — Nursery maps (Leaflet, geocoded pins, mini-map on cultivar page)
-12. **Sprint 4 Phase 4** — Marketplace foundation (community WTS/WTB listings, submission form, moderation)
-10. **Nursery consent & outreach** — draft outreach template, contact existing 3 nurseries
-11. **Build remaining scrapers** — One Green World + others, only after consent obtained
+11. ~~**Sprint 4 Phase 3**~~ ✅ Done — Leaflet nursery maps (index + cultivar mini-map), nursery detail cleanup
+12. ~~**Sprint 4 Phase 4**~~ ✅ Done — Community marketplace foundation (listings table, API, form, admin, cards on cultivar/species pages)
+13. **Nursery consent & outreach** ← NEXT — draft outreach template, contact existing 3 nurseries
+14. **Build remaining scrapers** — One Green World + others, only after consent obtained
+15. **Phase 5: Auth + engagement** — Supabase Auth, tie listings to accounts, trust tier progression, price alerts
 
 ---
 
@@ -233,8 +239,8 @@ Use these as the source of truth for search URL state, result card fields, listi
       ├── Pages: home, search, species, cultivar, nursery index, nursery detail
       │   └── Server-rendered, pulls from Supabase directly
       │
-      ├── API (8 endpoints)
-      │   └── Plants, cultivars, nurseries, search, pipeline trigger
+      ├── API (9 endpoints)
+      │   └── Plants, cultivars, nurseries, search, pipeline trigger, listings
       │
       └── Pipeline (cron endpoint, manual trigger)
             │
@@ -246,8 +252,9 @@ Use these as the source of truth for search URL state, result card fields, listi
                   ▼
           [Supabase PostgreSQL]
             ├── plant_entities, cultivars, aliases, legal_identifiers
-            ├── nurseries, inventory_offers
+            ├── nurseries (lat/lng), inventory_offers
             ├── import_runs, raw_inventory_rows, unmatched_names
+            ├── community_listings (WTS/WTB, pending→approved, RLS)
             └── material_search_index (materialized view)
 ```
 
@@ -269,6 +276,8 @@ Interactive system map available at `/system-map` (dev tool, not linked in nav).
 | 2026-02-25 | Vercel project "plantfinder" (diverged from plantcommerce repo) | GitHub integration points at old plantfinder repo; direct CLI deploy used for now |
 | 2026-02-26 | Foundation hardening sprint completed | ESM imports, offer key safety, dead code removal, parser audit, Raintree live run, error boundaries, health monitoring |
 | 2026-02-26 | Consent-first nursery policy adopted | No new scrapers without nursery awareness/approval. Existing nurseries to be notified retroactively. Trust > speed in permaculture community |
+| 2026-02-26 | Sprint 4 Phase 3: Nursery maps | Leaflet + OSM, green pins, fitBounds, NurseryMap dynamic wrapper (ssr:false), 300px index map + 200px cultivar mini-map; lat/lng seeded for 3 nurseries |
+| 2026-02-26 | Sprint 4 Phase 4: Community marketplace | community_listings table (no-auth v1), anon submissions → pending → admin approval, resolver auto-links cultivar on submit, 90-day expiry |
 
 ---
 
