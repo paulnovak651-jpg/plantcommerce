@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { listPlantEntities } from '@/lib/queries/plants';
 import Link from 'next/link';
@@ -15,6 +16,18 @@ interface SpeciesOfferRow {
 interface NurseryOfferRow {
   nursery_id: string;
 }
+
+export const metadata: Metadata = {
+  title: 'Plant Commerce',
+  description:
+    'Search once, compare nursery stock across North America. Plant Commerce aggregates cultivars, pricing, and availability across nurseries.',
+  openGraph: {
+    title: 'Plant Commerce',
+    description:
+      'Search once, compare nursery stock across North America. Plant Commerce aggregates cultivars, pricing, and availability across nurseries.',
+    url: 'https://plantcommerce.app/',
+  },
+};
 
 function formatFreshnessLabel(iso: string | null): string {
   if (!iso) return 'not yet available';
@@ -147,7 +160,7 @@ export default async function HomePage() {
       </section>
 
       {/* Visual bridge between hero and browse */}
-      <div className="mx-auto my-6 h-px w-16 bg-border" />
+      <div className="mx-auto my-12 h-px w-16 bg-border" />
 
       {/* Browse by Species grid */}
       <section className="pb-8">

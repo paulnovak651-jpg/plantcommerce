@@ -25,15 +25,29 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const q = state.q;
 
   if (!q) {
+    const description = 'Search plants, cultivars, and nurseries across the permaculture community.';
     return {
       title: 'Search',
-      description: 'Search plants, cultivars, and nurseries across the permaculture community.',
+      description,
+      openGraph: {
+        title: 'Search | Plant Commerce',
+        description,
+        url: 'https://plantcommerce.app/search',
+      },
+      twitter: { card: 'summary' },
     };
   }
 
+  const description = `Search results for "${q}" - plants, cultivars, and nursery availability.`;
   return {
     title: `Search: "${q}"`,
-    description: `Search results for "${q}" — plants, cultivars, and nursery availability.`,
+    description,
+    openGraph: {
+      title: `Search: "${q}" | Plant Commerce`,
+      description,
+      url: `https://plantcommerce.app/search?q=${encodeURIComponent(q)}`,
+    },
+    twitter: { card: 'summary' },
     robots: { index: false },
   };
 }
@@ -100,3 +114,4 @@ export default async function SearchPage({ searchParams }: Props) {
     </div>
   );
 }
+

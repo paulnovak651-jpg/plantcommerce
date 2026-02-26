@@ -84,6 +84,14 @@ export default async function NurseryPage({ params }: Props) {
   const location = [nursery.location_city, nursery.location_state, nursery.location_country]
     .filter(Boolean)
     .join(', ');
+  const websiteHost = (() => {
+    if (!nursery.website_url) return null;
+    try {
+      return new URL(nursery.website_url).hostname.replace(/^www\./, '');
+    } catch {
+      return nursery.website_url;
+    }
+  })();
   const lastUpdatedLabel = formatNurseryUpdateLabel(
     latestCompletedRun?.completed_at ?? null
   );
@@ -117,14 +125,21 @@ export default async function NurseryPage({ params }: Props) {
         <Text variant="h1">{nursery.name}</Text>
         <Text variant="body" color="secondary" className="mt-1">{location}</Text>
         {nursery.website_url && (
-          <a
-            href={nursery.website_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-accent hover:underline"
-          >
-            {nursery.website_url}
-          </a>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <a
+              href={nursery.website_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-[var(--radius-md)] bg-accent px-3 py-1.5 text-sm font-medium text-text-inverse hover:bg-accent-hover"
+            >
+              Visit nursery website
+            </a>
+            {websiteHost && (
+              <Text variant="sm" color="tertiary">
+                {websiteHost}
+              </Text>
+            )}
+          </div>
         )}
 
         {/* Metadata cards */}
@@ -159,7 +174,7 @@ export default async function NurseryPage({ params }: Props) {
 
               return (
                 <Surface key={offer.id} elevation="raised" padding="default">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <Text variant="body" className="font-medium">
                         {cv ? (
@@ -182,18 +197,22 @@ export default async function NurseryPage({ params }: Props) {
                       </Text>
                       <Text variant="caption" color="tertiary">{offer.raw_product_name}</Text>
                     </div>
-                    <div className="text-right">
-                      {offer.raw_price_text && (
+                    <div className="sm:text-right">
+                      {offer.raw_price_text ? (
                         <Text variant="price">{offer.raw_price_text}</Text>
+                      ) : (
+                        <Text variant="sm" color="tertiary">
+                          Contact nursery for pricing
+                        </Text>
                       )}
                       {offer.product_page_url && (
                         <a
                           href={offer.product_page_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-accent hover:underline"
+                          className="mt-2 inline-block rounded-[var(--radius-md)] bg-accent px-3 py-1.5 text-sm font-medium text-text-inverse hover:bg-accent-hover"
                         >
-                          View at nursery &rarr;
+                          View at nursery
                         </a>
                       )}
                     </div>
@@ -205,7 +224,7 @@ export default async function NurseryPage({ params }: Props) {
         ) : (
           <EmptyState
             title="No active inventory"
-            description="No active inventory scraped yet. Run the pipeline to populate offers."
+            description="We don't have active offers from this nursery yet. We'll show inventory here as soon as it's available."
           />
         )}
       </section>
