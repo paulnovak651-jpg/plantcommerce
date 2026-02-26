@@ -77,9 +77,14 @@ CREATE POLICY "Public read approved listings"
 -- Anyone (anon) can submit — no auth required for v1
 CREATE POLICY "Anyone can submit listing"
   ON community_listings FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (
+    status = 'pending'
+    AND trust_tier = 0
+    AND mod_reason IS NULL
+  );
 
 COMMENT ON TABLE community_listings IS
   'User-submitted WTS/WTB listings. Anon submissions go to pending; admin approves before public display.';
 
 COMMIT;
+

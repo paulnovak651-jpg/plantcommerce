@@ -34,7 +34,7 @@ export function MobileMenu() {
           <div className="px-4 py-3">
             <MobileLink href="/search" onClick={close}>Search</MobileLink>
             <MobileLink href="/browse" onClick={close}>Explore</MobileLink>
-            <MobileLink href="/listings/new" onClick={close}>List a Plant</MobileLink>
+            <MobileLink href="/marketplace" onClick={close}>Marketplace</MobileLink>
             <MobileLink href="/nurseries" onClick={close}>Nurseries</MobileLink>
           </div>
         </div>

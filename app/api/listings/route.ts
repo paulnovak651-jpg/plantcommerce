@@ -1,10 +1,18 @@
-import { createAnonClient } from '@/lib/supabase/server';
+import { createAnonClient, createServiceClient } from '@/lib/supabase/server';
 import { apiSuccess, apiError } from '@/lib/api-helpers';
 
 const VALID_LISTING_TYPES = new Set(['wts', 'wtb']);
 const VALID_MATERIAL_TYPES = new Set([
   'unknown', 'potted', 'bareroot', 'scion', 'cutting', 'seed', 'rootstock', 'other',
 ]);
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function normalizeEmail(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null;
+  const email = raw.trim().toLowerCase();
+  if (!email) return null;
+  return EMAIL_RE.test(email) ? email : null;
+}
 
 export async function POST(request: Request) {
   let body: Record<string, unknown>;
@@ -49,14 +57,43 @@ export async function POST(request: Request) {
       ? material_type
       : 'unknown';
 
+  const normalizedEmail = normalizeEmail(contact_email);
+  if (contact_email && !normalizedEmail) {
+    return apiError('INVALID_FIELD', 'contact_email must be a valid email address', 422);
+  }
+
+  const supabase = createServiceClient();
+
+  // Rate limit: max 5 pending listings per email
+  if (normalizedEmail) {
+    const { count, error: countError } = await supabase
+      .from('community_listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'pending')
+      .eq('contact_email', normalizedEmail);
+
+    if (countError) {
+      console.error('Listing rate-limit check failed:', countError);
+      return apiError('DB_ERROR', 'Failed to validate listing limits', 500);
+    }
+
+    if ((count ?? 0) >= 5) {
+      return apiError(
+        'RATE_LIMITED',
+        'You already have 5 pending listings for this email. Please wait for moderation.',
+        429
+      );
+    }
+  }
+
   // Attempt resolver: exact case-insensitive cultivar name match
-  const supabase = createAnonClient();
   let cultivarId: string | null = null;
+  let plantEntityId: string | null = null;
   let resolveConfidence = 0.0;
 
   const { data: exactMatch } = await supabase
     .from('cultivars')
-    .select('id')
+    .select('id, plant_entity_id')
     .ilike('canonical_name', raw_cultivar_text.trim())
     .eq('curation_status', 'published')
     .limit(1)
@@ -64,7 +101,23 @@ export async function POST(request: Request) {
 
   if (exactMatch) {
     cultivarId = exactMatch.id as string;
+    plantEntityId = exactMatch.plant_entity_id as string;
     resolveConfidence = 0.90;
+  } else if (typeof raw_species_text === 'string' && raw_species_text.trim()) {
+    const { data: speciesMatch } = await supabase
+      .from('plant_entities')
+      .select('id')
+      .or(
+        `canonical_name.ilike.${raw_species_text.trim()},botanical_name.ilike.${raw_species_text.trim()}`
+      )
+      .eq('curation_status', 'published')
+      .limit(1)
+      .maybeSingle();
+
+    if (speciesMatch) {
+      plantEntityId = speciesMatch.id as string;
+      resolveConfidence = 0.60;
+    }
   }
 
   const { data: inserted, error } = await supabase
@@ -84,13 +137,11 @@ export async function POST(request: Request) {
           ? Math.floor(price_cents)
           : null,
       location_state: String(location_state).trim(),
-      contact_email:
-        typeof contact_email === 'string' && contact_email.trim()
-          ? contact_email.trim()
-          : null,
+      contact_email: normalizedEmail,
       notes:
         typeof notes === 'string' && notes.trim() ? notes.trim() : null,
       cultivar_id: cultivarId,
+      plant_entity_id: plantEntityId,
       resolve_confidence: resolveConfidence,
       status: 'pending',
     })

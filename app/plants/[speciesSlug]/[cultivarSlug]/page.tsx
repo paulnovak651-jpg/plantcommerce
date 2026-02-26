@@ -329,12 +329,12 @@ export default async function CultivarPage({ params }: Props) {
               </span>
             )}
           </Text>
-          <a
-            href={`/listings/new?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
+          <Link
+            href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
             className="text-sm text-accent hover:underline"
           >
             + List {cultivar.canonical_name}
-          </a>
+          </Link>
         </div>
         {communityListings.length > 0 ? (
           <div className="space-y-3">
@@ -346,7 +346,7 @@ export default async function CultivarPage({ params }: Props) {
           <p className="text-sm text-text-tertiary">
             No community listings yet.{' '}
             <a
-              href={`/listings/new?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
+              href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
               className="text-accent hover:underline"
             >
               Be the first to list this cultivar →

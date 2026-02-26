@@ -17,7 +17,11 @@ export interface CommunityListing {
   plant_entity_id: string | null;
   created_at: string;
   expires_at: string | null;
-  cultivars: { canonical_name: string; slug: string; plant_entity_id: string } | null;
+  cultivars: {
+    canonical_name: string;
+    slug: string;
+    plant_entities: { slug: string } | null;
+  } | null;
   plant_entities: { canonical_name: string; slug: string } | null;
 }
 
@@ -30,7 +34,7 @@ const PUBLIC_SELECT = `
   id, listing_type, raw_cultivar_text, raw_species_text, material_type,
   quantity, price_cents, location_state, notes, status, trust_tier,
   resolve_confidence, cultivar_id, plant_entity_id, created_at, expires_at,
-  cultivars(canonical_name, slug, plant_entity_id),
+  cultivars(canonical_name, slug, plant_entities(slug)),
   plant_entities(canonical_name, slug)
 `;
 
@@ -39,7 +43,7 @@ const ADMIN_SELECT = `
   quantity, price_cents, location_state, notes, status, trust_tier,
   resolve_confidence, cultivar_id, plant_entity_id, created_at, expires_at,
   contact_email, mod_reason,
-  cultivars(canonical_name, slug, plant_entity_id),
+  cultivars(canonical_name, slug, plant_entities(slug)),
   plant_entities(canonical_name, slug)
 `;
 
@@ -89,4 +93,23 @@ export async function getListingsForAdmin(
 
   const { data } = await query;
   return (data ?? []) as unknown as AdminListing[];
+}
+
+export async function getMarketplaceListings(
+  supabase: SupabaseClient,
+  listingType: 'all' | 'wts' | 'wtb' = 'all'
+): Promise<CommunityListing[]> {
+  let query = supabase
+    .from('community_listings')
+    .select(PUBLIC_SELECT)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (listingType !== 'all') {
+    query = query.eq('listing_type', listingType);
+  }
+
+  const { data } = await query;
+  return (data ?? []) as unknown as CommunityListing[];
 }

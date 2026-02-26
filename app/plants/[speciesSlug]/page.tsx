@@ -121,7 +121,7 @@ export default async function SpeciesPage({ params }: Props) {
               </span>
             )}
             {cultivars.length > 0 && offerStats.nurseryCount > 0 && (
-              <span className="mx-2 text-border-default">&middot;</span>
+              <span className="mx-2 text-border">&middot;</span>
             )}
             {offerStats.nurseryCount > 0 && (
               <span>

@@ -136,8 +136,7 @@ export default async function AdminListingsPage({ searchParams }: Props) {
             listing.cultivars?.canonical_name ?? listing.plant_entities?.canonical_name;
           const cultivarSlug = listing.cultivars?.slug;
           const speciesSlug =
-            (listing.cultivars as { plant_entity_id?: string } | null)
-              ?.plant_entity_id ?? listing.plant_entities?.slug;
+            listing.cultivars?.plant_entities?.slug ?? listing.plant_entities?.slug;
 
           return (
             <Surface key={listing.id} elevation="raised" padding="default">
