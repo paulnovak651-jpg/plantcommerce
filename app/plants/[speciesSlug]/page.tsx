@@ -9,7 +9,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Text } from '@/components/ui/Text';
 import { BotanicalName } from '@/components/ui/BotanicalName';
 import { Tag } from '@/components/ui/Tag';
-import { Surface } from '@/components/ui/Surface';
+import { TraitGrid } from '@/components/ui/TraitGrid';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
@@ -41,70 +41,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: { card: 'summary' },
   };
-}
-
-function formatEnumValue(val: string): string {
-  return val
-    .split('_')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-}
-
-function GrowingProfileSection({ profile }: { profile: Record<string, unknown> }) {
-  const rows: Array<{ label: string; value: string }> = [];
-
-  if (profile.usda_zone_min != null && profile.usda_zone_max != null) {
-    const zones = `Zone ${profile.usda_zone_min}–${profile.usda_zone_max}`;
-    rows.push({
-      label: 'USDA Zones',
-      value: profile.usda_zone_notes ? `${zones} — ${profile.usda_zone_notes}` : zones,
-    });
-  }
-  if (profile.chill_hours_min != null && profile.chill_hours_max != null) {
-    rows.push({ label: 'Chill Hours', value: `${profile.chill_hours_min}–${profile.chill_hours_max} hrs` });
-  }
-  if (profile.mature_height_min_ft != null && profile.mature_height_max_ft != null) {
-    rows.push({ label: 'Mature Height', value: `${profile.mature_height_min_ft}–${profile.mature_height_max_ft} ft` });
-  }
-  if (profile.mature_spread_min_ft != null && profile.mature_spread_max_ft != null) {
-    rows.push({ label: 'Mature Spread', value: `${profile.mature_spread_min_ft}–${profile.mature_spread_max_ft} ft` });
-  }
-  if (profile.sun_requirement != null) {
-    rows.push({ label: 'Sun', value: formatEnumValue(profile.sun_requirement as string) });
-  }
-  if (profile.water_needs != null) {
-    rows.push({ label: 'Water', value: formatEnumValue(profile.water_needs as string) });
-  }
-  if (profile.soil_ph_min != null && profile.soil_ph_max != null) {
-    rows.push({ label: 'Soil pH', value: `${profile.soil_ph_min}–${profile.soil_ph_max}` });
-  }
-  if (profile.years_to_bearing_min != null && profile.years_to_bearing_max != null) {
-    rows.push({ label: 'Years to Bearing', value: `${profile.years_to_bearing_min}–${profile.years_to_bearing_max} yrs` });
-  }
-  if (profile.growth_rate != null) {
-    rows.push({ label: 'Growth Rate', value: formatEnumValue(profile.growth_rate as string) });
-  }
-  if (profile.native_range_description != null) {
-    rows.push({ label: 'Native Range', value: profile.native_range_description as string });
-  }
-
-  if (rows.length === 0) return null;
-
-  return (
-    <section>
-      <Text variant="h2" className="mb-3">Growing Requirements</Text>
-      <Surface elevation="raised" padding="compact">
-        <div className="grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-          {rows.map(({ label, value }) => (
-            <div key={label}>
-              <Text variant="caption" color="tertiary">{label}</Text>
-              <Text variant="body">{value}</Text>
-            </div>
-          ))}
-        </div>
-      </Surface>
-    </section>
-  );
 }
 
 export default async function SpeciesPage({ params }: Props) {
@@ -177,7 +113,14 @@ export default async function SpeciesPage({ params }: Props) {
         )}
       </section>
 
-      {growingProfile && <GrowingProfileSection profile={growingProfile} />}
+      {growingProfile && (
+        <section>
+          <Text variant="h2" className="mb-3">
+            Growing Requirements
+          </Text>
+          <TraitGrid profile={growingProfile} />
+        </section>
+      )}
 
       {clones.length > 0 && (
         <CultivarSection title="Cultivars" items={clones} speciesSlug={speciesSlug} />
