@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 const US_STATES = [
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
@@ -20,6 +20,18 @@ const MATERIAL_TYPES = [
   { value: 'seed', label: 'Seed' },
   { value: 'rootstock', label: 'Rootstock' },
 ];
+
+interface SearchResult {
+  canonical_name: string;
+  species_common_name: string | null;
+  botanical_name: string | null;
+  index_source: string;
+}
+
+interface ApiResponse {
+  ok: boolean;
+  data: SearchResult[];
+}
 
 interface FormState {
   listing_type: 'wts' | 'wtb';
@@ -54,8 +66,50 @@ export function ListingForm({ prefillCultivar }: { prefillCultivar?: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   function set(field: keyof FormState, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  function handleCultivarChange(value: string) {
+    set('raw_cultivar_text', value);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (value.trim().length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(value.trim())}&limit=5`);
+        const json = (await res.json()) as ApiResponse;
+        if (json.ok && json.data.length > 0) {
+          setSuggestions(json.data);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
+      } catch {
+        // silently ignore autocomplete errors
+      }
+    }, 300);
+  }
+
+  function selectSuggestion(result: SearchResult) {
+    set('raw_cultivar_text', result.canonical_name);
+    const speciesText = result.species_common_name ?? result.botanical_name ?? '';
+    if (speciesText) {
+      set('raw_species_text', speciesText);
+    }
+    setSuggestions([]);
+    setShowSuggestions(false);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -151,21 +205,43 @@ export function ListingForm({ prefillCultivar }: { prefillCultivar?: string }) {
         </div>
       </fieldset>
 
-      {/* Plant name */}
-      <label className="block">
-        <span className="text-sm font-medium text-text-primary">
-          Cultivar or plant name *
-        </span>
-        <input
-          type="text"
-          required
-          minLength={2}
-          value={form.raw_cultivar_text}
-          onChange={(e) => set('raw_cultivar_text', e.target.value)}
-          placeholder="e.g. Jefferson hazelnut, Comice pear"
-          className="mt-1.5 w-full rounded-[var(--radius-md)] border border-border bg-surface-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none"
-        />
-      </label>
+      {/* Plant name with autocomplete */}
+      <div className="relative">
+        <label className="block">
+          <span className="text-sm font-medium text-text-primary">
+            Cultivar or plant name *
+          </span>
+          <input
+            type="text"
+            required
+            minLength={2}
+            autoComplete="off"
+            value={form.raw_cultivar_text}
+            onChange={(e) => handleCultivarChange(e.target.value)}
+            onBlur={() => setShowSuggestions(false)}
+            placeholder="e.g. Jefferson hazelnut, Comice pear"
+            className="mt-1.5 w-full rounded-[var(--radius-md)] border border-border bg-surface-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none"
+          />
+        </label>
+        {showSuggestions && suggestions.length > 0 && (
+          <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-[var(--radius-md)] border border-border-subtle bg-surface-raised shadow-lg">
+            {suggestions.map((result, i) => (
+              <li key={i}>
+                <button
+                  type="button"
+                  onMouseDown={() => selectSuggestion(result)}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-inset"
+                >
+                  <span className="font-medium text-text-primary">{result.canonical_name}</span>
+                  {result.species_common_name && (
+                    <span className="ml-2 text-text-tertiary">{result.species_common_name}</span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {/* Species (optional) */}
       <label className="block">

@@ -67,6 +67,9 @@ export default async function RootLayout({
               <Link href="/browse" className="hover:text-accent">
                 Explore
               </Link>
+              <Link href="/listings/new" className="hover:text-accent">
+                List a Plant
+              </Link>
               <Link href="/nurseries" className="hover:text-accent">
                 Nurseries
               </Link>
@@ -113,6 +116,11 @@ export default async function RootLayout({
                   <li>
                     <Link href="/browse" className="text-text-tertiary hover:text-accent">
                       Explore Plants
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/listings/new" className="text-text-tertiary hover:text-accent">
+                      List a Plant
                     </Link>
                   </li>
                   <li>
