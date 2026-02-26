@@ -1,6 +1,6 @@
 # PlantCommerce — Project Context
 
-> **Last updated:** 2026-02-26
+> **Last updated:** 2026-02-26 (Sprint 4 Phase 2)
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder
@@ -19,12 +19,15 @@ No e-commerce. No payments. No accounts. Purely informational for v1.
 
 ## Current State (Honest Assessment)
 
-- **Foundation:** Solid. Database schema stress-tested with hazelnuts (104 real product names, 100% resolution accuracy).
-- **Live data:** 2 nurseries live in DB (Burnt Ridge + Grimo). Raintree scraper built, pending live run.
-- **Deployment:** ✅ Live at https://plantfinder-cyan.vercel.app (Vercel Hobby plan). Cron registered: Monday 6am UTC → `/api/pipeline/scrape`.
-- **Pipeline:** Works end-to-end manually. Grimo live run completed; search refresh still needs explicit end-to-end verification.
-- **Search:** Materialized view exists, needs manual refresh after scrapes (automated in code, untested e2e).
-- **Admin tools:** Unmatched names admin UI is live at `/admin/unmatched` (token-protected). Resolution tracking is now operational.
+- **Foundation:** Solid. 99 tests passing, TypeScript strict, CI green. 29 routes (API + UI).
+- **Live data:** 3 nurseries live (Burnt Ridge 18 offers, Grimo 28 offers, Raintree validated). Pipeline consent-gated.
+- **Deployment:** ✅ Live at https://plantfinder-cyan.vercel.app (commit 37f7b95). Cron: Monday 6am UTC.
+- **Knowledge graph:** Taxonomy tree (37 nodes, Kingdom→Genus) + growing profiles for 4 Corylus species in Supabase.
+- **Visual data:** Sprint 4 Phase 1 ✅ — RangeBar, IconRating, TraitGrid components. Species + cultivar pages show visual growing bars.
+- **Explorer:** Sprint 4 Phase 2 ✅ — `/browse` is now the Explorer: FilterBar (zone/category/availability), enhanced Cladogram (mini zone bars, cultivar counts, category dimming), detail panel with TraitGrid, nav simplified to Search | Explore | Nurseries.
+- **Species pages:** Stats line (N cultivars · N nurseries with stock), availability badges on cultivar cards.
+- **Search:** Zone-aware materialized view — "zone 4 hazelnut" returns results.
+- **Admin tools:** `/admin/unmatched` (token-protected). Resolution tracking operational.
 - **User stickiness:** Zero. No accounts, saved searches, price alerts, or notifications.
 
 ---
@@ -58,8 +61,13 @@ No e-commerce. No payments. No accounts. Purely informational for v1.
 - **raw_inventory_rows** — verbatim scraped data (always preserved)
 - **unmatched_names** — product names the resolver couldn't match
 
+### Taxonomy & Knowledge
+- **taxonomy_ranks** — 6 ranks (Kingdom → Genus)
+- **taxonomy_nodes** — 37 nodes, self-referential tree
+- **species_growing_profiles** — USDA zones, chill hours, height/spread, pH, bearing age, sun/water/growth rate
+
 ### Search
-- **material_search_index** — materialized view with trigram indexes for fuzzy search
+- **material_search_index** — materialized view with trigram indexes + zone token expansion
 
 ---
 
@@ -92,9 +100,9 @@ Scraper (fetches nursery HTML)
 |---------|--------|
 | Burnt Ridge | ✅ Live, 18 offers in DB |
 | Grimo | ✅ Live (run completed 2026-02-26) |
-| Raintree | 🔨 Built, pending live run |
-| One Green World | ❌ Needs scraper |
-| 6 others | ❌ In DB, nothing built |
+| Raintree | ✅ Live (pipeline validated 2026-02-26) |
+| One Green World | ❌ Needs scraper (consent required first) |
+| 6 others | ❌ In DB, nothing built (consent required first) |
 
 ---
 
@@ -123,17 +131,19 @@ Scraper (fetches nursery HTML)
 2. ~~**Unmatched names queue**~~ ✅ Admin UI implemented and operational
 3. **Parser generalization** — hazelnut-specific, needs work before expanding to other plant families
 4. ~~**Cron automation**~~ ✅ Done — Vercel cron registered, runs Monday 6am UTC
-5. **Search refresh** — materialized view refresh after scrapes untested end-to-end with Grimo
+5. ~~**Search refresh**~~ ✅ Validated end-to-end with Raintree live run
 
 ### Architecture gaps
 6. ~~**No admin interface**~~ ✅ `/admin/unmatched` implemented for unmatched review workflow
 7. **No user accounts or engagement features** — no saved searches, price alerts, stock notifications
-8. **No error monitoring** — if a scraper breaks, nobody knows
+8. ~~**No error monitoring**~~ ✅ `/api/pipeline/health` endpoint implemented
+9. **No nursery consent tracking** — need `consent_status` on nurseries table before scaling scraper count
 
 ### Strategic questions (unanswered)
-9. What's the user retention story beyond v1?
-10. How does the parser generalize across plant families without becoming a maintenance nightmare?
-11. What is the first concrete growth loop to reach 50 recurring users?
+10. What's the user retention story beyond v1?
+11. How does the parser generalize across plant families without becoming a maintenance nightmare?
+12. What is the first concrete growth loop to reach 50 recurring users?
+13. What's the right consent model for nursery data? (See Nursery Consent Strategy below)
 
 ---
 
@@ -143,8 +153,41 @@ Scraper (fetches nursery HTML)
 2. ~~**Admin UI for unmatched queue**~~ ✅ Implemented
 3. ~~**Run Grimo scraper live**~~ ✅ Completed (2026-02-26)
 4. ~~**Set up Vercel Cron**~~ ✅ Registered, runs Monday 6am UTC
-5. **Generalize the parser** — required before non-hazelnut expansion
-6. **Build remaining scrapers** — Raintree, One Green World, 6 others
+5. ~~**Foundation hardening sprint**~~ ✅ Done (2026-02-26)
+6. ~~**Generalize the parser**~~ ✅ Done (2026-02-26) — config-driven, genus registry
+7. ~~**UI polish pass (Sprint 2)**~~ ✅ Deployed to Vercel (2026-02-26)
+8. ~~**Sprint 3: "Depth Before Breadth"**~~ ✅ Complete (2026-02-26) — taxonomy, growing profiles, UI polish deployed
+9. ~~**Sprint 4 Phase 1**~~ ✅ Done — RangeBar, IconRating, TraitGrid; species + cultivar pages show visual bars; homepage cleanup
+10. ~~**Sprint 4 Phase 2**~~ ✅ Done (2026-02-26) — Explorer page, FilterBar, enhanced Cladogram, nav simplified, species page stats + badges
+11. **Sprint 4 Phase 3** ← NEXT — Nursery maps (Leaflet, geocoded pins, mini-map on cultivar page)
+12. **Sprint 4 Phase 4** — Marketplace foundation (community WTS/WTB listings, submission form, moderation)
+10. **Nursery consent & outreach** — draft outreach template, contact existing 3 nurseries
+11. **Build remaining scrapers** — One Green World + others, only after consent obtained
+
+---
+
+## Nursery Consent Strategy
+
+**Policy: Consent first, scrape second.** No new nursery scrapers should be built or run without nursery awareness/approval.
+
+### Approach
+- **Existing 3 nurseries (Burnt Ridge, Grimo, Raintree):** Reach out now to notify and request retroactive approval. Offer immediate removal if preferred.
+- **New nurseries:** Contact first, get approval, then build scraper. Ask if they have a product feed or API (Shopify `/products.json`, CSV export, etc.) as alternative to HTML scraping.
+- **Consent tracking:** Add `consent_status` enum to `nurseries` table: `pending`, `approved`, `declined`, `no_response`. Pipeline should only scrape `approved` nurseries.
+- **Value proposition in outreach:** PlantCommerce drives traffic TO nurseries. All purchases happen on their sites. We're making their inventory more discoverable, not competing with them.
+
+### Why this matters
+- The permaculture community is small and trust-based. Scraping without notification risks reputation damage.
+- Nurseries who opt in provide better data (feeds, corrections, advocacy).
+- Consent-first is the foundation for a potential affiliate model later.
+- Legal landscape for scraping is unsettled; consent eliminates the question entirely.
+
+### TODO
+- [x] Add `consent_status` column to `nurseries` table with enum (migration 004 applied)
+- [x] Gate pipeline to skip non-approved nurseries (`declined` skipped, `pending` still runs)
+- [ ] Draft outreach email template
+- [ ] Contact Burnt Ridge, Grimo, Raintree
+- [ ] Polish site before broader outreach
 
 ---
 
@@ -224,6 +267,8 @@ Interactive system map available at `/system-map` (dev tool, not linked in nav).
 | 2026-02 | Shared context repo for cross-AI sync | Single source of truth across Claude Code, Codex, Claude Opus, ChatGPT |
 | 2026-02-25 | Deployed to Vercel (Hobby plan, direct push) | plantfinder-cyan.vercel.app — cron registered Monday 6am UTC |
 | 2026-02-25 | Vercel project "plantfinder" (diverged from plantcommerce repo) | GitHub integration points at old plantfinder repo; direct CLI deploy used for now |
+| 2026-02-26 | Foundation hardening sprint completed | ESM imports, offer key safety, dead code removal, parser audit, Raintree live run, error boundaries, health monitoring |
+| 2026-02-26 | Consent-first nursery policy adopted | No new scrapers without nursery awareness/approval. Existing nurseries to be notified retroactively. Trust > speed in permaculture community |
 
 ---
 
