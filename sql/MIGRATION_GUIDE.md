@@ -15,7 +15,7 @@ NNN_description.sql       e.g. 018_patch_castanea_sun_requirement.sql
 - Descriptive slug uses underscores, lowercase.
 - File lives in `sql/migrations/`.
 
-**Current sequence:** 001 … 018. Next available: **019**
+**Current sequence:** 001 … 019. Next available: **020**
 
 ---
 
@@ -113,8 +113,9 @@ Before applying any Codex-generated genus migration, verify each item:
 | Castanea | `d0000000-0000-0000-0000-000000000003` |
 | Juglans | `d0000000-0000-0000-0000-000000000005` |
 | Carya | `d0000000-0000-0000-0000-000000000006` |
+| Asimina | `d0000000-0000-0000-0000-000000000015` |
 
-> To find others: `SELECT slug, id FROM plant_entities WHERE entity_type = 'species_group' ORDER BY slug;`
+> To find others: `SELECT slug, id FROM taxonomy_nodes WHERE rank_id = 6 ORDER BY slug;`
 
 ---
 
@@ -152,9 +153,9 @@ notes                     TEXT
 
 ### `plant_entity_parents`
 ```sql
-child_id                  UUID  -- FK → plant_entities
-parent_id                 UUID  -- FK → plant_entities
-parent_role               TEXT  -- e.g. 'female_parent', 'male_parent', 'parent_species'
+hybrid_id                 UUID  -- FK → plant_entities (the hybrid child)
+parent_id                 UUID  -- FK → plant_entities (a parent species)
+contribution_percent      NUMERIC
 data_source               TEXT
 confidence_note           TEXT
 ```
@@ -175,9 +176,9 @@ confidence_note           TEXT
 
 ## Materialized View
 
-`plant_search_index` — refresh after any genus seeding:
+`material_search_index` — refresh after any genus seeding:
 ```sql
-REFRESH MATERIALIZED VIEW plant_search_index;   -- no CONCURRENTLY
+REFRESH MATERIALIZED VIEW material_search_index;   -- no CONCURRENTLY
 ```
 Requires a unique index on the view to use CONCURRENTLY; that index does not exist.
 
