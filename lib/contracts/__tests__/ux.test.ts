@@ -17,36 +17,48 @@ describe('parseSearchUrlStateFromRecord', () => {
       q: '  hazelnut  ',
       page: '0',
       limit: '999',
-      materialType: 'cultivar',
-      availability: 'in_stock',
-      sort: 'name_asc',
+      zone: '14',
+      category: '  Nut Trees  ',
+      inStock: 'true',
     });
 
     expect(parsed).toEqual({
       q: 'hazelnut',
       page: 1,
       limit: 100,
-      materialType: 'cultivar',
-      availability: 'in_stock',
-      sort: 'name_asc',
+      zone: undefined,
+      category: 'Nut Trees',
+      inStock: true,
     });
   });
 
-  it('falls back for unknown enum values', () => {
+  it('falls back for invalid filter values', () => {
     const parsed = parseSearchUrlStateFromRecord({
-      availability: 'broken-value',
-      sort: 'bad-sort',
+      zone: 'abc',
+      inStock: 'yes',
     });
 
-    expect(parsed.availability).toBe('any');
-    expect(parsed.sort).toBe('relevance');
+    expect(parsed.zone).toBeUndefined();
+    expect(parsed.inStock).toBeUndefined();
   });
 });
 
 describe('parseSearchApiParams', () => {
   it('reads and trims query values', () => {
-    const params = new URLSearchParams({ q: '  filbert  ', limit: '7' });
-    expect(parseSearchApiParams(params)).toEqual({ query: 'filbert', limit: 7 });
+    const params = new URLSearchParams({
+      q: '  filbert  ',
+      limit: '7',
+      zone: '5',
+      category: 'Nut Trees',
+      inStock: 'true',
+    });
+    expect(parseSearchApiParams(params)).toEqual({
+      query: 'filbert',
+      limit: 7,
+      zone: 5,
+      category: 'Nut Trees',
+      inStock: true,
+    });
   });
 
   it('uses safe limit bounds', () => {
@@ -62,15 +74,17 @@ describe('toSearchQueryString', () => {
     const query = toSearchQueryString({
       q: 'hazelnut',
       page: 2,
-      sort: 'offers_desc',
-      availability: 'in_stock',
+      zone: 5,
+      category: 'Nut Trees',
+      inStock: true,
     });
 
     const params = new URLSearchParams(query);
     expect(params.get('q')).toBe('hazelnut');
     expect(params.get('page')).toBe('2');
-    expect(params.get('sort')).toBe('offers_desc');
-    expect(params.get('availability')).toBe('in_stock');
+    expect(params.get('zone')).toBe('5');
+    expect(params.get('category')).toBe('Nut Trees');
+    expect(params.get('inStock')).toBe('true');
     expect(params.get('limit')).toBeNull();
   });
 });

@@ -178,6 +178,8 @@ export async function writePipelineResult(
     productPageUrl?: string;
   } = {}
 ): Promise<{ offerId?: string; unmatchedId?: string; rawRowId: string }> {
+  const priceCents = parsePriceCents(rawData.rawPriceText ?? null);
+
   // 1. Create raw_inventory_row
   const { data: rawRow, error: rawErr } = await supabase
     .from('raw_inventory_rows')
@@ -239,6 +241,7 @@ export async function writePipelineResult(
       product_page_url: rawData.productPageUrl,
       propagation_method: result.parsedPropagation ?? 'unknown',
       sale_form: result.parsedSaleForm ?? 'unknown',
+      price_cents: priceCents,
       organic_status:
         result.parsedOrganic === 'organic'
           ? true
@@ -253,7 +256,7 @@ export async function writePipelineResult(
     // Check if offer already exists (for idempotent reruns)
     const { data: existing } = await supabase
       .from('inventory_offers')
-      .select('id')
+      .select('id, price_cents')
       .eq('nursery_id', nurseryId)
       .eq('source_offer_key', sourceOfferKey)
       .maybeSingle();
@@ -261,11 +264,31 @@ export async function writePipelineResult(
     let offerId: string;
 
     if (existing) {
+      if (
+        typeof (existing as { price_cents?: number }).price_cents === 'number' &&
+        priceCents !== null &&
+        (existing as { price_cents?: number }).price_cents !== priceCents
+      ) {
+        const { error: historyErr } = await supabase
+          .from('price_history')
+          .insert({
+            offer_id: (existing as { id: string }).id,
+            price_cents_old: (existing as { price_cents: number }).price_cents,
+            price_cents_new: priceCents,
+          });
+
+        if (historyErr) {
+          throw new Error(
+            `Failed to insert price_history: ${historyErr.message}`
+          );
+        }
+      }
+
       // Update existing offer
       const { data: updated, error: updateErr } = await supabase
         .from('inventory_offers')
         .update(offerFields)
-        .eq('id', existing.id)
+        .eq('id', (existing as { id: string }).id)
         .select('id')
         .single();
 
@@ -410,6 +433,29 @@ export async function completeImportRun(
 
 // ── Helpers ──
 
+export async function markNurseryScraped(
+  supabase: SupabaseClient,
+  nurseryId: string,
+  stats: {
+    rowsResolved: number;
+    scrapedAt?: string;
+  }
+): Promise<void> {
+  const { error } = await supabase
+    .from('nurseries')
+    .update({
+      last_scraped_at: stats.scrapedAt ?? new Date().toISOString(),
+      last_scrape_offer_count: stats.rowsResolved,
+    })
+    .eq('id', nurseryId);
+
+  if (error) {
+    throw new Error(
+      `Failed to update nursery scrape metadata: ${error.message}`
+    );
+  }
+}
+
 function materialTypeToEntityType(
   materialType: string
 ): AliasEntry['entityType'] {
@@ -452,3 +498,18 @@ export function generateSourceOfferKey(
 
   return key;
 }
+
+function parsePriceCents(rawPriceText: string | null): number | null {
+  if (!rawPriceText) return null;
+
+  const cleaned = rawPriceText.replace(/[^0-9.,]/g, ' ');
+  const match = cleaned.match(/(\d+[.,]?\d*)/);
+  if (!match) return null;
+
+  const normalized = match[1].replace(',', '.');
+  const value = Number.parseFloat(normalized);
+  if (!Number.isFinite(value)) return null;
+
+  return Math.round(value * 100);
+}
+

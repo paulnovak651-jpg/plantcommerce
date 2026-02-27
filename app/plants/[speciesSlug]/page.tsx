@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import { getPlantEntityBySlug, getCultivarsForSpecies, getOfferStatsForSpecies } from '@/lib/queries/plants';
-import { getTaxonomyPath } from '@/lib/queries/taxonomy';
-import { getGrowingProfile } from '@/lib/queries/growing';
+import { getPlantEntityBySlug } from '@/lib/queries/plants';
+import { loadSpeciesPage } from '@/lib/queries/loaders';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -13,7 +12,7 @@ import { TraitGrid } from '@/components/ui/TraitGrid';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 import { ListingCard } from '@/components/ListingCard';
-import { getApprovedListingsForSpecies } from '@/lib/queries/listings';
+import type { Cultivar } from '@/lib/types';
 
 interface Props {
   params: Promise<{ speciesSlug: string }>;
@@ -47,26 +46,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SpeciesPage({ params }: Props) {
   const { speciesSlug } = await params;
-  const supabase = await createClient();
-  const species = await getPlantEntityBySlug(supabase, speciesSlug);
-
-  if (!species) notFound();
-
-  const cultivars = await getCultivarsForSpecies(supabase, species.id);
-  const cultivarIds = cultivars.map((c: { id: string }) => c.id);
-
-  const [taxonomyPath, growingProfile, offerStats, communityListings] = await Promise.all([
-    getTaxonomyPath(supabase, species.id),
-    getGrowingProfile(supabase, species.id),
-    getOfferStatsForSpecies(supabase, cultivarIds),
-    getApprovedListingsForSpecies(supabase, species.id),
-  ]);
+  const loaded = await loadSpeciesPage(speciesSlug);
+  if (!loaded) notFound();
+  const { species, cultivars, taxonomyPath, growingProfile, offerStats, communityListings } = loaded;
 
   // Group cultivars by material type
-  const clones = cultivars.filter((c: { material_type: string }) => c.material_type === 'cultivar_clone');
-  const seedStrains = cultivars.filter((c: { material_type: string }) => c.material_type === 'named_seed_strain');
+  const clones = cultivars.filter((c) => c.material_type === 'cultivar_clone');
+  const seedStrains = cultivars.filter((c) => c.material_type === 'named_seed_strain');
   const populations = cultivars.filter(
-    (c: { material_type: string }) =>
+    (c) =>
       c.material_type === 'breeding_population' || c.material_type === 'geographic_population'
   );
 
@@ -75,7 +63,7 @@ export default async function SpeciesPage({ params }: Props) {
     '@type': 'ItemList',
     name: `${species.canonical_name} Cultivars`,
     numberOfItems: cultivars.length,
-    itemListElement: cultivars.map((cv: { canonical_name: string; slug: string }, i: number) => ({
+    itemListElement: cultivars.map((cv, i: number) => ({
       '@type': 'ListItem',
       position: i + 1,
       name: cv.canonical_name,
@@ -207,15 +195,7 @@ function CultivarSection({
   nurseryCountById,
 }: {
   title: string;
-  items: Array<{
-    id: string;
-    slug: string;
-    canonical_name: string;
-    breeder?: string | null;
-    notes?: string | null;
-    patent_status?: string | null;
-    material_type?: string | null;
-  }>;
+  items: Cultivar[];
   speciesSlug: string;
   nurseryCountById: Record<string, number>;
 }) {

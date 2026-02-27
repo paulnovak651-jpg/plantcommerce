@@ -22,6 +22,12 @@ export async function GET() {
         description:
           'Full-text search across plants, cultivars, and nurseries using trigram matching',
       },
+      schema: {
+        url: '/api/schema',
+        method: 'GET',
+        description:
+          'Static schema metadata (tables, relationships, enums) for agents and integrations',
+      },
       plant_species: {
         url: '/api/plants/{speciesSlug}',
         method: 'GET',

@@ -1,6 +1,35 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Cultivar, PlantEntity } from '@/lib/types';
 
-export async function getPlantEntityBySlug(supabase: SupabaseClient, slug: string) {
+interface PlantCategoryRow {
+  id: string;
+  slug: string;
+  canonical_name: string;
+  display_category: string | null;
+}
+
+interface CultivarCategoryRow {
+  id: string;
+  plant_entity_id: string;
+}
+
+interface ActiveOfferRow {
+  cultivar_id: string | null;
+  nursery_id: string;
+}
+
+export interface CategoryGroup {
+  category: string;
+  species_count: number;
+  cultivar_count: number;
+  nursery_count: number;
+  top_species: Array<{ slug: string; canonical_name: string }>;
+}
+
+export async function getPlantEntityBySlug(
+  supabase: SupabaseClient,
+  slug: string
+): Promise<PlantEntity | null> {
   const { data, error } = await supabase
     .from('plant_entities')
     .select('*')
@@ -8,10 +37,12 @@ export async function getPlantEntityBySlug(supabase: SupabaseClient, slug: strin
     .single();
 
   if (error) return null;
-  return data;
+  return data as PlantEntity;
 }
 
-export async function listPlantEntities(supabase: SupabaseClient) {
+export async function listPlantEntities(
+  supabase: SupabaseClient
+): Promise<PlantEntity[]> {
   const { data, error } = await supabase
     .from('plant_entities')
     .select('*')
@@ -22,7 +53,7 @@ export async function listPlantEntities(supabase: SupabaseClient) {
     console.error('listPlantEntities error:', error);
     return [];
   }
-  return data;
+  return (data ?? []) as PlantEntity[];
 }
 
 export async function listPlantEntitiesForBrowse(supabase: SupabaseClient) {
@@ -46,17 +77,17 @@ export async function listPlantEntitiesForBrowse(supabase: SupabaseClient) {
       .from('inventory_offers')
       .select('cultivar_id, nursery_id')
       .eq('offer_status', 'active'),
-  ]);
+    ]);
 
   if (error) return [];
 
   const cultivarToPlant = new Map<string, string>();
-  for (const c of cultivars ?? []) {
+  for (const c of (cultivars ?? []) as Array<{ id: string; plant_entity_id: string }>) {
     cultivarToPlant.set(c.id, c.plant_entity_id);
   }
 
   const plantNurseries = new Map<string, Set<string>>();
-  for (const offer of activeOffers ?? []) {
+  for (const offer of (activeOffers ?? []) as Array<{ cultivar_id: string; nursery_id: string }>) {
     const plantId = cultivarToPlant.get(offer.cultivar_id);
     if (!plantId) continue;
     if (!plantNurseries.has(plantId)) plantNurseries.set(plantId, new Set());
@@ -111,5 +142,123 @@ export async function getCultivarsForSpecies(supabase: SupabaseClient, plantEnti
     .order('canonical_name');
 
   if (error) return [];
-  return data;
+  return (data ?? []) as Cultivar[];
+}
+
+export async function getHomepageCategories(
+  supabase: SupabaseClient
+): Promise<CategoryGroup[]> {
+  const [
+    { data: speciesRows, error: speciesError },
+    { data: cultivarRows, error: cultivarError },
+    { data: offerRows, error: offerError },
+  ] = await Promise.all([
+    supabase
+      .from('plant_entities')
+      .select('id, slug, canonical_name, display_category')
+      .eq('curation_status', 'published')
+      .order('canonical_name'),
+    supabase
+      .from('cultivars')
+      .select('id, plant_entity_id')
+      .eq('curation_status', 'published'),
+    supabase
+      .from('inventory_offers')
+      .select('cultivar_id, nursery_id')
+      .eq('offer_status', 'active'),
+  ]);
+
+  if (speciesError || cultivarError || offerError) {
+    console.error('getHomepageCategories error:', speciesError ?? cultivarError ?? offerError);
+    return [];
+  }
+
+  const species = (speciesRows ?? []) as PlantCategoryRow[];
+  const cultivars = (cultivarRows ?? []) as CultivarCategoryRow[];
+  const offers = (offerRows ?? []) as ActiveOfferRow[];
+
+  const cultivarToSpecies = new Map<string, string>();
+  const speciesCultivarCounts = new Map<string, number>();
+  const speciesNurseries = new Map<string, Set<string>>();
+
+  for (const cultivar of cultivars) {
+    cultivarToSpecies.set(cultivar.id, cultivar.plant_entity_id);
+    speciesCultivarCounts.set(
+      cultivar.plant_entity_id,
+      (speciesCultivarCounts.get(cultivar.plant_entity_id) ?? 0) + 1
+    );
+  }
+
+  for (const offer of offers) {
+    if (!offer.cultivar_id) continue;
+    const speciesId = cultivarToSpecies.get(offer.cultivar_id);
+    if (!speciesId) continue;
+    if (!speciesNurseries.has(speciesId)) speciesNurseries.set(speciesId, new Set());
+    speciesNurseries.get(speciesId)?.add(offer.nursery_id);
+  }
+
+  type GroupAccumulator = {
+    speciesIds: Set<string>;
+    cultivarCount: number;
+    nurseryIds: Set<string>;
+    speciesStats: Array<{
+      slug: string;
+      canonical_name: string;
+      cultivar_count: number;
+      nursery_count: number;
+    }>;
+  };
+
+  const groups = new Map<string, GroupAccumulator>();
+
+  for (const sp of species) {
+    const category = sp.display_category?.trim() || 'Other';
+    if (!groups.has(category)) {
+      groups.set(category, {
+        speciesIds: new Set<string>(),
+        cultivarCount: 0,
+        nurseryIds: new Set<string>(),
+        speciesStats: [],
+      });
+    }
+
+    const group = groups.get(category);
+    if (!group) continue;
+
+    const cultivarCount = speciesCultivarCounts.get(sp.id) ?? 0;
+    const nurseries = speciesNurseries.get(sp.id) ?? new Set<string>();
+
+    group.speciesIds.add(sp.id);
+    group.cultivarCount += cultivarCount;
+    for (const nurseryId of nurseries) {
+      group.nurseryIds.add(nurseryId);
+    }
+
+    group.speciesStats.push({
+      slug: sp.slug,
+      canonical_name: sp.canonical_name,
+      cultivar_count: cultivarCount,
+      nursery_count: nurseries.size,
+    });
+  }
+
+  return Array.from(groups.entries())
+    .map(([category, group]) => ({
+      category,
+      species_count: group.speciesIds.size,
+      cultivar_count: group.cultivarCount,
+      nursery_count: group.nurseryIds.size,
+      top_species: group.speciesStats
+        .sort((a, b) => {
+          if (b.nursery_count !== a.nursery_count) return b.nursery_count - a.nursery_count;
+          if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
+          return a.canonical_name.localeCompare(b.canonical_name);
+        })
+        .slice(0, 3)
+        .map(({ slug, canonical_name }) => ({ slug, canonical_name })),
+    }))
+    .sort((a, b) => {
+      if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
+      return a.category.localeCompare(b.category);
+    });
 }

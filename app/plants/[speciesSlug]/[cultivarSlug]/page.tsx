@@ -27,6 +27,18 @@ interface Props {
   params: Promise<{ speciesSlug: string; cultivarSlug: string }>;
 }
 
+function formatPricesLastChecked(iso: string | null): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
 function getAvailabilityTag(rawAvailability: string | null): {
   label: string;
   className: string;
@@ -113,6 +125,16 @@ export default async function CultivarPage({ params }: Props) {
     species?.id ? getGrowingProfile(supabase, species.id) : Promise.resolve(null),
     getApprovedListingsForCultivar(supabase, cultivar.id),
   ]);
+
+  const latestScrapeIso =
+    offers.reduce<string | null>((latest, offer: any) => {
+      const value = offer.nurseries?.last_scraped_at as string | null | undefined;
+      if (!value) return latest;
+      if (!latest) return value;
+      return new Date(value) > new Date(latest) ? value : latest;
+    }, null) ?? null;
+
+  const pricesLastCheckedLabel = formatPricesLastChecked(latestScrapeIso);
 
   const seen = new Set<string>();
   const nurseryPins: NurseryPin[] = offers
@@ -226,6 +248,11 @@ export default async function CultivarPage({ params }: Props) {
         <Text variant="h2" className="mb-4">
           Nursery Offers ({offers.length})
         </Text>
+        {pricesLastCheckedLabel && (
+          <Text variant="sm" color="tertiary" className="mb-2">
+            Prices last checked: {pricesLastCheckedLabel}
+          </Text>
+        )}
         {offers.length > 0 ? (
           <div className="space-y-3">
             {offers.map((offer: any) => {

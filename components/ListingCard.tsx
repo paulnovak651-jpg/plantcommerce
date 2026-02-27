@@ -1,5 +1,5 @@
 import { Text } from '@/components/ui/Text';
-import type { CommunityListing } from '@/lib/queries/listings';
+import type { CommunityListing } from '@/lib/types';
 
 function daysAgo(iso: string): string {
   const ms = Date.now() - new Date(iso).getTime();

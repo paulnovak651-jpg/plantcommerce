@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import { searchPlants, type SearchResult } from '@/lib/queries/search';
+import { searchPlants } from '@/lib/queries/search';
 import { parseSearchUrlStateFromRecord } from '@/lib/contracts/ux';
 import Link from 'next/link';
 import { Text } from '@/components/ui/Text';
@@ -8,15 +8,17 @@ import { SearchBar } from '@/components/ui/SearchBar';
 import { Tag } from '@/components/ui/Tag';
 import { BotanicalName } from '@/components/ui/BotanicalName';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { SearchFilters } from '@/components/SearchFilters';
+import type { SearchResult } from '@/lib/types';
 
 interface Props {
   searchParams: Promise<{
     q?: string;
     page?: string;
     limit?: string;
-    materialType?: string;
-    availability?: string;
-    sort?: string;
+    zone?: string;
+    category?: string;
+    inStock?: string;
   }>;
 }
 
@@ -53,10 +55,35 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function SearchPage({ searchParams }: Props) {
-  const state = parseSearchUrlStateFromRecord(await searchParams);
+  const sp = await searchParams;
+  const state = parseSearchUrlStateFromRecord(sp);
   const q = state.q;
+  const { zone, category, inStock } = state;
   const supabase = await createClient();
-  const results = q ? await searchPlants(supabase, q, state.limit) : [];
+  const [results, categoryRows] = await Promise.all([
+    q
+      ? searchPlants(supabase, {
+          q,
+          limit: state.limit,
+          zone,
+          category,
+          inStock,
+        })
+      : Promise.resolve([]),
+    supabase
+      .from('plant_entities')
+      .select('display_category')
+      .eq('curation_status', 'published')
+      .not('display_category', 'is', null),
+  ]);
+
+  const categories = Array.from(
+    new Set(
+      (categoryRows.data ?? [])
+        .map((row) => row.display_category?.trim())
+        .filter((value): value is string => Boolean(value))
+    )
+  ).sort((a, b) => a.localeCompare(b));
 
   return (
     <div className="space-y-[var(--spacing-zone)]">
@@ -64,6 +91,13 @@ export default async function SearchPage({ searchParams }: Props) {
         <Text variant="h1" className="mb-4">Search</Text>
         <SearchBar defaultValue={q} />
       </section>
+
+      <SearchFilters
+        currentZone={zone}
+        currentCategory={category}
+        currentInStock={inStock}
+        categories={categories}
+      />
 
       {q && (
         <Text variant="sm" color="tertiary">
@@ -92,6 +126,9 @@ export default async function SearchPage({ searchParams }: Props) {
                 <div className="flex flex-wrap items-center gap-2">
                   <Tag type="neutral">{r.material_type.replace(/_/g, ' ')}</Tag>
                   <Text variant="h3" color="accent">{r.canonical_name}</Text>
+                  {r.usda_zone_min != null && r.usda_zone_max != null && (
+                    <Tag type="neutral">Zone {r.usda_zone_min}-{r.usda_zone_max}</Tag>
+                  )}
                   {r.active_offer_count > 0 && (
                     <Tag type="availability">
                       {r.active_offer_count} {r.active_offer_count === 1 ? 'nursery' : 'nurseries'}

@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { getMarketplaceListings, type CommunityListing } from '@/lib/queries/listings';
+import { getMarketplaceListings } from '@/lib/queries/listings';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Text } from '@/components/ui/Text';
 import { ListingCard } from '@/components/ListingCard';
 import { EmptyState } from '@/components/ui/EmptyState';
+import type { CommunityListing } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Marketplace',
@@ -82,4 +83,3 @@ export default async function MarketplacePage({ searchParams }: Props) {
     </div>
   );
 }
-

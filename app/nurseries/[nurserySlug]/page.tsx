@@ -76,17 +76,8 @@ export default async function NurseryPage({ params }: Props) {
 
   if (!nursery) notFound();
 
-  const [inventory, { data: latestCompletedRun }] = await Promise.all([
+  const [inventory] = await Promise.all([
     getInventoryForNursery(supabase, nursery.id),
-    supabase
-      .from('import_runs')
-      .select('completed_at')
-      .eq('nursery_id', nursery.id)
-      .eq('status', 'completed')
-      .not('completed_at', 'is', null)
-      .order('completed_at', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
   ]);
 
   const displayName = displayNurseryName(nursery.name);
@@ -102,7 +93,7 @@ export default async function NurseryPage({ params }: Props) {
     }
   })();
   const lastUpdatedLabel = formatNurseryUpdateLabel(
-    latestCompletedRun?.completed_at ?? null
+    (nursery as any).last_scraped_at ?? null
   );
 
   // JSON-LD: Organization
@@ -159,7 +150,7 @@ export default async function NurseryPage({ params }: Props) {
           </Surface>
           {lastUpdatedLabel && (
             <Surface elevation="raised" padding="compact">
-              <Text variant="caption" color="tertiary">Last Updated</Text>
+              <Text variant="caption" color="tertiary">Prices last checked</Text>
               <Text variant="body" className="font-medium">{lastUpdatedLabel}</Text>
             </Surface>
           )}

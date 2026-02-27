@@ -62,30 +62,16 @@ export interface SearchUrlState {
   q: string;
   page: number;
   limit: number;
-  materialType: string | null;
-  availability: AvailabilityState | 'any';
-  sort: SearchSort;
+  zone?: number;
+  category?: string;
+  inStock?: boolean;
 }
 
 export const SEARCH_DEFAULTS: SearchUrlState = {
   q: '',
   page: 1,
   limit: 20,
-  materialType: null,
-  availability: 'any',
-  sort: 'relevance',
 };
-
-const SEARCH_SORTS: ReadonlySet<SearchSort> = new Set([
-  'relevance',
-  'offers_desc',
-  'name_asc',
-  'name_desc',
-]);
-
-const AVAILABILITY_FILTERS: ReadonlySet<SearchUrlState['availability']> = new Set(
-  ['any', 'in_stock', 'partially_in_stock', 'sold_out', 'unknown']
-);
 
 function toSingleValue(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) return value[0];
@@ -107,9 +93,9 @@ export function parseSearchUrlStateFromRecord(input: {
   q?: string | string[];
   page?: string | string[];
   limit?: string | string[];
-  materialType?: string | string[];
-  availability?: string | string[];
-  sort?: string | string[];
+  zone?: string | string[];
+  category?: string | string[];
+  inStock?: string | string[];
 }): SearchUrlState {
   const q = (toSingleValue(input.q) ?? '').trim();
   const page = toPositiveInt(toSingleValue(input.page), SEARCH_DEFAULTS.page);
@@ -118,36 +104,52 @@ export function parseSearchUrlStateFromRecord(input: {
     1,
     100
   );
-  const materialTypeRaw = (toSingleValue(input.materialType) ?? '').trim();
-  const materialType = materialTypeRaw.length > 0 ? materialTypeRaw : null;
-
-  const availabilityRaw = (toSingleValue(input.availability) ??
-    SEARCH_DEFAULTS.availability) as SearchUrlState['availability'];
-  const availability = AVAILABILITY_FILTERS.has(availabilityRaw)
-    ? availabilityRaw
-    : SEARCH_DEFAULTS.availability;
-
-  const sortRaw = (toSingleValue(input.sort) ?? SEARCH_DEFAULTS.sort) as SearchSort;
-  const sort = SEARCH_SORTS.has(sortRaw) ? sortRaw : SEARCH_DEFAULTS.sort;
+  const zoneRaw = toSingleValue(input.zone);
+  const zoneParsed = zoneRaw ? Number.parseInt(zoneRaw, 10) : undefined;
+  const zone =
+    zoneParsed != null &&
+    Number.isFinite(zoneParsed) &&
+    zoneParsed >= 1 &&
+    zoneParsed <= 13
+      ? zoneParsed
+      : undefined;
+  const categoryRaw = (toSingleValue(input.category) ?? '').trim();
+  const category = categoryRaw.length > 0 ? categoryRaw : undefined;
+  const inStockRaw = (toSingleValue(input.inStock) ?? '').trim().toLowerCase();
+  const inStock = inStockRaw === 'true' ? true : undefined;
 
   return {
     q,
     page,
     limit,
-    materialType,
-    availability,
-    sort,
+    zone,
+    category,
+    inStock,
   };
 }
 
 export function parseSearchApiParams(searchParams: URLSearchParams): {
   query: string;
   limit: number;
+  zone?: number;
+  category?: string;
+  inStock?: boolean;
 } {
-  const query = (searchParams.get('q') ?? '').trim();
-  const limitRaw = searchParams.get('limit') ?? String(SEARCH_DEFAULTS.limit);
-  const limit = clamp(toPositiveInt(limitRaw, SEARCH_DEFAULTS.limit), 1, 100);
-  return { query, limit };
+  const parsed = parseSearchUrlStateFromRecord({
+    q: searchParams.get('q') ?? '',
+    limit: searchParams.get('limit') ?? String(SEARCH_DEFAULTS.limit),
+    zone: searchParams.get('zone') ?? undefined,
+    category: searchParams.get('category') ?? undefined,
+    inStock: searchParams.get('inStock') ?? undefined,
+  });
+
+  return {
+    query: parsed.q,
+    limit: parsed.limit,
+    zone: parsed.zone,
+    category: parsed.category,
+    inStock: parsed.inStock,
+  };
 }
 
 export function toSearchQueryString(state: Partial<SearchUrlState>): string {
@@ -157,11 +159,9 @@ export function toSearchQueryString(state: Partial<SearchUrlState>): string {
   if (merged.q.trim()) params.set('q', merged.q.trim());
   if (merged.page !== SEARCH_DEFAULTS.page) params.set('page', String(merged.page));
   if (merged.limit !== SEARCH_DEFAULTS.limit) params.set('limit', String(merged.limit));
-  if (merged.materialType) params.set('materialType', merged.materialType);
-  if (merged.availability !== SEARCH_DEFAULTS.availability) {
-    params.set('availability', merged.availability);
-  }
-  if (merged.sort !== SEARCH_DEFAULTS.sort) params.set('sort', merged.sort);
+  if (merged.zone != null) params.set('zone', String(merged.zone));
+  if (merged.category) params.set('category', merged.category);
+  if (merged.inStock) params.set('inStock', 'true');
 
   return params.toString();
 }

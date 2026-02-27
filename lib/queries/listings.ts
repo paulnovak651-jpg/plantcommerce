@@ -1,29 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-
-export interface CommunityListing {
-  id: string;
-  listing_type: 'wts' | 'wtb';
-  raw_cultivar_text: string;
-  raw_species_text: string | null;
-  material_type: string;
-  quantity: number | null;
-  price_cents: number | null;
-  location_state: string;
-  notes: string | null;
-  status: string;
-  trust_tier: number;
-  resolve_confidence: number | null;
-  cultivar_id: string | null;
-  plant_entity_id: string | null;
-  created_at: string;
-  expires_at: string | null;
-  cultivars: {
-    canonical_name: string;
-    slug: string;
-    plant_entities: { slug: string } | null;
-  } | null;
-  plant_entities: { canonical_name: string; slug: string } | null;
-}
+import type { CommunityListing } from '@/lib/types';
 
 export interface AdminListing extends CommunityListing {
   contact_email: string | null;

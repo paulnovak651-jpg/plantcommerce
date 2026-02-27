@@ -6,6 +6,7 @@ import {
   writePipelineResult,
   createImportRun,
   completeImportRun,
+  markNurseryScraped,
 } from '@/lib/pipeline/supabase-pipeline';
 import {
   createRegisteredScrapers,
@@ -292,6 +293,11 @@ async function runNurseryPipeline(
       durationMs,
       errorSamples: capErrorSamples(errorSamples),
       scraperVersion: SCRAPER_VERSION,
+    });
+
+    await markNurseryScraped(supabase, nursery.id, {
+      rowsResolved: resolved,
+      scrapedAt: scrapeResult.scrapedAt,
     });
 
     if (totalProducts > 0) {
