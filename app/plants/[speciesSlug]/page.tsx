@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import { getPlantEntityBySlug } from '@/lib/queries/plants';
+import { getPlantEntityBySlug, getRelatedSpecies } from '@/lib/queries/plants';
 import { loadSpeciesPage } from '@/lib/queries/loaders';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -49,6 +49,8 @@ export default async function SpeciesPage({ params }: Props) {
   const loaded = await loadSpeciesPage(speciesSlug);
   if (!loaded) notFound();
   const { species, cultivars, taxonomyPath, growingProfile, offerStats, communityListings } = loaded;
+  const supabase = await createClient();
+  const relatedSpecies = await getRelatedSpecies(supabase, species.genus, species.slug);
 
   // Group cultivars by material type
   const clones = cultivars.filter((c) => c.material_type === 'cultivar_clone');
@@ -168,6 +170,28 @@ export default async function SpeciesPage({ params }: Props) {
           title="No cultivar data yet"
           description="No cultivar data for this species yet."
         />
+      )}
+
+      {relatedSpecies.length > 0 && (
+        <section>
+          <Text variant="h2" className="mb-2">
+            Related Species
+          </Text>
+          <Text variant="sm" color="secondary" className="mb-2">
+            Other {species.genus} species:
+          </Text>
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {relatedSpecies.map((item) => (
+              <Link
+                key={item.slug}
+                href={`/plants/${item.slug}`}
+                className="text-sm text-accent hover:underline"
+              >
+                {item.canonical_name}
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
 
       {communityListings.length > 0 && (

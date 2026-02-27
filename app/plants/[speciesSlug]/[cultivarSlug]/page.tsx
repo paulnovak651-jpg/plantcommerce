@@ -21,6 +21,7 @@ import { JsonLd } from '@/components/JsonLd';
 import { NurseryMap } from '@/components/NurseryMap';
 import type { NurseryPin } from '@/components/NurseryMap';
 import { ListingCard } from '@/components/ListingCard';
+import { PriceComparisonTable } from '@/components/PriceComparisonTable';
 import { getApprovedListingsForCultivar } from '@/lib/queries/listings';
 
 interface Props {
@@ -135,6 +136,24 @@ export default async function CultivarPage({ params }: Props) {
     }, null) ?? null;
 
   const pricesLastCheckedLabel = formatPricesLastChecked(latestScrapeIso);
+  const comparisonOffers = offers.map((offer: any) => {
+    const availability = getAvailabilityTag(offer.raw_availability);
+    const location = [offer.nurseries?.location_state, offer.nurseries?.location_country]
+      .filter(Boolean)
+      .join(', ');
+
+    return {
+      nurseryName: (offer.nurseries?.name as string) ?? 'Unknown Nursery',
+      nurserySlug: (offer.nurseries?.slug as string) ?? '',
+      price: (offer.raw_price_text as string | null) ?? null,
+      priceCents: (offer.price_cents as number | null) ?? null,
+      availability: availability?.label ?? ((offer.raw_availability as string | null) ?? null),
+      propagationMethod: (offer.propagation_method as string | null) ?? null,
+      saleForm: (offer.sale_form as string | null) ?? null,
+      productUrl: (offer.product_page_url as string | null) ?? null,
+      location,
+    };
+  });
 
   const seen = new Set<string>();
   const nurseryPins: NurseryPin[] = offers
@@ -253,9 +272,11 @@ export default async function CultivarPage({ params }: Props) {
             Prices last checked: {pricesLastCheckedLabel}
           </Text>
         )}
-        {offers.length > 0 ? (
+        {offers.length >= 2 ? (
+          <PriceComparisonTable offers={comparisonOffers} />
+        ) : offers.length === 1 ? (
           <div className="space-y-3">
-            {offers.map((offer: any) => {
+            {offers.slice(0, 1).map((offer: any) => {
               const availability = getAvailabilityTag(offer.raw_availability);
               const offerDetails = [
                 offer.propagation_method,

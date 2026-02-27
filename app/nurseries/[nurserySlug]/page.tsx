@@ -96,12 +96,13 @@ export default async function NurseryPage({ params }: Props) {
     (nursery as any).last_scraped_at ?? null
   );
 
-  // JSON-LD: Organization
-  const orgJsonLd = {
+  const localBusinessJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'LocalBusiness',
+    '@id': `https://plantcommerce.app/nurseries/${nurserySlug}`,
     name: displayName,
-    url: nursery.website_url || `https://plantcommerce.app/nurseries/${nurserySlug}`,
+    url: `https://plantcommerce.app/nurseries/${nurserySlug}`,
+    sameAs: nursery.website_url || undefined,
     address: {
       '@type': 'PostalAddress',
       addressLocality: nursery.location_city,
@@ -109,6 +110,14 @@ export default async function NurseryPage({ params }: Props) {
       addressCountry: nursery.location_country,
     },
   };
+
+  if (nursery.latitude != null && nursery.longitude != null) {
+    localBusinessJsonLd.geo = {
+      '@type': 'GeoCoordinates',
+      latitude: nursery.latitude,
+      longitude: nursery.longitude,
+    };
+  }
 
   return (
     <div className="space-y-[var(--spacing-zone)]">
@@ -225,7 +234,7 @@ export default async function NurseryPage({ params }: Props) {
         )}
       </section>
 
-      <JsonLd data={orgJsonLd} />
+      <JsonLd data={localBusinessJsonLd} />
     </div>
   );
 }

@@ -26,6 +26,12 @@ export interface CategoryGroup {
   top_species: Array<{ slug: string; canonical_name: string }>;
 }
 
+export interface RelatedSpecies {
+  slug: string;
+  canonical_name: string;
+  botanical_name: string | null;
+}
+
 export async function getPlantEntityBySlug(
   supabase: SupabaseClient,
   slug: string
@@ -261,4 +267,26 @@ export async function getHomepageCategories(
       if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
       return a.category.localeCompare(b.category);
     });
+}
+
+export async function getRelatedSpecies(
+  supabase: SupabaseClient,
+  genus: string,
+  excludeSlug: string
+): Promise<RelatedSpecies[]> {
+  const { data, error } = await supabase
+    .from('plant_entities')
+    .select('slug, canonical_name, botanical_name')
+    .eq('genus', genus)
+    .eq('curation_status', 'published')
+    .neq('slug', excludeSlug)
+    .order('canonical_name')
+    .limit(10);
+
+  if (error) {
+    console.error('getRelatedSpecies error:', error);
+    return [];
+  }
+
+  return (data ?? []) as RelatedSpecies[];
 }
