@@ -15,7 +15,7 @@ NNN_description.sql       e.g. 018_patch_castanea_sun_requirement.sql
 - Descriptive slug uses underscores, lowercase.
 - File lives in `sql/migrations/`.
 
-**Current sequence:** 001 … 020. Next available: **021**
+**Current sequence:** 001 … 024. Next available: **025**
 
 ---
 
@@ -114,6 +114,10 @@ Before applying any Codex-generated genus migration, verify each item:
 | Juglans | `d0000000-0000-0000-0000-000000000005` |
 | Carya | `d0000000-0000-0000-0000-000000000006` |
 | Asimina | `d0000000-0000-0000-0000-000000000015` |
+| Corylus | `d0000000-0000-0000-0000-000000000001` |
+| Malus | `d0000000-0000-0000-0000-000000000007` |
+| Pyrus | `d0000000-0000-0000-0000-000000000008` |
+| Prunus | `d0000000-0000-0000-0000-000000000009` |
 
 > To find others: `SELECT slug, id FROM taxonomy_nodes WHERE rank_id = 6 ORDER BY slug;`
 

@@ -7,6 +7,8 @@
 --          Morton Arboretum, Flora of the Southeastern US
 -- Pipeline step: 2 (Write SQL Migration)
 
+BEGIN;
+
 -- ============================================================================
 -- PART 1: plant_entities
 -- ============================================================================
@@ -314,3 +316,5 @@ INSERT INTO species_pollination_profiles (
 -- ============================================================================
 
 REFRESH MATERIALIZED VIEW material_search_index;
+
+COMMIT;

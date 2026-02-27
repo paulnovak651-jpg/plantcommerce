@@ -1,11 +1,38 @@
 import { createAnonClient, createServiceClient } from '@/lib/supabase/server';
 import { apiSuccess, apiError } from '@/lib/api-helpers';
+import { createPipelineClient, buildAliasIndexFromSupabase } from '@/lib/pipeline/supabase-pipeline';
+import { processProductName } from '@/lib/resolver/pipeline';
+import type { AliasEntry, EntityType } from '@/lib/resolver/types';
 
 const VALID_LISTING_TYPES = new Set(['wts', 'wtb']);
 const VALID_MATERIAL_TYPES = new Set([
   'unknown', 'potted', 'bareroot', 'scion', 'cutting', 'seed', 'rootstock', 'other',
 ]);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALIAS_INDEX_CACHE_TTL_MS = 5 * 60 * 1000;
+
+let aliasIndexCache:
+  | {
+      expiresAt: number;
+      index: Map<string, AliasEntry>;
+    }
+  | null = null;
+
+async function getAliasIndex(): Promise<Map<string, AliasEntry>> {
+  const now = Date.now();
+  if (aliasIndexCache && aliasIndexCache.expiresAt > now) {
+    return aliasIndexCache.index;
+  }
+
+  const pipelineClient = createPipelineClient();
+  const index = await buildAliasIndexFromSupabase(pipelineClient);
+  aliasIndexCache = {
+    expiresAt: now + ALIAS_INDEX_CACHE_TTL_MS,
+    index,
+  };
+
+  return index;
+}
 
 function normalizeEmail(raw: unknown): string | null {
   if (typeof raw !== 'string') return null;
@@ -86,38 +113,60 @@ export async function POST(request: Request) {
     }
   }
 
-  // Attempt resolver: exact case-insensitive cultivar name match
+  // Use the shared parser+resolver pipeline so listing resolution matches scraper behavior.
   let cultivarId: string | null = null;
   let plantEntityId: string | null = null;
   let resolveConfidence = 0.0;
+  const applyResolution = (
+    resolvedType: EntityType,
+    resolvedId: string | null,
+    confidence: number
+  ) => {
+    if (!resolvedId) return;
+    if (
+      resolvedType === 'cultivar' ||
+      resolvedType === 'named_material' ||
+      resolvedType === 'population'
+    ) {
+      cultivarId = resolvedId;
+      resolveConfidence = Math.max(resolveConfidence, confidence);
+      return;
+    }
+    if (resolvedType === 'plant_entity') {
+      plantEntityId = resolvedId;
+      resolveConfidence = Math.max(resolveConfidence, confidence);
+    }
+  };
 
-  const { data: exactMatch } = await supabase
-    .from('cultivars')
-    .select('id, plant_entity_id')
-    .ilike('canonical_name', raw_cultivar_text.trim())
-    .eq('curation_status', 'published')
-    .limit(1)
-    .maybeSingle();
+  try {
+    const aliasIndex = await getAliasIndex();
+    const primaryResolution = processProductName(raw_cultivar_text.trim(), aliasIndex);
+    applyResolution(
+      primaryResolution.resolvedEntityType,
+      primaryResolution.resolvedEntityId,
+      primaryResolution.resolutionConfidence
+    );
 
-  if (exactMatch) {
-    cultivarId = exactMatch.id as string;
-    plantEntityId = exactMatch.plant_entity_id as string;
-    resolveConfidence = 0.90;
-  } else if (typeof raw_species_text === 'string' && raw_species_text.trim()) {
-    const { data: speciesMatch } = await supabase
-      .from('plant_entities')
-      .select('id')
-      .or(
-        `canonical_name.ilike.${raw_species_text.trim()},botanical_name.ilike.${raw_species_text.trim()}`
-      )
-      .eq('curation_status', 'published')
-      .limit(1)
+    if (!plantEntityId && typeof raw_species_text === 'string' && raw_species_text.trim()) {
+      const secondaryResolution = processProductName(raw_species_text.trim(), aliasIndex);
+      applyResolution(
+        secondaryResolution.resolvedEntityType,
+        secondaryResolution.resolvedEntityId,
+        secondaryResolution.resolutionConfidence
+      );
+    }
+  } catch (resolverError) {
+    console.error('Listing resolver failed:', resolverError);
+  }
+
+  if (cultivarId && !plantEntityId) {
+    const { data: cultivarRow } = await supabase
+      .from('cultivars')
+      .select('plant_entity_id')
+      .eq('id', cultivarId)
       .maybeSingle();
 
-    if (speciesMatch) {
-      plantEntityId = speciesMatch.id as string;
-      resolveConfidence = 0.60;
-    }
+    plantEntityId = (cultivarRow?.plant_entity_id as string | null) ?? null;
   }
 
   const { data: inserted, error } = await supabase

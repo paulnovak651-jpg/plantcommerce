@@ -10,7 +10,7 @@
 --
 -- Every record carries:
 --   - taxonomy_confidence: how certain is the taxonomic placement
---   - data_source (on growing profiles): where the numbers came from
+--   - data_sources (on growing profiles): where the numbers came from
 --   - curation_status: editorial readiness
 --
 -- Data verified against:
@@ -256,15 +256,15 @@ INSERT INTO species_growing_profiles (
   plant_entity_id,
   usda_zone_min, usda_zone_max, usda_zone_notes,
   chill_hours_min, chill_hours_max,
-  soil_ph_min, soil_ph_max, soil_drainage, soil_textures,
+  soil_ph_min, soil_ph_max, soil_drainage, soil_texture_tolerances,
   sun_requirement, water_needs, drought_tolerance,
   mature_height_min_ft, mature_height_max_ft,
   mature_spread_min_ft, mature_spread_max_ft,
-  growth_rate, root_type,
-  native_range, nitrogen_fixer,
+  growth_rate, root_architecture,
+  native_range_description, nitrogen_fixer,
   years_to_bearing_min, years_to_bearing_max,
   harvest_season, productive_lifespan_years,
-  data_source, curation_status
+  data_sources, curation_status
 ) VALUES (
   (SELECT id FROM plant_entities WHERE slug = 'castanea-mollissima'),
   4, 8,
@@ -276,7 +276,7 @@ INSERT INTO species_growing_profiles (
   'moderate', 'taproot',
   'China, Korea, Taiwan', FALSE,
   5, 7, 'mid', 100,
-  'PFAF, Raintree Nursery, Stark Bros, Forest Agriculture Nursery, Oregon State Extension',
+  ARRAY['PFAF, Raintree Nursery, Stark Bros, Forest Agriculture Nursery, Oregon State Extension'],
   'published'
 ) ON CONFLICT (plant_entity_id) DO NOTHING;
 
@@ -285,15 +285,15 @@ INSERT INTO species_growing_profiles (
   plant_entity_id,
   usda_zone_min, usda_zone_max, usda_zone_notes,
   chill_hours_min, chill_hours_max,
-  soil_ph_min, soil_ph_max, soil_drainage, soil_textures,
+  soil_ph_min, soil_ph_max, soil_drainage, soil_texture_tolerances,
   sun_requirement, water_needs, drought_tolerance,
   mature_height_min_ft, mature_height_max_ft,
   mature_spread_min_ft, mature_spread_max_ft,
-  growth_rate, root_type,
-  native_range, nitrogen_fixer,
+  growth_rate, root_architecture,
+  native_range_description, nitrogen_fixer,
   years_to_bearing_min, years_to_bearing_max,
   harvest_season, productive_lifespan_years,
-  data_source, curation_status
+  data_sources, curation_status
 ) VALUES (
   (SELECT id FROM plant_entities WHERE slug = 'castanea-dentata'),
   4, 8,
@@ -305,7 +305,7 @@ INSERT INTO species_growing_profiles (
   'fast', 'taproot',
   'Eastern North America — Maine to Michigan south to Mississippi, concentrated in Appalachians to 4000 ft',
   FALSE, 5, 8, 'mid', 200,
-  'USDA PLANTS, NC State Extension, Oregon State Extension, TACF, UMN UFOR',
+  ARRAY['USDA PLANTS, NC State Extension, Oregon State Extension, TACF, UMN UFOR'],
   'published'
 ) ON CONFLICT (plant_entity_id) DO NOTHING;
 
@@ -314,15 +314,15 @@ INSERT INTO species_growing_profiles (
   plant_entity_id,
   usda_zone_min, usda_zone_max, usda_zone_notes,
   chill_hours_min, chill_hours_max,
-  soil_ph_min, soil_ph_max, soil_drainage, soil_textures,
+  soil_ph_min, soil_ph_max, soil_drainage, soil_texture_tolerances,
   sun_requirement, water_needs, drought_tolerance,
   mature_height_min_ft, mature_height_max_ft,
   mature_spread_min_ft, mature_spread_max_ft,
-  growth_rate, root_type,
-  native_range, nitrogen_fixer,
+  growth_rate, root_architecture,
+  native_range_description, nitrogen_fixer,
   years_to_bearing_min, years_to_bearing_max,
   harvest_season, productive_lifespan_years,
-  data_source, curation_status
+  data_sources, curation_status
 ) VALUES (
   (SELECT id FROM plant_entities WHERE slug = 'castanea-sativa'),
   5, 7,
@@ -334,7 +334,7 @@ INSERT INTO species_growing_profiles (
   'fast', 'taproot',
   'Southern Europe, North Africa, southwestern Asia — naturalized in British Isles since Roman times',
   FALSE, 5, 8, 'mid', 150,
-  'PFAF, Oregon State Extension, Raintree Nursery, Britannica',
+  ARRAY['PFAF, Oregon State Extension, Raintree Nursery, Britannica'],
   'published'
 ) ON CONFLICT (plant_entity_id) DO NOTHING;
 
@@ -343,15 +343,15 @@ INSERT INTO species_growing_profiles (
   plant_entity_id,
   usda_zone_min, usda_zone_max, usda_zone_notes,
   chill_hours_min, chill_hours_max,
-  soil_ph_min, soil_ph_max, soil_drainage, soil_textures,
+  soil_ph_min, soil_ph_max, soil_drainage, soil_texture_tolerances,
   sun_requirement, water_needs, drought_tolerance,
   mature_height_min_ft, mature_height_max_ft,
   mature_spread_min_ft, mature_spread_max_ft,
-  growth_rate, root_type,
-  native_range, nitrogen_fixer,
+  growth_rate, root_architecture,
+  native_range_description, nitrogen_fixer,
   years_to_bearing_min, years_to_bearing_max,
   harvest_season, productive_lifespan_years,
-  data_source, curation_status
+  data_sources, curation_status
 ) VALUES (
   (SELECT id FROM plant_entities WHERE slug = 'castanea-crenata'),
   4, 8,
@@ -363,7 +363,7 @@ INSERT INTO species_growing_profiles (
   'moderate', 'taproot',
   'Japan and Korea — cultivated in eastern China and Taiwan',
   FALSE, 2, 4, 'mid', 80,
-  'PFAF, Wikipedia, Gardenia.net, Sheffield Seeds, Trees & Shrubs Online',
+  ARRAY['PFAF, Wikipedia, Gardenia.net, Sheffield Seeds, Trees & Shrubs Online'],
   'published'
 ) ON CONFLICT (plant_entity_id) DO NOTHING;
 
@@ -371,25 +371,25 @@ INSERT INTO species_growing_profiles (
 INSERT INTO species_growing_profiles (
   plant_entity_id,
   usda_zone_min, usda_zone_max, usda_zone_notes,
-  soil_ph_min, soil_ph_max, soil_drainage, soil_textures,
+  soil_ph_min, soil_ph_max, soil_drainage, soil_texture_tolerances,
   sun_requirement, water_needs, drought_tolerance,
   mature_height_min_ft, mature_height_max_ft,
-  growth_rate, root_type,
-  native_range, nitrogen_fixer,
+  growth_rate, root_architecture,
+  native_range_description, nitrogen_fixer,
   years_to_bearing_min, years_to_bearing_max,
   harvest_season,
-  data_source, curation_status
+  data_sources, curation_status
 ) VALUES (
   (SELECT id FROM plant_entities WHERE slug = 'castanea-seguinii'),
   6, 9,
   'Zone 6 per Trees & Shrubs Online. Prefers warm, wet summers. Rare in cultivation outside Asia.',
   5.0, 6.5, 'well_drained', ARRAY['loam'],
-  'full_to_part_sun', 'moderate', 3,
+  'part_shade', 'moderate', 3,
   30, 40,
   'moderate', 'taproot',
   'Central/SW China — Anhui to Yunnan, 400–2000m elevation',
   FALSE, 5, 8, 'mid',
-  'Trees & Shrubs Online, Wikispecies, Flora of China, Lang et al. 2007',
+  ARRAY['Trees & Shrubs Online, Wikispecies, Flora of China, Lang et al. 2007'],
   'published'
 ) ON CONFLICT (plant_entity_id) DO NOTHING;
 
@@ -398,27 +398,27 @@ INSERT INTO species_growing_profiles (
   plant_entity_id,
   usda_zone_min, usda_zone_max, usda_zone_notes,
   chill_hours_min, chill_hours_max,
-  soil_ph_min, soil_ph_max, soil_drainage, soil_textures,
+  soil_ph_min, soil_ph_max, soil_drainage, soil_texture_tolerances,
   sun_requirement, water_needs, drought_tolerance,
   mature_height_min_ft, mature_height_max_ft,
   mature_spread_min_ft, mature_spread_max_ft,
-  growth_rate, root_type,
-  native_range, nitrogen_fixer,
+  growth_rate, root_architecture,
+  native_range_description, nitrogen_fixer,
   years_to_bearing_min, years_to_bearing_max,
   harvest_season, productive_lifespan_years,
-  data_source, curation_status
+  data_sources, curation_status
 ) VALUES (
   (SELECT id FROM plant_entities WHERE slug = 'castanea-pumila'),
   5, 9,
   'More heat-tolerant than American chestnut. Found naturally on dry, poor sites. Some blight tolerance.',
   300, 600,
   4.5, 6.5, 'well_drained', ARRAY['sand', 'loam'],
-  'full_to_part_sun', 'low', 4,
+  'part_shade', 'low', 4,
   15, 30, 10, 20,
   'fast', 'spreading',
   'Eastern US — New Jersey to Florida, west to Texas. var. ozarkensis on Ozark plateau.',
   FALSE, 3, 5, 'mid', 60,
-  'USDA PLANTS, PFAF, Route 9 Cooperative, Lang et al. 2007',
+  ARRAY['USDA PLANTS, PFAF, Route 9 Cooperative, Lang et al. 2007'],
   'published'
 ) ON CONFLICT (plant_entity_id) DO NOTHING;
 
@@ -427,15 +427,15 @@ INSERT INTO species_growing_profiles (
   plant_entity_id,
   usda_zone_min, usda_zone_max, usda_zone_notes,
   chill_hours_min, chill_hours_max,
-  soil_ph_min, soil_ph_max, soil_drainage, soil_textures,
+  soil_ph_min, soil_ph_max, soil_drainage, soil_texture_tolerances,
   sun_requirement, water_needs, drought_tolerance,
   mature_height_min_ft, mature_height_max_ft,
   mature_spread_min_ft, mature_spread_max_ft,
-  growth_rate, root_type,
-  native_range, nitrogen_fixer,
+  growth_rate, root_architecture,
+  native_range_description, nitrogen_fixer,
   years_to_bearing_min, years_to_bearing_max,
   harvest_season, productive_lifespan_years,
-  data_source, curation_status
+  data_sources, curation_status
 ) VALUES (
   (SELECT id FROM plant_entities WHERE slug = 'castanea-dentata-x-mollissima'),
   5, 9,
@@ -447,7 +447,7 @@ INSERT INTO species_growing_profiles (
   'fast', 'taproot',
   'Hybrid origin — US breeding programs (TACF, U. Missouri, Penn State, SUNY-ESF, Badgersett)',
   FALSE, 3, 5, 'mid', 80,
-  'TACF, Tristar Plants, Gardener''s Path, Raintree Nursery, Route 9 Cooperative',
+  ARRAY['TACF, Tristar Plants, Gardener''s Path, Raintree Nursery, Route 9 Cooperative'],
   'published'
 ) ON CONFLICT (plant_entity_id) DO NOTHING;
 
@@ -510,7 +510,7 @@ ON CONFLICT (plant_entity_id) DO NOTHING;
 -- PART 6: REFRESH SEARCH INDEX
 -- ============================================================================
 
-REFRESH MATERIALIZED VIEW CONCURRENTLY material_search_index;
+REFRESH MATERIALIZED VIEW material_search_index;
 
 
 -- ============================================================================
@@ -542,3 +542,4 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY material_search_index;
 --    FAGACEAE   → Castanea → [7 chestnut species]
 
 COMMIT;
+

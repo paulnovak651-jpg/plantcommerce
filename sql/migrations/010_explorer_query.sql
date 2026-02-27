@@ -1,6 +1,8 @@
 -- Migration 010: Explorer query function
 -- Supports zone-range filtering and availability-only toggle for the Explorer page.
 
+BEGIN;
+
 CREATE OR REPLACE FUNCTION get_explorer_species(
   p_zone_min INT DEFAULT NULL,
   p_zone_max INT DEFAULT NULL,
@@ -58,3 +60,5 @@ BEGIN
   ORDER BY pe.family, pe.genus, pe.canonical_name;
 END;
 $$;
+
+COMMIT;
