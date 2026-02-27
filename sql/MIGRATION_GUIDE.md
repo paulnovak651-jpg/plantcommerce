@@ -98,7 +98,7 @@ Before applying any Codex-generated genus migration, verify each item:
 - [ ] `native_range_description` not `native_range`
 - [ ] `data_sources ARRAY[...]` not `data_source '...'`
 - [ ] `sun_requirement` uses only valid enum values (no `full_to_part_sun`)
-- [ ] `REFRESH MATERIALIZED VIEW` — **no `CONCURRENTLY`** (fails without unique index)
+- [ ] `REFRESH MATERIALIZED VIEW` — **no `CONCURRENTLY`** (fails via MCP apply_migration endpoint even with unique index present)
 - [ ] All UPDATEs and INSERTs use `WHERE NOT EXISTS` or `ON CONFLICT DO NOTHING`
 - [ ] Taxonomy node UUID exists in `plant_entities` for the genus
 - [ ] Hybrid parentage rows have `WHERE NOT EXISTS` guards
@@ -180,7 +180,7 @@ confidence_note           TEXT
 ```sql
 REFRESH MATERIALIZED VIEW material_search_index;   -- no CONCURRENTLY
 ```
-Requires a unique index on the view to use CONCURRENTLY; that index does not exist.
+The unique index `idx_material_search_entity` exists on the view but CONCURRENTLY still fails via MCP apply_migration endpoint. Always use plain `REFRESH MATERIALIZED VIEW material_search_index;`.
 
 ---
 
