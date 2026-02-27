@@ -3,6 +3,7 @@ import { apiError, apiSuccess } from '@/lib/api-helpers';
 import { requireAdminStatusAuth } from '@/lib/pipeline/auth';
 import { createServiceClient } from '@/lib/supabase/server';
 import { parseLimit, parseListStatus } from '@/lib/unmatched/admin';
+import { buildPaginationLinks } from '@/lib/pagination';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -19,6 +20,10 @@ export async function GET(request: NextRequest) {
   try {
     const status = parseListStatus(request.nextUrl.searchParams.get('status'));
     const limit = parseLimit(request.nextUrl.searchParams.get('limit'), 100);
+    const offsetRaw = request.nextUrl.searchParams.get('offset');
+    const parsedOffset = offsetRaw ? Number.parseInt(offsetRaw, 10) : 0;
+    const offset =
+      Number.isFinite(parsedOffset) && parsedOffset >= 0 ? parsedOffset : 0;
 
     const supabase = createServiceClient();
     let query = supabase
@@ -28,7 +33,7 @@ export async function GET(request: NextRequest) {
         { count: 'exact' }
       )
       .order('last_seen_at', { ascending: false })
-      .limit(limit);
+      .range(offset, offset + limit - 1);
 
     if (status !== 'all') {
       query = query.eq('review_status', status);
@@ -37,8 +42,16 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await query;
     if (error) return apiError('DB_ERROR', error.message, 500);
 
-    const self = `/api/admin/unmatched?status=${status}&limit=${limit}`;
-    return apiSuccess(data ?? [], { total: count ?? 0, limit }, { self });
+    const params = new URLSearchParams(request.nextUrl.searchParams.toString());
+    params.set('status', status);
+    const links = buildPaginationLinks(
+      '/api/admin/unmatched',
+      params,
+      { limit, offset },
+      count ?? 0
+    );
+
+    return apiSuccess(data ?? [], { total: count ?? 0, limit, offset }, links);
   } catch (err) {
     return apiError('SERVER_ERROR', String(err), 500);
   }

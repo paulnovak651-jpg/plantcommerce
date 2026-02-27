@@ -1,8 +1,6 @@
 # Plant Commerce
 
-> Plant database and nursery inventory aggregator for the permaculture community.
-
-Plant Commerce helps you find specific plant cultivars and compare availability across nurseries. Currently focused on hazelnuts (Corylus genus).
+Plant comparison platform for permaculture crops. Search cultivars, compare nursery inventory, and browse species guidance.
 
 ## Key Pages
 
@@ -10,18 +8,26 @@ Plant Commerce helps you find specific plant cultivars and compare availability 
 - Search: https://plantcommerce.app/search?q={query}
 - Species: https://plantcommerce.app/plants/{species-slug}
 - Cultivar: https://plantcommerce.app/plants/{species-slug}/{cultivar-slug}
+- Pollination checker: https://plantcommerce.app/pollination?species={species-slug}
 - Nurseries: https://plantcommerce.app/nurseries
-- Nursery: https://plantcommerce.app/nurseries/{nursery-slug}
+- Feed: https://plantcommerce.app/feed.xml
 
 ## API
 
 - Discovery: https://plantcommerce.app/api
-- Search: https://plantcommerce.app/api/search?q={query}
-- Species: https://plantcommerce.app/api/plants/{species-slug}
-- Cultivar: https://plantcommerce.app/api/plants/{species-slug}/{cultivar-slug}
-- Nurseries: https://plantcommerce.app/api/nurseries
-- Nursery: https://plantcommerce.app/api/nurseries/{nursery-slug}
+- Search: `/api/search?q={query}&zone={1-13}&category={name}&inStock=true&limit={n}&offset={n}`
+- Species: `/api/plants/{species-slug}?fields=canonical_name,cultivars.canonical_name&limit={n}&offset={n}`
+- Cultivar: `/api/plants/{species-slug}/{cultivar-slug}?fields=canonical_name,offers.raw_price_text&limit={n}&offset={n}`
+- Nurseries: `/api/nurseries?limit={n}&offset={n}`
+- Nursery detail: `/api/nurseries/{nursery-slug}?limit={n}&offset={n}`
+- Listings: `/api/listings?cultivarId={uuid}&limit={n}&offset={n}`
+- Alerts create: `POST /api/alerts`
+- Schema: `/api/schema`
 
-## Full API Guide
+## API Conventions
 
-See /llms-full.txt for complete API documentation.
+- Envelope: `{ ok, data, meta, links }`
+- Pagination: `limit` + `offset`, with `meta.total` and `links.self/next/prev`
+- Sparse fieldsets on plant endpoints via `fields` CSV
+
+See `/llms-full.txt` for full endpoint and field details.

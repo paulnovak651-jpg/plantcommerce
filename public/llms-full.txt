@@ -1,81 +1,144 @@
-# Plant Commerce — Full API & Data Guide
+# Plant Commerce - Full API Guide
 
 ## Overview
-Plant Commerce is a plant database and nursery inventory aggregator focused on permaculture crops. It provides structured data about plant species, cultivars (named varieties), and nursery inventory with pricing/availability.
 
-Current scope: Hazelnuts (Corylus genus) — 7 species, 60+ cultivars, 10 nurseries.
+Plant Commerce aggregates species, cultivars, nursery inventory, and community listings for perennial crops.
 
-## Data Model
+Core objects:
+- `plant_entity`: species-level record
+- `cultivar`: named material under a species
+- `inventory_offer`: active nursery listing
+- `nursery`: seller profile
+- `community_listing`: user-submitted WTS/WTB listing
 
-### Plant Entity (Species)
-A botanical species, hybrid, or species group.
-Fields: id, slug, canonical_name, botanical_name, genus, family, entity_type, description.
-Example: European Hazelnut = Corylus avellana.
+All API responses use:
+- Success: `{ ok: true, data, meta?, links? }`
+- Error: `{ ok: false, error: { code, message } }`
 
-### Cultivar
-A named plant variety under a species. Types: cultivar_clone, named_seed_strain, breeding_population, geographic_population, species_seedling.
-Fields: id, slug, canonical_name, plant_entity_id, material_type, breeder, origin_location, year_released, patent_status, notes.
-Example: Jefferson = cultivar_clone under Corylus avellana, bred by Oregon State University.
+## Pagination Contract
 
-### Nursery
-A business that sells plants.
-Fields: id, slug, name, website_url, location_city, location_state, location_country, sales_type, is_active.
+List endpoints support:
+- `limit` (default `20`, max `100`)
+- `offset` (default `0`)
 
-### Inventory Offer
-A current listing of a cultivar at a nursery.
-Fields: nursery_id, cultivar_id, raw_product_name, raw_price_text, product_page_url, propagation_method, sale_form, offer_status.
+Responses include:
+- `meta.total` (full result size before paging)
+- `meta.limit`
+- `meta.offset`
+- `links.self`
+- `links.next` when more rows exist
+- `links.prev` when offset > 0
 
-## API Endpoints
+## Search
 
-All responses use envelope: { ok: true, data: ..., meta: { total }, links: { self, ... } }
-Errors: { ok: false, error: { code, message } }
+`GET /api/search`
 
-### GET /api
-Returns JSON listing all available endpoints with descriptions and parameters.
+Query params:
+- `q` (required)
+- `zone` (optional int `1..13`)
+- `category` (optional string)
+- `inStock` (optional boolean; use `true`)
+- `limit`, `offset`
 
-### GET /api/search?q={query}&limit={n}
-Full-text search across plants and cultivars.
-- q (required): search term
-- limit (optional, default 20): max results
-Returns: { ok, data: [{ index_source, entity_id, slug, canonical_name, material_type, botanical_name, species_slug, active_offer_count }] }
+Returns rows from the material search index including:
+- `index_source`
+- `entity_id`
+- `slug`
+- `canonical_name`
+- `material_type`
+- `botanical_name`
+- `species_common_name`
+- `species_slug`
+- `genus`
+- `family`
+- `active_offer_count`
+- `usda_zone_min`
+- `usda_zone_max`
+- `display_category`
 
-### GET /api/plants/{speciesSlug}
-Get species details with all cultivars.
-Returns: { ok, data: { type: "plant_entity", data: {...}, cultivars: [...] } }
-Example: /api/plants/corylus-avellana
+## Plants API (Sparse Fieldsets + Paging)
 
-### GET /api/plants/{speciesSlug}/{cultivarSlug}
-Get cultivar with offers, aliases, legal identifiers.
-Returns: { ok, data: { type: "cultivar", data: {...}, offers: [...], aliases: [...], legal_identifiers: [...] } }
-Example: /api/plants/corylus-avellana/jefferson
+### Species endpoint
 
-### GET /api/nurseries
-List all active nurseries.
-Returns: { ok, data: [...], meta: { total } }
+`GET /api/plants/{speciesSlug}`
 
-### GET /api/nurseries/{nurserySlug}
-Get nursery with inventory.
-Returns: { ok, data: { ...nursery, inventory: [...] }, meta: { total } }
-Example: /api/nurseries/burnt-ridge-nursery
+Query params:
+- `fields` (optional CSV sparse fieldset)
+- `limit`, `offset` (applies to cultivar list)
 
-## URL Patterns
-- Species pages: /plants/{species-slug} (e.g., /plants/corylus-avellana)
-- Cultivar pages: /plants/{species-slug}/{cultivar-slug} (e.g., /plants/corylus-avellana/jefferson)
-- Nursery pages: /nurseries/{nursery-slug} (e.g., /nurseries/burnt-ridge-nursery)
+Examples:
+- `?fields=canonical_name,botanical_name`
+- `?fields=canonical_name,cultivars.canonical_name,cultivars.slug`
 
-## Structured Data
-All pages include JSON-LD (schema.org) structured data:
-- Homepage: WebSite + SearchAction
-- Species: ItemList of cultivars
-- Cultivar: Product + Offer[]
-- Nursery: Organization
-- All: BreadcrumbList
+Fieldset rules:
+- Root fields without prefix apply to `data`
+- `data.field` is also supported
+- `cultivars.field` applies to each cultivar object
+- `*`, `data.*`, or `cultivars.*` request full object for that scope
 
-## Search Tips
-- Search by cultivar name: "jefferson", "barcelona"
-- Search by species: "european hazelnut", "corylus avellana"
-- Search by breeder: results include breeder info in cultivar details
-- Partial matches work via trigram similarity
+### Cultivar endpoint
 
-## Rate Limits
-Be polite. No formal rate limit, but please keep requests under 1/second for API endpoints.
+`GET /api/plants/{speciesSlug}/{cultivarSlug}`
+
+Query params:
+- `fields` (optional CSV sparse fieldset)
+- `limit`, `offset` (applies to offers list)
+
+Examples:
+- `?fields=canonical_name,material_type`
+- `?fields=canonical_name,offers.raw_price_text,offers.product_page_url`
+
+Fieldset scopes:
+- Root: `data` (or unprefixed fields)
+- Nested: `offers`, `aliases`, `legal_identifiers`
+
+## Nurseries
+
+### List nurseries
+
+`GET /api/nurseries?limit=20&offset=0`
+
+Returns active published nurseries with `offer_count`.
+
+### Nursery detail
+
+`GET /api/nurseries/{nurserySlug}?limit=20&offset=0`
+
+Returns nursery record plus paginated `inventory`.
+
+## Listings
+
+### Create listing
+
+`POST /api/listings`
+
+Creates pending WTS/WTB listings and attempts resolver matching.
+
+### Read listings
+
+`GET /api/listings?cultivarId={uuid}&limit=20&offset=0`
+or
+`GET /api/listings?plantEntityId={uuid}&limit=20&offset=0`
+
+Requires `cultivarId` or `plantEntityId`.
+
+## Alerts
+
+`POST /api/alerts`
+
+Creates stock alerts.
+
+Body:
+- `email` (required)
+- `cultivarId` (optional if `plantEntityId` provided)
+- `plantEntityId` (optional if `cultivarId` provided)
+- `usdaZone` (optional int `1..13`)
+
+Duplicate active alerts for the same target/email return `duplicate: true`.
+
+## Other Discovery Endpoints
+
+- `GET /api` (endpoint registry)
+- `GET /api/schema` (static schema metadata)
+- `GET /feed.xml` (RSS feed)
+- `GET /llms.txt` / `GET /llms-full.txt` (this documentation)

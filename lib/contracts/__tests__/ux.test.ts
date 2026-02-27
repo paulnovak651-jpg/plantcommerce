@@ -48,6 +48,7 @@ describe('parseSearchApiParams', () => {
     const params = new URLSearchParams({
       q: '  filbert  ',
       limit: '7',
+      offset: '14',
       zone: '5',
       category: 'Nut Trees',
       inStock: 'true',
@@ -55,6 +56,7 @@ describe('parseSearchApiParams', () => {
     expect(parseSearchApiParams(params)).toEqual({
       query: 'filbert',
       limit: 7,
+      offset: 14,
       zone: 5,
       category: 'Nut Trees',
       inStock: true,
@@ -66,6 +68,7 @@ describe('parseSearchApiParams', () => {
     const high = new URLSearchParams({ limit: '9000' });
     expect(parseSearchApiParams(low).limit).toBe(20);
     expect(parseSearchApiParams(high).limit).toBe(100);
+    expect(parseSearchApiParams(new URLSearchParams({ offset: '-2' })).offset).toBe(0);
   });
 });
 

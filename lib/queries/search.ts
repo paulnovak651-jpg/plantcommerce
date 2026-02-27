@@ -23,19 +23,26 @@ export interface SearchFilters {
   category?: string;
   inStock?: boolean;
   limit?: number;
+  offset?: number;
 }
 
-export async function searchPlants(
+export interface SearchPage {
+  results: SearchResult[];
+  total: number;
+}
+
+export async function searchPlantsPaged(
   supabase: SupabaseClient,
   filters: SearchFilters
-): Promise<SearchResult[]> {
+): Promise<SearchPage> {
   const q = filters.q.trim();
   const limit = filters.limit ?? 20;
-  if (!q) return [];
+  const offset = filters.offset ?? 0;
+  if (!q) return { results: [], total: 0 };
 
   let query = supabase
     .from('material_search_index')
-    .select('*')
+    .select('*', { count: 'exact' })
     .textSearch('search_text', q.toLowerCase(), { type: 'plain' });
 
   if (filters.zone != null) {
@@ -52,13 +59,13 @@ export async function searchPlants(
     query = query.gt('active_offer_count', 0);
   }
 
-  const { data, error } = await query.limit(limit);
+  const { data, error, count } = await query.range(offset, offset + limit - 1);
 
   // Fallback: if full-text search returns nothing, try ilike
   if (error || !data || data.length === 0) {
     let fallback = supabase
       .from('material_search_index')
-      .select('*')
+      .select('*', { count: 'exact' })
       .ilike('search_text', `%${q.toLowerCase()}%`);
 
     if (filters.zone != null) {
@@ -69,10 +76,27 @@ export async function searchPlants(
     if (filters.category) fallback = fallback.eq('display_category', filters.category);
     if (filters.inStock) fallback = fallback.gt('active_offer_count', 0);
 
-    const { data: fallbackData } = await fallback.limit(limit);
+    const {
+      data: fallbackData,
+      count: fallbackCount,
+    } = await fallback.range(offset, offset + limit - 1);
 
-    return (fallbackData ?? []) as SearchResult[];
+    return {
+      results: (fallbackData ?? []) as SearchResult[],
+      total: fallbackCount ?? 0,
+    };
   }
 
-  return data as SearchResult[];
+  return {
+    results: data as SearchResult[],
+    total: count ?? data.length,
+  };
+}
+
+export async function searchPlants(
+  supabase: SupabaseClient,
+  filters: SearchFilters
+): Promise<SearchResult[]> {
+  const { results } = await searchPlantsPaged(supabase, { ...filters, offset: 0 });
+  return results;
 }

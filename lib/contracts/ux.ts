@@ -131,6 +131,7 @@ export function parseSearchUrlStateFromRecord(input: {
 export function parseSearchApiParams(searchParams: URLSearchParams): {
   query: string;
   limit: number;
+  offset: number;
   zone?: number;
   category?: string;
   inStock?: boolean;
@@ -142,10 +143,15 @@ export function parseSearchApiParams(searchParams: URLSearchParams): {
     category: searchParams.get('category') ?? undefined,
     inStock: searchParams.get('inStock') ?? undefined,
   });
+  const offsetRaw = searchParams.get('offset');
+  const offsetParsed = offsetRaw ? Number.parseInt(offsetRaw, 10) : 0;
+  const offset =
+    Number.isFinite(offsetParsed) && offsetParsed >= 0 ? offsetParsed : 0;
 
   return {
     query: parsed.q,
     limit: parsed.limit,
+    offset,
     zone: parsed.zone,
     category: parsed.category,
     inStock: parsed.inStock,

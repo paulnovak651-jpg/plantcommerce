@@ -3,6 +3,7 @@ import { apiSuccess, apiError } from '@/lib/api-helpers';
 import { createPipelineClient, buildAliasIndexFromSupabase } from '@/lib/pipeline/supabase-pipeline';
 import { processProductName } from '@/lib/resolver/pipeline';
 import type { AliasEntry, EntityType } from '@/lib/resolver/types';
+import { buildPaginationLinks, parsePagination } from '@/lib/pagination';
 
 const VALID_LISTING_TYPES = new Set(['wts', 'wtb']);
 const VALID_MATERIAL_TYPES = new Set([
@@ -213,6 +214,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const cultivarId = searchParams.get('cultivarId');
   const plantEntityId = searchParams.get('plantEntityId');
+  const pagination = parsePagination(searchParams);
 
   if (!cultivarId && !plantEntityId) {
     return apiError('INVALID_PARAMS', 'cultivarId or plantEntityId is required', 400);
@@ -222,11 +224,12 @@ export async function GET(request: Request) {
   let query = supabase
     .from('community_listings')
     .select(
-      'id, listing_type, raw_cultivar_text, material_type, quantity, price_cents, location_state, notes, trust_tier, created_at'
+      'id, listing_type, raw_cultivar_text, material_type, quantity, price_cents, location_state, notes, trust_tier, created_at',
+      { count: 'exact' }
     )
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
-    .limit(20);
+    .range(pagination.offset, pagination.offset + pagination.limit - 1);
 
   if (cultivarId) {
     query = query.eq('cultivar_id', cultivarId);
@@ -234,6 +237,12 @@ export async function GET(request: Request) {
     query = query.eq('plant_entity_id', plantEntityId);
   }
 
-  const { data } = await query;
-  return apiSuccess(data ?? []);
+  const { data, count } = await query;
+  const links = buildPaginationLinks(
+    '/api/listings',
+    searchParams,
+    pagination,
+    count ?? 0
+  );
+  return apiSuccess(data ?? [], { total: count ?? 0, ...pagination }, links);
 }

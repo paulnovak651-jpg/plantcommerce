@@ -22,6 +22,7 @@ import { NurseryMap } from '@/components/NurseryMap';
 import type { NurseryPin } from '@/components/NurseryMap';
 import { ListingCard } from '@/components/ListingCard';
 import { PriceComparisonTable } from '@/components/PriceComparisonTable';
+import { AlertSignupForm } from '@/components/AlertSignupForm';
 import { getApprovedListingsForCultivar } from '@/lib/queries/listings';
 
 interface Props {
@@ -354,6 +355,14 @@ export default async function CultivarPage({ params }: Props) {
             description="No nursery offers yet. We're adding new sources regularly."
           />
         )}
+      </section>
+
+      <section>
+        <AlertSignupForm
+          cultivarId={cultivar.id}
+          plantEntityId={species?.id ?? null}
+          cultivarName={cultivar.canonical_name}
+        />
       </section>
 
       {/* MINI MAP */}
