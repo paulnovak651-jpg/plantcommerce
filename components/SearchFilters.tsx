@@ -1,12 +1,12 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { CATEGORY_LABELS } from '@/lib/search/categories';
 
 interface SearchFiltersProps {
   currentZone?: number;
   currentCategory?: string;
   currentInStock?: boolean;
-  categories: string[];
 }
 
 const ZONE_OPTIONS = Array.from({ length: 13 }, (_, i) => i + 1);
@@ -15,7 +15,6 @@ export function SearchFilters({
   currentZone,
   currentCategory,
   currentInStock,
-  categories,
 }: SearchFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -61,9 +60,9 @@ export function SearchFilters({
           className="rounded-[var(--radius-sm)] border border-border bg-surface-raised px-2 py-1 text-sm text-text-primary"
         >
           <option value="">Any</option>
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
+          {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
             </option>
           ))}
         </select>

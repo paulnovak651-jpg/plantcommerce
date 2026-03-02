@@ -1,31 +1,54 @@
 export { BurntRidgeScraper } from './burnt-ridge';
 export { GrimoScraper } from './grimo';
 export { RaintreeScraper } from './raintree';
+export { ShopifyScraper } from './shopify';
 export type { NurseryScraper, ScrapedProduct, ScrapeResult } from './types';
 export { fetchPage } from './fetch-utils';
 
 import { BurntRidgeScraper } from './burnt-ridge';
 import { GrimoScraper } from './grimo';
 import { RaintreeScraper } from './raintree';
+import { ShopifyScraper } from './shopify';
 import type { NurseryScraper } from './types';
 
 type ScraperFactory = () => NurseryScraper;
 
-const SCRAPER_REGISTRY: Record<string, ScraperFactory> = {
+const CUSTOM_SCRAPERS: Record<string, ScraperFactory> = {
   'burnt-ridge-nursery': () => new BurntRidgeScraper({ delayMs: 2000 }),
   'grimo-nut-nursery': () => new GrimoScraper({ delayMs: 2000 }),
   'raintree-nursery': () => new RaintreeScraper({ delayMs: 2000 }),
 };
 
 export function listRegisteredScraperSlugs(): string[] {
-  return Object.keys(SCRAPER_REGISTRY);
+  return Object.keys(CUSTOM_SCRAPERS);
 }
 
 export function createRegisteredScrapers(): NurseryScraper[] {
-  return Object.values(SCRAPER_REGISTRY).map((factory) => factory());
+  return Object.values(CUSTOM_SCRAPERS).map((factory) => factory());
 }
 
 export function createScraperForNursery(slug: string): NurseryScraper | null {
-  const factory = SCRAPER_REGISTRY[slug];
+  const factory = CUSTOM_SCRAPERS[slug];
   return factory ? factory() : null;
+}
+
+export function createScraperFromConfig(nursery: {
+  slug: string;
+  name: string;
+  scraper_type: string | null;
+  scraper_config: Record<string, any> | null;
+}): NurseryScraper | null {
+  if (nursery.scraper_type === 'shopify') {
+    const domain = nursery.scraper_config?.domain;
+    const collections = nursery.scraper_config?.collections;
+    if (typeof domain !== 'string' || !Array.isArray(collections)) return null;
+    const validCollections = collections.filter(
+      (collection: unknown): collection is string => typeof collection === 'string' && collection.trim().length > 0
+    );
+    if (validCollections.length === 0) return null;
+    return new ShopifyScraper({ nurserySlug: nursery.slug, nurseryName: nursery.name, domain, collections: validCollections, delayMs: 2000 });
+  }
+  if (nursery.scraper_type === 'custom') return createScraperForNursery(nursery.slug);
+  if (nursery.scraper_type === 'woocommerce') return null;
+  return null;
 }

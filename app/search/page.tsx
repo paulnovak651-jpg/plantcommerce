@@ -59,31 +59,17 @@ export default async function SearchPage({ searchParams }: Props) {
   const state = parseSearchUrlStateFromRecord(sp);
   const q = state.q;
   const { zone, category, inStock } = state;
+  const shouldSearch = Boolean(q || category || inStock || zone);
   const supabase = await createClient();
-  const [results, categoryRows] = await Promise.all([
-    q
-      ? searchPlants(supabase, {
-          q,
-          limit: state.limit,
-          zone,
-          category,
-          inStock,
-        })
-      : Promise.resolve([]),
-    supabase
-      .from('plant_entities')
-      .select('display_category')
-      .eq('curation_status', 'published')
-      .not('display_category', 'is', null),
-  ]);
-
-  const categories = Array.from(
-    new Set(
-      (categoryRows.data ?? [])
-        .map((row) => row.display_category?.trim())
-        .filter((value): value is string => Boolean(value))
-    )
-  ).sort((a, b) => a.localeCompare(b));
+  const results = shouldSearch
+    ? await searchPlants(supabase, {
+        q,
+        limit: state.limit,
+        zone,
+        category,
+        inStock,
+      })
+    : [];
 
   return (
     <div className="space-y-[var(--spacing-zone)]">
@@ -96,7 +82,6 @@ export default async function SearchPage({ searchParams }: Props) {
         currentZone={zone}
         currentCategory={category}
         currentInStock={inStock}
-        categories={categories}
       />
 
       {q && (

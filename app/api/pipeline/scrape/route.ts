@@ -9,9 +9,7 @@ import {
   markNurseryScraped,
 } from '@/lib/pipeline/supabase-pipeline';
 import {
-  createRegisteredScrapers,
-  createScraperForNursery,
-  listRegisteredScraperSlugs,
+  createScraperFromConfig,
   type NurseryScraper,
 } from '@/lib/scraper';
 import { processProductName } from '@/lib/resolver/pipeline';
@@ -53,18 +51,16 @@ export async function GET(request: NextRequest) {
 
   try {
     const nurseryFilter = request.nextUrl.searchParams.get('nursery');
-    const scrapers = selectScrapers(nurseryFilter);
+    const supabase = createPipelineClient();
+    const scrapers = await selectScrapers(supabase, nurseryFilter);
 
     if (scrapers.length === 0) {
-      const valid = listRegisteredScraperSlugs().join(', ');
       return apiError(
         'NOT_FOUND',
-        `Unknown nursery '${nurseryFilter}'. Registered: ${valid}`,
+        `No scrapable nurseries found${nurseryFilter ? ` for slug '${nurseryFilter}'` : ''}. Ensure nurseries have scraper_type set and is_active = true.`,
         404
       );
     }
-
-    const supabase = createPipelineClient();
 
     pipelineLog('info', 'alias_index_start', {});
     const aliasIndex = await buildAliasIndexFromSupabase(supabase);
@@ -149,10 +145,31 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function selectScrapers(nurseryFilter: string | null): NurseryScraper[] {
-  if (!nurseryFilter) return createRegisteredScrapers();
-  const scraper = createScraperForNursery(nurseryFilter);
-  return scraper ? [scraper] : [];
+async function selectScrapers(
+  supabase: ReturnType<typeof createPipelineClient>,
+  nurseryFilter: string | null
+): Promise<NurseryScraper[]> {
+  let query = supabase
+    .from('nurseries')
+    .select('slug, name, scraper_type, scraper_config')
+    .eq('is_active', true)
+    .not('scraper_type', 'is', null);
+
+  if (nurseryFilter) {
+    query = query.eq('slug', nurseryFilter);
+  }
+
+  const { data, error } = await query;
+  if (error || !data) return [];
+
+  return (data as Array<{
+    slug: string;
+    name: string;
+    scraper_type: string | null;
+    scraper_config: Record<string, any> | null;
+  }>)
+    .map((nursery) => createScraperFromConfig(nursery))
+    .filter((scraper): scraper is NurseryScraper => scraper !== null);
 }
 
 async function runNurseryPipeline(

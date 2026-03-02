@@ -7,6 +7,7 @@ import { Surface } from '@/components/ui/Surface';
 import { Tag } from '@/components/ui/Tag';
 import { parseLimit, parseListStatus } from '@/lib/unmatched/admin';
 import { updateUnmatchedAction } from './actions';
+import { ResolveForm } from './ResolveForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -259,48 +260,7 @@ export default async function AdminUnmatchedPage({ searchParams }: Props) {
                   </button>
                 </form>
 
-                <form action={updateUnmatchedAction} className="space-y-2">
-                  <input type="hidden" name="token" value={token} />
-                  <input type="hidden" name="id" value={row.id} />
-                  <input type="hidden" name="review_status" value="resolved" />
-                  <label className="block text-xs text-text-secondary">
-                    Resolved type
-                    <select
-                      name="resolved_to_type"
-                      defaultValue={row.resolved_to_type ?? 'cultivar'}
-                      className="mt-1 w-full rounded border border-border bg-surface-primary px-2 py-1 text-sm"
-                    >
-                      <option value="cultivar">cultivar</option>
-                      <option value="plant_entity">plant_entity</option>
-                      <option value="named_material">named_material</option>
-                      <option value="population">population</option>
-                    </select>
-                  </label>
-                  <label className="block text-xs text-text-secondary">
-                    Resolved ID
-                    <input
-                      name="resolved_to_id"
-                      defaultValue={row.resolved_to_id ?? ''}
-                      placeholder="UUID"
-                      className="mt-1 w-full rounded border border-border bg-surface-primary px-2 py-1 text-sm"
-                    />
-                  </label>
-                  <label className="block text-xs text-text-secondary">
-                    Notes (optional)
-                    <textarea
-                      name="reviewer_notes"
-                      defaultValue={row.reviewer_notes ?? ''}
-                      rows={2}
-                      className="mt-1 w-full rounded border border-border bg-surface-primary px-2 py-1 text-sm"
-                    />
-                  </label>
-                  <button
-                    type="submit"
-                    className="rounded bg-accent px-3 py-2 text-sm text-white"
-                  >
-                    Mark Resolved
-                  </button>
-                </form>
+                <ResolveForm unmatchedId={row.id} token={token} currentStatus={row.review_status} />
               </div>
 
               {(row.resolved_to_id || row.reviewed_at) && (

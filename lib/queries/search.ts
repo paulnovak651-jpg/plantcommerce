@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { CATEGORY_GROUPS } from '@/lib/search/categories';
 
 export interface SearchResult {
   index_source: string;
@@ -38,12 +39,17 @@ export async function searchPlantsPaged(
   const q = filters.q.trim();
   const limit = filters.limit ?? 20;
   const offset = filters.offset ?? 0;
-  if (!q) return { results: [], total: 0 };
+  const hasFilters =
+    filters.zone != null || Boolean(filters.category) || Boolean(filters.inStock);
+  if (!q && !hasFilters) return { results: [], total: 0 };
 
   let query = supabase
     .from('material_search_index')
-    .select('*', { count: 'exact' })
-    .textSearch('search_text', q.toLowerCase(), { type: 'plain' });
+    .select('*', { count: 'exact' });
+
+  if (q) {
+    query = query.textSearch('search_text', q.toLowerCase(), { type: 'plain' });
+  }
 
   if (filters.zone != null) {
     query = query
@@ -52,7 +58,10 @@ export async function searchPlantsPaged(
   }
 
   if (filters.category) {
-    query = query.eq('display_category', filters.category);
+    const groupedCategories = CATEGORY_GROUPS[filters.category];
+    query = groupedCategories
+      ? query.in('display_category', groupedCategories)
+      : query.eq('display_category', filters.category);
   }
 
   if (filters.inStock) {
@@ -62,7 +71,7 @@ export async function searchPlantsPaged(
   const { data, error, count } = await query.range(offset, offset + limit - 1);
 
   // Fallback: if full-text search returns nothing, try ilike
-  if (error || !data || data.length === 0) {
+  if (q && (error || !data || data.length === 0)) {
     let fallback = supabase
       .from('material_search_index')
       .select('*', { count: 'exact' })
@@ -73,7 +82,12 @@ export async function searchPlantsPaged(
         .lte('usda_zone_min', filters.zone)
         .gte('usda_zone_max', filters.zone);
     }
-    if (filters.category) fallback = fallback.eq('display_category', filters.category);
+    if (filters.category) {
+      const groupedCategories = CATEGORY_GROUPS[filters.category];
+      fallback = groupedCategories
+        ? fallback.in('display_category', groupedCategories)
+        : fallback.eq('display_category', filters.category);
+    }
     if (filters.inStock) fallback = fallback.gt('active_offer_count', 0);
 
     const {
@@ -88,8 +102,8 @@ export async function searchPlantsPaged(
   }
 
   return {
-    results: data as SearchResult[],
-    total: count ?? data.length,
+    results: (data ?? []) as SearchResult[],
+    total: count ?? data?.length ?? 0,
   };
 }
 

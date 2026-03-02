@@ -1,6 +1,6 @@
 # PlantCommerce — Project Context
 
-> **Last updated:** 2026-02-26 (Sprint 4 Phase 4)
+> **Last updated:** 2026-03-01
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder
@@ -36,7 +36,7 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 
 ## Tech Stack
 
-| Layer | Technology |
+| Layer | Technology
 |-------|-----------|
 | Database | Supabase PostgreSQL |
 | Frontend | Next.js 16 (App Router), server-rendered |
