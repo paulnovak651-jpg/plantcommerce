@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { getHomepageCategories } from '@/lib/queries/plants';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Text } from '@/components/ui/Text';
-import { Surface } from '@/components/ui/Surface';
 import { JsonLd } from '@/components/JsonLd';
 import { CategoryCard } from '@/components/CategoryCard';
 
@@ -44,7 +44,7 @@ export default async function HomePage() {
   const totalSpecies = categories.reduce((sum, group) => sum + group.species_count, 0);
 
   return (
-    <div className="space-y-[var(--spacing-zone)]">
+    <div>
       <JsonLd
         data={[
           {
@@ -66,65 +66,41 @@ export default async function HomePage() {
         ]}
       />
 
-      <section className="py-12 text-center">
-        <Text variant="display">Plant Commerce</Text>
-        <Text variant="body" color="secondary" className="mx-auto mt-2 max-w-2xl">
-          Search once, compare nursery stock across North America.
-        </Text>
-        <div className="mt-8">
-          <SearchBar />
+      {/* Hero */}
+      <section className="bg-accent px-4 py-20 text-center">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="font-serif text-4xl font-semibold text-text-inverse md:text-5xl">
+            Find Plants, Compare Nurseries
+          </h1>
+          <p className="mt-4 text-lg text-text-inverse/80">
+            Search once, compare nursery stock across North America.
+          </p>
+          <div className="mt-8">
+            <SearchBar />
+          </div>
+          <p className="mt-4 text-sm text-text-inverse/60">
+            {totalSpecies} species  {publishedCultivarCount ?? 0} cultivars  {trackedNurseryCount} nurseries tracked
+          </p>
         </div>
       </section>
 
-      <section>
-        <Text variant="h2" className="mb-4">
-          Browse by Category
-        </Text>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.category}
-              category={category.category}
-              speciesCount={category.species_count}
-              cultivarCount={category.cultivar_count}
-              nurseryCount={category.nursery_count}
-              topSpecies={category.top_species}
-            />
+      {/* Browse by Category */}
+      <section className="mx-auto max-w-7xl px-4 py-12">
+        <Text variant="h1">Browse by Category</Text>
+        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {categories.map((group) => (
+            <CategoryCard key={group.category} group={group} />
           ))}
         </div>
+        <div className="mt-8 text-center">
+          <Link
+            href="/browse"
+            className="inline-block rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+          >
+            Browse All Plants 
+          </Link>
+        </div>
       </section>
-
-      <Surface elevation="raised" padding="default">
-        <Text variant="h3">Quick Stats</Text>
-        <Text variant="sm" color="secondary" className="mt-2">
-          Tracking {trackedNurseryCount} nurseries · {totalSpecies}+ species ·{' '}
-          {publishedCultivarCount ?? 0} cultivars
-        </Text>
-        <Text variant="caption" color="tertiary" className="mt-1 block">
-          All purchases happen directly on nursery sites.
-        </Text>
-      </Surface>
-
-      <Surface elevation="raised" padding="default">
-        <Text variant="h2">How It Works</Text>
-        <ol className="mt-3 space-y-2">
-          <li>
-            <Text variant="sm" color="secondary">
-              1. Search for a plant cultivar by name or growing zone.
-            </Text>
-          </li>
-          <li>
-            <Text variant="sm" color="secondary">
-              2. Compare prices and availability across nurseries.
-            </Text>
-          </li>
-          <li>
-            <Text variant="sm" color="secondary">
-              3. Buy directly from the nursery - we never handle transactions.
-            </Text>
-          </li>
-        </ol>
-      </Surface>
     </div>
   );
 }

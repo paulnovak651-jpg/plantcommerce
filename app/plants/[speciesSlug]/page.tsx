@@ -74,7 +74,8 @@ export default async function SpeciesPage({ params }: Props) {
   };
 
   return (
-    <div className="space-y-[var(--spacing-zone)]">
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="space-y-[var(--spacing-zone)]">
       <Breadcrumbs
         items={[
           { label: 'Home', href: '/' },
@@ -208,6 +209,7 @@ export default async function SpeciesPage({ params }: Props) {
       )}
 
       <JsonLd data={jsonLd} />
+      </div>
     </div>
   );
 }

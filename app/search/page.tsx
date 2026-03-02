@@ -72,7 +72,8 @@ export default async function SearchPage({ searchParams }: Props) {
     : [];
 
   return (
-    <div className="space-y-[var(--spacing-zone)]">
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="space-y-[var(--spacing-zone)]">
       <section className="flex flex-col items-center py-8 text-center">
         <Text variant="h1" className="mb-4">Search</Text>
         <SearchBar defaultValue={q} />
@@ -132,6 +133,7 @@ export default async function SearchPage({ searchParams }: Props) {
             </Link>
           );
         })}
+      </div>
       </div>
     </div>
   );

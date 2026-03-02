@@ -232,7 +232,8 @@ export default async function DashboardPage() {
   const nowStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div style={{ background: C.bg, minHeight: '100vh', color: C.text, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div style={{ background: C.bg, minHeight: '100vh', color: C.text, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
 
       {/* ── Auto-refresh every 30s ── */}
       {/* eslint-disable-next-line @next/next/no-head-element */}
@@ -401,6 +402,7 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

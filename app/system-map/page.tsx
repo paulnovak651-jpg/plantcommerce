@@ -162,7 +162,8 @@ export default function SystemMapPage() {
   const gaps = nodes.filter((n) => n.status === 'gap' || n.status === 'missing');
 
   return (
-    <div style={{ background: COLORS.bg, minHeight: '100vh', color: COLORS.text, fontFamily: 'system-ui, sans-serif' }}>
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div style={{ background: COLORS.bg, minHeight: '100vh', color: COLORS.text, fontFamily: 'system-ui, sans-serif' }}>
       <div style={{ padding: '20px 24px 0', borderBottom: `1px solid ${COLORS.border}` }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 4 }}>
           <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>PlantCommerce</h1>
@@ -298,6 +299,7 @@ export default function SystemMapPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

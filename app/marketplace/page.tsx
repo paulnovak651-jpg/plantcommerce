@@ -27,7 +27,8 @@ export default async function MarketplacePage({ searchParams }: Props) {
   const listings = await getMarketplaceListings(supabase, type);
 
   return (
-    <div className="space-y-[var(--spacing-zone)]">
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="space-y-[var(--spacing-zone)]">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Marketplace' }]} />
 
       <section className="flex flex-wrap items-start justify-between gap-4">
@@ -80,6 +81,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
           </div>
         )}
       </section>
+      </div>
     </div>
   );
 }

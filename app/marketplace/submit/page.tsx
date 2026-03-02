@@ -19,7 +19,8 @@ export default async function MarketplaceSubmitPage({ searchParams }: Props) {
   const prefillCultivar = sp.cultivar?.trim() ?? undefined;
 
   return (
-    <div className="space-y-[var(--spacing-zone)]">
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="space-y-[var(--spacing-zone)]">
       <Breadcrumbs
         items={[
           { label: 'Home', href: '/' },
@@ -39,7 +40,7 @@ export default async function MarketplaceSubmitPage({ searchParams }: Props) {
       <section className="max-w-xl">
         <ListingForm prefillCultivar={prefillCultivar} />
       </section>
+      </div>
     </div>
   );
 }
-

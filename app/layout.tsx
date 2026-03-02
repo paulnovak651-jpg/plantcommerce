@@ -50,113 +50,96 @@ export default async function RootLayout({
       <body className="bg-surface-ground text-text-primary antialiased">
         <SkipNav />
 
-        <header className="relative border-b border-border-subtle bg-surface-raised">
-          <nav
-            className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4"
-            aria-label="Main navigation"
-          >
-            <Link href="/" className="whitespace-nowrap font-serif text-xl font-semibold text-accent">
-              Plant Commerce
-            </Link>
+        <header className="border-b border-border-subtle">
+          {/* Tier 1: Logo bar */}
+          <div className="bg-surface-raised">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+              <form action="/search" method="GET" role="search" className="hidden md:block">
+                <div className="flex items-center gap-2 rounded-full border border-border bg-surface-primary px-3 py-1.5">
+                  <svg className="h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                  </svg>
+                  <input
+                    type="text"
+                    name="q"
+                    placeholder="Search plants..."
+                    className="w-40 bg-transparent text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none"
+                  />
+                </div>
+              </form>
 
-            {/* Desktop nav */}
-            <div className="hidden items-center gap-6 text-sm text-text-secondary md:flex">
-              <Link href="/search" className="hover:text-accent">
-                Search
+              <Link href="/" className="whitespace-nowrap font-serif text-2xl font-semibold text-accent">
+                Plant Commerce
               </Link>
-              <Link href="/browse" className="hover:text-accent">
-                Explore
-              </Link>
-              <Link href="/marketplace" className="hover:text-accent">
-                Marketplace
-              </Link>
-              <Link href="/nurseries" className="hover:text-accent">
-                Nurseries
-              </Link>
+
+              <div className="hidden items-center gap-4 text-xs text-text-tertiary md:flex">
+                <Link href="/nurseries" className="uppercase tracking-wide hover:text-accent">Nurseries</Link>
+                <Link href="/marketplace" className="uppercase tracking-wide hover:text-accent">Marketplace</Link>
+              </div>
+
+              <MobileMenu />
             </div>
+          </div>
 
-            {/* Mobile hamburger */}
-            <MobileMenu />
+          {/* Tier 2: Main navigation */}
+          <nav className="bg-surface-primary" aria-label="Main navigation">
+            <div className="mx-auto hidden max-w-7xl items-center justify-center gap-8 px-4 py-3 md:flex">
+              <Link href="/browse" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Browse</Link>
+              <Link href="/search" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Search</Link>
+              <Link href="/marketplace" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Marketplace</Link>
+              <Link href="/nurseries" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Nurseries</Link>
+            </div>
           </nav>
         </header>
 
-        <main id="main-content" className="mx-auto max-w-5xl px-4 py-8">
+        <main id="main-content">
           {children}
         </main>
 
-        <footer className="border-t border-border-subtle bg-surface-primary">
-          <div className="mx-auto max-w-5xl px-4 py-8">
-            <div className="grid gap-8 sm:grid-cols-3">
+        <footer className="bg-accent">
+          <div className="mx-auto max-w-7xl px-4 py-12">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <h3 className="mb-2 font-serif text-sm font-semibold text-text-primary">Plant Commerce</h3>
-                <p className="text-xs text-text-tertiary">
+                <h3 className="font-serif text-lg font-semibold text-text-inverse">Plant Commerce</h3>
+                <p className="mt-2 text-sm text-text-inverse/60">
                   Free plant comparison tool for the permaculture community.
                 </p>
-                <p className="mt-1 text-xs text-text-tertiary">
+                <p className="mt-1 text-sm text-text-inverse/60">
                   Built by Even Flow Nursery LLC in Cannon Falls, Minnesota.
-                </p>
-                <p className="mt-1 text-xs text-text-tertiary">
-                  All purchases happen directly on nursery websites.
                 </p>
                 <a
                   href="mailto:paul@evenflownursery.com"
-                  className="mt-2 inline-block text-xs text-accent hover:text-accent-hover"
+                  className="mt-3 inline-block text-sm text-text-inverse/70 hover:text-text-inverse"
                 >
-                  Contact: paul@evenflownursery.com
+                  paul@evenflownursery.com
                 </a>
               </div>
               <div>
-                <h3 className="mb-2 text-sm font-semibold text-text-primary">Explore</h3>
-                <ul className="space-y-1 text-xs">
-                  <li>
-                    <Link href="/search" className="text-text-tertiary hover:text-accent">
-                      Search
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/browse" className="text-text-tertiary hover:text-accent">
-                      Explore Plants
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/marketplace" className="text-text-tertiary hover:text-accent">
-                      Marketplace
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/nurseries" className="text-text-tertiary hover:text-accent">
-                      Nurseries
-                    </Link>
-                  </li>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-text-inverse">Browse</h3>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li><Link href="/browse" className="text-text-inverse/70 hover:text-text-inverse">Browse Plants</Link></li>
+                  <li><Link href="/search" className="text-text-inverse/70 hover:text-text-inverse">Search</Link></li>
+                  <li><Link href="/marketplace" className="text-text-inverse/70 hover:text-text-inverse">Marketplace</Link></li>
                 </ul>
               </div>
               <div>
-                <h3 className="mb-2 text-sm font-semibold text-text-primary">For Developers & Agents</h3>
-                <ul className="space-y-1 text-xs">
-                  <li>
-                    <Link href="/api" className="text-text-tertiary hover:text-accent">
-                      API Discovery
-                    </Link>
-                  </li>
-                  <li>
-                    <a href="/llms.txt" className="text-text-tertiary hover:text-accent">
-                      llms.txt
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/llms-full.txt" className="text-text-tertiary hover:text-accent">
-                      llms-full.txt (API Guide)
-                    </a>
-                  </li>
-                  <li>
-                    <Link href="/sitemap.xml" className="text-text-tertiary hover:text-accent">
-                      Sitemap
-                    </Link>
-                  </li>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-text-inverse">Resources</h3>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li><Link href="/nurseries" className="text-text-inverse/70 hover:text-text-inverse">Nurseries</Link></li>
+                  <li><Link href="/api" className="text-text-inverse/70 hover:text-text-inverse">API Discovery</Link></li>
+                  <li><a href="/llms.txt" className="text-text-inverse/70 hover:text-text-inverse">llms.txt</a></li>
+                  <li><Link href="/sitemap.xml" className="text-text-inverse/70 hover:text-text-inverse">Sitemap</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-text-inverse">For Developers</h3>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li><a href="/llms-full.txt" className="text-text-inverse/70 hover:text-text-inverse">llms-full.txt (API Guide)</a></li>
                 </ul>
               </div>
             </div>
-            <div className="mt-8 border-t border-border-subtle pt-4 text-center text-xs text-text-tertiary">
+            <div className="mt-10 border-t border-text-inverse/20 pt-4 text-center text-xs text-text-inverse/40">
               Plant Commerce by Even Flow Nursery LLC
             </div>
           </div>

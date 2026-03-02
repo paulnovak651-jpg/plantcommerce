@@ -1,61 +1,39 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
-import { getExplorerSpecies } from '@/lib/queries/explorer';
-import { getGrowingProfile } from '@/lib/queries/growing';
-import { ExplorerLayout } from '@/components/ExplorerLayout';
-import { Text } from '@/components/ui/Text';
+import { getAllBrowsePlants } from '@/lib/queries/browse';
+import { BrowseContent } from '@/components/BrowseContent';
 
 export const metadata: Metadata = {
-  title: 'Explore',
+  title: 'Browse All Plants',
   description:
-    'Browse all plants in the Plant Commerce catalog organized by taxonomy. Filter by zone, category, and availability.',
+    'Browse and filter all plants in the Plant Commerce catalog. Compare availability across nurseries.',
 };
 
-interface Props {
-  searchParams: Promise<{
-    category?: string;
-    zoneMin?: string;
-    zoneMax?: string;
-    available?: string;
-  }>;
-}
-
-export default async function ExplorePage({ searchParams }: Props) {
-  const sp = await searchParams;
-
-  const category = sp.category ?? 'all';
-  const zoneMin = sp.zoneMin ? Number(sp.zoneMin) : null;
-  const zoneMax = sp.zoneMax ? Number(sp.zoneMax) : null;
-  const availableOnly = sp.available === 'true';
-
+export default async function BrowsePage() {
   const supabase = await createClient();
-
-  const species = await getExplorerSpecies(supabase, {
-    zoneMin,
-    zoneMax,
-    availableOnly,
-  });
-
-  // Pre-fetch growing profiles for all species so the detail panel can show TraitGrid
-  const profiles = Object.fromEntries(
-    await Promise.all(
-      species.map(async (s) => {
-        const profile = await getGrowingProfile(supabase, s.id);
-        return [s.id, profile] as [string, Record<string, unknown> | null];
-      })
-    )
-  ) as Record<string, Record<string, unknown>>;
+  const allPlants = await getAllBrowsePlants(supabase);
 
   return (
-    <div className="space-y-6">
-      <section>
-        <Text variant="h1">Explore</Text>
-        <Text variant="body" color="secondary" className="mt-1">
-          Filter by zone and category. Click a species to see growing details.
-        </Text>
+    <div>
+      {/* Hero */}
+      <section className="bg-accent px-4 py-16 text-center">
+        <div className="mx-auto max-w-7xl">
+          <h1 className="font-serif text-4xl font-semibold text-text-inverse md:text-5xl">
+            Browse All Plants
+          </h1>
+          <p className="mt-3 text-lg text-text-inverse/80">
+            Filter, sort, and compare availability across nurseries.
+          </p>
+        </div>
       </section>
 
-      <ExplorerLayout species={species} profiles={profiles} category={category} />
+      {/* Main content */}
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <Suspense fallback={null}>
+          <BrowseContent allPlants={allPlants} />
+        </Suspense>
+      </div>
     </div>
   );
 }

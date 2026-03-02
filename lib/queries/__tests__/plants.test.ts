@@ -22,7 +22,7 @@ function createMockSupabase(tables: MockTables): SupabaseClient {
       const sourceRows = (tables[table as keyof MockTables] ?? []).map((row) => ({ ...row }));
       let filteredRows = sourceRows;
 
-      const chain = {
+      const chain: QueryChain = {
         select: (_columns: string) => chain,
         eq: (column: string, value: unknown) => {
           filteredRows = filteredRows.filter((row) => row[column] === value);
@@ -33,11 +33,17 @@ function createMockSupabase(tables: MockTables): SupabaseClient {
           return chain;
         },
         order: (_column: string) => chain,
-        then: (
-          onFulfilled?: ((value: { data: Row[]; error: null }) => unknown) | null,
-          onRejected?: ((reason: unknown) => unknown) | null,
-        ) => Promise.resolve({ data: filteredRows, error: null }).then(onFulfilled, onRejected),
-      } satisfies QueryChain;
+        then: <TResult1 = { data: Row[]; error: null }, TResult2 = never>(
+          onfulfilled?:
+            | ((value: { data: Row[]; error: null }) => TResult1 | PromiseLike<TResult1>)
+            | null,
+          onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
+        ): PromiseLike<TResult1 | TResult2> =>
+          Promise.resolve({ data: filteredRows, error: null }).then(
+            onfulfilled ?? undefined,
+            onrejected ?? undefined
+          ),
+      };
 
       return chain;
     },

@@ -69,7 +69,8 @@ export default async function NurseriesPage() {
   };
 
   return (
-    <div className="space-y-[var(--spacing-zone)]">
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="space-y-[var(--spacing-zone)]">
       <section>
         <Text variant="h1">Nurseries</Text>
         <Text variant="body" color="secondary" className="mt-1">
@@ -119,6 +120,7 @@ export default async function NurseriesPage() {
       )}
 
       <JsonLd data={jsonLd} />
+      </div>
     </div>
   );
 }

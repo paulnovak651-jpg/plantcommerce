@@ -63,17 +63,19 @@ export default async function PollinationPage({ searchParams }: Props) {
 
   if (speciesOptions.length === 0) {
     return (
-      <div className="space-y-[var(--spacing-zone)]">
-        <section>
-          <Text variant="h1">Pollination Checker</Text>
-          <Text variant="body" color="secondary" className="mt-2">
-            Find pollination guidance and potential compatible species.
-          </Text>
-        </section>
-        <EmptyState
-          title="No species available"
-          description="No published species are available for pollination checks yet."
-        />
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        <div className="space-y-[var(--spacing-zone)]">
+          <section>
+            <Text variant="h1">Pollination Checker</Text>
+            <Text variant="body" color="secondary" className="mt-2">
+              Find pollination guidance and potential compatible species.
+            </Text>
+          </section>
+          <EmptyState
+            title="No species available"
+            description="No published species are available for pollination checks yet."
+          />
+        </div>
       </div>
     );
   }
@@ -90,7 +92,8 @@ export default async function PollinationPage({ searchParams }: Props) {
   const profile = checker?.profile ?? null;
 
   return (
-    <div className="space-y-[var(--spacing-zone)]">
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="space-y-[var(--spacing-zone)]">
       <section>
         <Text variant="h1">Pollination Checker</Text>
         <Text variant="body" color="secondary" className="mt-2">
@@ -228,6 +231,7 @@ export default async function PollinationPage({ searchParams }: Props) {
         Based on species-level pollination profiles. Cultivar-level compatibility is not yet
         available.
       </Text>
+      </div>
     </div>
   );
 }

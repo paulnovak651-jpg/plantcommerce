@@ -21,6 +21,7 @@ const NUT_FAMILIES = new Set([
 ]);
 const FRUIT_FAMILIES = new Set([
   'Rosaceae', 'Ericaceae', 'Actinidiaceae', 'Moraceae', 'Ebenaceae', 'Vitaceae',
+  'Annonaceae', 'Adoxaceae',
 ]);
 
 function matchesCategory(s: CladogramSpecies, category: string): boolean {

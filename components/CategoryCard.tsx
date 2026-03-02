@@ -1,62 +1,23 @@
 import Link from 'next/link';
-import { Surface } from '@/components/ui/Surface';
-import { Text } from '@/components/ui/Text';
+import type { CategoryGroup } from '@/lib/queries/plants';
 
-interface CategoryCardProps {
-  category: string;
-  speciesCount: number;
-  cultivarCount: number;
-  nurseryCount: number;
-  topSpecies: Array<{ slug: string; canonical_name: string }>;
-}
-
-function toCategorySlug(category: string): string {
-  return category.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
-
-export function CategoryCard({
-  category,
-  speciesCount,
-  cultivarCount,
-  nurseryCount,
-  topSpecies,
-}: CategoryCardProps) {
+export function CategoryCard({ group }: { group: CategoryGroup }) {
   return (
-    <Surface elevation="raised" padding="default" className="h-full">
-      <div className="flex h-full flex-col">
-        <Text variant="h3">{category}</Text>
-        <Text variant="sm" color="secondary" className="mt-1">
-          {speciesCount} {speciesCount === 1 ? 'species' : 'species'} · {cultivarCount}{' '}
-          {cultivarCount === 1 ? 'cultivar' : 'cultivars'}
-        </Text>
-        <Text variant="caption" color="tertiary" className="mt-1">
-          {nurseryCount} {nurseryCount === 1 ? 'nursery' : 'nurseries'} with stock
-        </Text>
-
-        {topSpecies.length > 0 && (
-          <ul className="mt-4 space-y-1">
-            {topSpecies.map((species) => (
-              <li key={species.slug}>
-                <Link
-                  href={`/plants/${species.slug}`}
-                  className="text-sm text-accent hover:text-accent-hover hover:underline"
-                >
-                  · {species.canonical_name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+    <Link
+      href={`/browse?category=${encodeURIComponent(group.category)}`}
+      className="group block overflow-hidden rounded-[var(--radius-lg)] transition-opacity hover:opacity-90"
+    >
+      <div className="bg-gradient-to-br from-accent to-accent-hover p-5">
+        <h3 className="font-serif text-lg font-semibold text-white">{group.category}</h3>
+        <p className="mt-1 text-sm text-white/70">
+          {group.species_count} species  {group.cultivar_count} cultivars
+        </p>
+        {group.nursery_count > 0 && (
+          <p className="mt-0.5 text-xs text-white/50">
+            {group.nursery_count} nurseries with stock
+          </p>
         )}
-
-        <div className="mt-4 pt-2">
-          <Link
-            href={`/browse?category=${encodeURIComponent(toCategorySlug(category))}`}
-            className="text-sm font-medium text-accent hover:text-accent-hover hover:underline"
-          >
-            Browse all {'->'}
-          </Link>
-        </div>
       </div>
-    </Surface>
+    </Link>
   );
 }
