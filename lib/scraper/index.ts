@@ -2,6 +2,7 @@ export { BurntRidgeScraper } from './burnt-ridge';
 export { GrimoScraper } from './grimo';
 export { RaintreeScraper } from './raintree';
 export { ShopifyScraper } from './shopify';
+export { WooCommerceScraper } from './woocommerce';
 export type { NurseryScraper, ScrapedProduct, ScrapeResult } from './types';
 export { fetchPage } from './fetch-utils';
 
@@ -9,6 +10,7 @@ import { BurntRidgeScraper } from './burnt-ridge';
 import { GrimoScraper } from './grimo';
 import { RaintreeScraper } from './raintree';
 import { ShopifyScraper } from './shopify';
+import { WooCommerceScraper } from './woocommerce';
 import type { NurseryScraper } from './types';
 
 type ScraperFactory = () => NurseryScraper;
@@ -49,6 +51,21 @@ export function createScraperFromConfig(nursery: {
     return new ShopifyScraper({ nurserySlug: nursery.slug, nurseryName: nursery.name, domain, collections: validCollections, delayMs: 2000 });
   }
   if (nursery.scraper_type === 'custom') return createScraperForNursery(nursery.slug);
-  if (nursery.scraper_type === 'woocommerce') return null;
+  if (nursery.scraper_type === 'woocommerce') {
+    const domain = nursery.scraper_config?.domain;
+    const categoryPaths = nursery.scraper_config?.categoryPaths;
+    if (typeof domain !== 'string' || !Array.isArray(categoryPaths)) return null;
+    const validPaths = categoryPaths.filter(
+      (p: unknown): p is string => typeof p === 'string' && p.trim().length > 0
+    );
+    if (validPaths.length === 0) return null;
+    return new WooCommerceScraper({
+      nurserySlug: nursery.slug,
+      nurseryName: nursery.name,
+      domain,
+      categoryPaths: validPaths,
+      delayMs: 2000,
+    });
+  }
   return null;
 }
