@@ -1,6 +1,6 @@
 # Plant Commerce — Agent Instructions
 
-> Auto-loaded by Codex on startup. Read before doing any work.
+> Auto-loaded by agents on startup. Read before doing any work.
 > At session start, fetch and read: https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
 > Dashboard: http://localhost:3001/dashboard
 
@@ -79,8 +79,9 @@ curl -s -X PATCH http://localhost:3001/api/tasks/<task-uuid> \
 
 ## What This Project Is
 
-Plant comparison platform for the permaculture community: "PCPartPicker for nursery stock."
-Users search for a cultivar, see which nurseries carry it, and compare prices and availability.
+All in one platform for the permaculture community: a website that aims to be single source for information about "permaculture" plants and a way to obtain material. The goals are to create an efficient scraper pipeline of nurseries with available material for sale; it will also have a marketplace for private sellers and buyers to both sell and request material. 
+Users search for a cultivar, see which nurseries or private sells carry it, and compare prices and availability.
+It also will provide general information about the plants in a clean easy to sort and search way. This involves incorporating easy search functions by type (fruit, nut, other) as well as searching by zone, fruiting time, etc. 
 
 Business entity: Even Flow Nursery LLC
 Stack: Next.js 16.1.6 (App Router), React 19.2.4, TypeScript 5.9.3 strict, Tailwind CSS 4.2.1, Supabase (PostgreSQL + RLS), Cheerio 1.2.0
