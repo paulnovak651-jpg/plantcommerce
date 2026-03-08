@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { getAllBrowsePlants } from '@/lib/queries/browse';
 import { BrowseContent } from '@/components/BrowseContent';
+import { BrowseGridSkeleton } from '@/components/PlantCardSkeleton';
 
 export const metadata: Metadata = {
   title: 'Browse All Plants',
@@ -30,7 +31,11 @@ export default async function BrowsePage() {
 
       {/* Main content */}
       <div className="mx-auto max-w-7xl px-4 py-8">
-        <Suspense fallback={null}>
+        <Suspense fallback={
+          <div className="mx-auto max-w-7xl px-4 py-8">
+            <BrowseGridSkeleton />
+          </div>
+        }>
           <BrowseContent allPlants={allPlants} />
         </Suspense>
       </div>

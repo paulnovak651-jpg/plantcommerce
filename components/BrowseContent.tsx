@@ -58,6 +58,10 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     window.history.replaceState(null, '', url);
   }, [filters]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [filters.page]);
+
   const { plants, total } = useMemo(
     () =>
       filterBrowsePlants(allPlants, {
@@ -111,6 +115,32 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     });
   }, []);
 
+  const activeChips: Array<{ label: string; onRemove: () => void }> = [];
+  if (filters.categories.length > 0) {
+    filters.categories.forEach((cat) => {
+      activeChips.push({ label: cat, onRemove: () => toggleInList('categories', cat) });
+    });
+  }
+  if (filters.zoneMin) {
+    activeChips.push({ label: `Zone min: ${filters.zoneMin}`, onRemove: () => updateFilters({ zoneMin: '' }) });
+  }
+  if (filters.zoneMax) {
+    activeChips.push({ label: `Zone max: ${filters.zoneMax}`, onRemove: () => updateFilters({ zoneMax: '' }) });
+  }
+  if (filters.available) {
+    activeChips.push({ label: 'In stock', onRemove: () => updateFilters({ available: false }) });
+  }
+  if (filters.sun.length > 0) {
+    filters.sun.forEach((s) => {
+      activeChips.push({ label: s, onRemove: () => toggleInList('sun', s) });
+    });
+  }
+  if (filters.growthRate.length > 0) {
+    filters.growthRate.forEach((g) => {
+      activeChips.push({ label: g, onRemove: () => toggleInList('growthRate', g) });
+    });
+  }
+
   return (
     <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
       <PlantFilterSidebar
@@ -132,6 +162,29 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
           sort={filters.sort}
           onSortChange={(v) => updateFilters({ sort: v, page: 1 })}
         />
+
+        {activeChips.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {activeChips.map((chip) => (
+              <button
+                key={chip.label}
+                onClick={chip.onRemove}
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-surface-primary px-3 py-1 text-xs font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent"
+              >
+                {chip.label}
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            ))}
+            <button
+              onClick={clearAll}
+              className="text-xs text-accent hover:text-accent-hover"
+            >
+              Clear all
+            </button>
+          </div>
+        )}
 
         {plants.length === 0 ? (
           <div className="py-16 text-center">

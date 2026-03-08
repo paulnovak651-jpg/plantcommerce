@@ -372,7 +372,7 @@ export default async function CultivarPage({ params }: Props) {
           <Text variant="h2" className="mb-3">
             Where to Buy
           </Text>
-          <NurseryMap nurseries={nurseryPins} height="200px" />
+          <NurseryMap nurseries={nurseryPins} height="300px" />
         </section>
       )}
 

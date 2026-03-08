@@ -12,7 +12,7 @@ const NurseryMapClient = dynamic(
     loading: () => (
       <div
         className="animate-pulse rounded-[var(--radius-lg)] bg-surface-raised"
-        style={{ height: '100%', width: '100%', minHeight: '200px' }}
+        style={{ height: '100%', width: '100%', minHeight: '300px' }}
       />
     ),
   }

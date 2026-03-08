@@ -21,7 +21,7 @@ const variantStyles: Record<TextProps['variant'], { className: string; defaultTa
     defaultTag: 'h2',
   },
   h3: {
-    className: 'text-[1.1rem] font-medium leading-[1.2]',
+    className: 'font-serif text-[1.1rem] font-medium leading-[1.2]',
     defaultTag: 'h3',
   },
   body: {
@@ -37,7 +37,7 @@ const variantStyles: Record<TextProps['variant'], { className: string; defaultTa
     defaultTag: 'span',
   },
   price: {
-    className: 'text-[1.1rem] font-semibold leading-[1.2]',
+    className: 'font-serif text-[1.15rem] font-semibold leading-[1.2] tabular-nums',
     defaultTag: 'span',
   },
 };

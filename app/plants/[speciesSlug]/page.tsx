@@ -83,7 +83,7 @@ export default async function SpeciesPage({ params }: Props) {
         ]}
       />
 
-      <section>
+      <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
         <Text variant="h1">{species.canonical_name}</Text>
         <Text variant="body" color="secondary" className="mt-1">
           <BotanicalName>{species.botanical_name}</BotanicalName>
@@ -131,7 +131,7 @@ export default async function SpeciesPage({ params }: Props) {
       </section>
 
       {growingProfile && (
-        <section>
+        <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
           <Text variant="h2" className="mb-3">
             Growing Requirements
           </Text>
@@ -140,30 +140,36 @@ export default async function SpeciesPage({ params }: Props) {
       )}
 
       {clones.length > 0 && (
-        <CultivarSection
-          title="Cultivars"
-          items={clones}
-          speciesSlug={speciesSlug}
-          nurseryCountById={offerStats.perCultivar}
-        />
+        <div className="border-b border-border-subtle pb-[var(--spacing-zone)]">
+          <CultivarSection
+            title="Cultivars"
+            items={clones}
+            speciesSlug={speciesSlug}
+            nurseryCountById={offerStats.perCultivar}
+          />
+        </div>
       )}
 
       {seedStrains.length > 0 && (
-        <CultivarSection
-          title="Named Seed Strains"
-          items={seedStrains}
-          speciesSlug={speciesSlug}
-          nurseryCountById={offerStats.perCultivar}
-        />
+        <div className="border-b border-border-subtle pb-[var(--spacing-zone)]">
+          <CultivarSection
+            title="Named Seed Strains"
+            items={seedStrains}
+            speciesSlug={speciesSlug}
+            nurseryCountById={offerStats.perCultivar}
+          />
+        </div>
       )}
 
       {populations.length > 0 && (
-        <CultivarSection
-          title="Breeding & Geographic Populations"
-          items={populations}
-          speciesSlug={speciesSlug}
-          nurseryCountById={offerStats.perCultivar}
-        />
+        <div className="border-b border-border-subtle pb-[var(--spacing-zone)]">
+          <CultivarSection
+            title="Breeding & Geographic Populations"
+            items={populations}
+            speciesSlug={speciesSlug}
+            nurseryCountById={offerStats.perCultivar}
+          />
+        </div>
       )}
 
       {cultivars.length === 0 && (
@@ -174,19 +180,19 @@ export default async function SpeciesPage({ params }: Props) {
       )}
 
       {relatedSpecies.length > 0 && (
-        <section>
+        <section className={communityListings.length > 0 ? 'border-b border-border-subtle pb-[var(--spacing-zone)]' : undefined}>
           <Text variant="h2" className="mb-2">
             Related Species
           </Text>
           <Text variant="sm" color="secondary" className="mb-2">
             Other {species.genus} species:
           </Text>
-          <div className="flex flex-wrap gap-x-3 gap-y-1">
+          <div className="flex flex-wrap gap-2">
             {relatedSpecies.map((item) => (
               <Link
                 key={item.slug}
                 href={`/plants/${item.slug}`}
-                className="text-sm text-accent hover:underline"
+                className="inline-block rounded-full border border-border-subtle bg-surface-primary px-3 py-1 text-sm text-accent transition-colors hover:border-accent hover:bg-accent-subtle"
               >
                 {item.canonical_name}
               </Link>
@@ -235,7 +241,7 @@ function CultivarSection({
           const nurseryCount = nurseryCountById[cv.id] ?? 0;
           return (
             <Link key={cv.id} href={`/plants/${speciesSlug}/${cv.slug}`}>
-              <div className="h-full rounded-[var(--radius-lg)] px-4 py-3 transition-colors hover:bg-surface-raised">
+              <div className="h-full rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary px-4 py-3 transition-colors hover:bg-surface-raised hover:border-border">
                 <div className="flex items-start justify-between gap-2">
                   <Text variant="h3" color="accent">{cv.canonical_name}</Text>
                   {nurseryCount > 0 && (

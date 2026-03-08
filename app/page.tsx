@@ -67,7 +67,7 @@ export default async function HomePage() {
       />
 
       {/* Hero */}
-      <section className="bg-accent px-4 py-20 text-center">
+      <section className="relative bg-accent px-4 py-20 text-center hero-grain">
         <div className="mx-auto max-w-3xl">
           <h1 className="font-serif text-4xl font-semibold text-text-inverse md:text-5xl">
             Find Plants, Compare Nurseries
@@ -78,9 +78,21 @@ export default async function HomePage() {
           <div className="mt-8">
             <SearchBar />
           </div>
-          <p className="mt-4 text-sm text-text-inverse/60">
-            {totalSpecies} species  {publishedCultivarCount ?? 0} cultivars  {trackedNurseryCount} nurseries tracked
-          </p>
+          <div className="mt-6 flex items-center justify-center gap-3">
+            {[
+              { value: totalSpecies, label: 'Species' },
+              { value: publishedCultivarCount ?? 0, label: 'Cultivars' },
+              { value: trackedNurseryCount, label: 'Nurseries' },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-[var(--radius-lg)] bg-white/10 px-5 py-3 text-center backdrop-blur-sm"
+              >
+                <p className="font-serif text-2xl font-semibold text-text-inverse">{stat.value}</p>
+                <p className="text-xs uppercase tracking-wide text-text-inverse/60">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

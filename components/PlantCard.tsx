@@ -21,7 +21,7 @@ export function PlantCard(props: PlantCardProps) {
       <div className="relative">
         <PlantImage src={props.imageUrl ?? null} alt={props.canonicalName} aspectRatio="3/4" />
         <div
-          className="absolute bottom-0 left-0 right-0 px-3 py-2 text-center text-xs font-medium uppercase tracking-wide text-white"
+          className="absolute bottom-0 left-0 right-0 rounded-b-[var(--radius-lg)] px-3 py-2 text-center text-xs font-medium uppercase tracking-wide text-white"
           style={{
             backgroundColor:
               props.nurseryCount > 0 ? 'rgba(45,106,79,0.85)' : 'rgba(138,130,121,0.75)',
@@ -39,6 +39,11 @@ export function PlantCard(props: PlantCardProps) {
         )}
         {props.zoneMin != null && props.zoneMax != null && (
           <p className="mt-1 text-xs text-text-tertiary">Zone {props.zoneMin}{'\u2013'}{props.zoneMax}</p>
+        )}
+        {props.cultivarCount > 0 && (
+          <p className="mt-1 text-xs font-medium text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            {props.cultivarCount} cultivar{props.cultivarCount !== 1 ? 's' : ''}
+          </p>
         )}
       </div>
     </Link>

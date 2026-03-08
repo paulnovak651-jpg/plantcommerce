@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import Link from 'next/link';
 import { SkipNav } from '@/components/SkipNav';
 import { MobileMenu } from '@/components/MobileMenu';
+import { NavLinks } from '@/components/NavLinks';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -85,15 +86,12 @@ export default async function RootLayout({
           {/* Tier 2: Main navigation */}
           <nav className="bg-surface-primary" aria-label="Main navigation">
             <div className="mx-auto hidden max-w-7xl items-center justify-center gap-8 px-4 py-3 md:flex">
-              <Link href="/browse" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Browse</Link>
-              <Link href="/search" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Search</Link>
-              <Link href="/marketplace" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Marketplace</Link>
-              <Link href="/nurseries" className="text-sm font-medium uppercase tracking-widest text-text-secondary hover:text-accent">Nurseries</Link>
+              <NavLinks />
             </div>
           </nav>
         </header>
 
-        <main id="main-content">
+        <main id="main-content" className="page-enter">
           {children}
         </main>
 

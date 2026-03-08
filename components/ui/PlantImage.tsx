@@ -32,20 +32,30 @@ export function PlantImage(props: PlantImageProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-inset">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
+            width="64"
+            height="64"
+            viewBox="0 0 64 64"
             fill="none"
             stroke="currentColor"
-            strokeWidth="1.5"
+            strokeWidth="0.75"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-text-tertiary/50"
+            className="text-text-tertiary/30"
           >
-            <path d="M17 8c.7-1 1-2.2 1-3.5 0-.4 0-.8-.1-1.2C14.8 3.8 12 6 12 6s-2.8-2.2-5.9-2.7C6 3.7 6 4.1 6 4.5 6 5.8 6.3 7 7 8c-2.2 1.2-4 3.4-4 6.5 0 4.4 4 8.5 9 9.5 5-1 9-5.1 9-9.5 0-3.1-1.8-5.3-4-6.5z" />
-            <path d="M12 6v18" />
+            {/* Stem */}
+            <path d="M32 56V28" />
+            <path d="M32 44c-4-2-8-1-12 2" />
+            <path d="M32 38c3-2 7-1 10 1" />
+            {/* Main leaf */}
+            <path d="M32 28c0 0-12-4-14-16 8-2 14 4 14 16z" />
+            <path d="M32 28c0 0 12-4 14-16-8-2-14 4-14 16z" />
+            {/* Leaf veins */}
+            <path d="M32 28c-3-4-7-7-11-9" strokeDasharray="2 2" />
+            <path d="M32 28c3-4 7-7 11-9" strokeDasharray="2 2" />
+            <path d="M32 20c-2-2-5-4-8-5" strokeDasharray="2 2" />
+            <path d="M32 20c2-2 5-4 8-5" strokeDasharray="2 2" />
           </svg>
-          <span className="mt-2 text-xs text-text-tertiary/50">{props.alt}</span>
+          <span className="mt-2 text-xs text-text-tertiary/40">{props.alt}</span>
         </div>
       )}
     </div>

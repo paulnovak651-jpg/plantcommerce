@@ -55,7 +55,7 @@ export function PlantFilterSidebar({
             <label key={cat} className="flex cursor-pointer items-center gap-2 py-1 text-sm text-text-secondary">
               <input
                 type="checkbox"
-                className="accent-accent"
+                className="custom-checkbox"
                 checked={filters.categories.includes(cat)}
                 onChange={() => onToggleCategory(cat)}
               />
@@ -103,7 +103,7 @@ export function PlantFilterSidebar({
           <label className="flex cursor-pointer items-center gap-2 py-1 text-sm text-text-secondary">
             <input
               type="checkbox"
-              className="accent-accent"
+              className="custom-checkbox"
               checked={filters.available}
               onChange={onToggleAvailable}
             />
@@ -116,7 +116,7 @@ export function PlantFilterSidebar({
             <label key={val} className="flex cursor-pointer items-center gap-2 py-1 text-sm text-text-secondary">
               <input
                 type="checkbox"
-                className="accent-accent"
+                className="custom-checkbox"
                 checked={filters.sun.includes(val)}
                 onChange={() => onToggleSun(val)}
               />
@@ -130,7 +130,7 @@ export function PlantFilterSidebar({
             <label key={val} className="flex cursor-pointer items-center gap-2 py-1 text-sm text-text-secondary">
               <input
                 type="checkbox"
-                className="accent-accent"
+                className="custom-checkbox"
                 checked={filters.growthRate.includes(val)}
                 onChange={() => onToggleGrowthRate(val)}
               />
@@ -157,8 +157,8 @@ export function PlantFilterSidebar({
 
       {sheetOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="fixed inset-0 filter-sheet-backdrop" onClick={() => setSheetOpen(false)} />
-          <div className="fixed inset-y-0 left-0 z-50 w-80 overflow-y-auto bg-surface-raised p-4 shadow-xl">
+          <div className="fixed inset-0 filter-sheet-backdrop filter-sheet-backdrop-enter" onClick={() => setSheetOpen(false)} />
+          <div className="fixed inset-y-0 left-0 z-50 w-80 overflow-y-auto bg-surface-raised p-4 shadow-xl filter-sheet-enter">
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium uppercase tracking-wide text-text-primary">Filters</span>
               <button onClick={() => setSheetOpen(false)} className="text-text-tertiary hover:text-text-primary">
