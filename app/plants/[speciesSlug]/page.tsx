@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { getPlantEntityBySlug, getRelatedSpecies } from '@/lib/queries/plants';
 import { loadSpeciesPage } from '@/lib/queries/loaders';
+import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -77,10 +78,27 @@ export default async function SpeciesPage({ params }: Props) {
     <div className="mx-auto max-w-5xl px-4 py-8">
       <div className="space-y-[var(--spacing-zone)]">
       <Breadcrumbs
-        items={[
-          { label: 'Home', href: '/' },
-          { label: species.canonical_name },
-        ]}
+        items={(() => {
+          const crumbs: Array<{ label: string; href?: string }> = [{ label: 'Home', href: '/' }];
+          // Category crumb from display_category
+          if (species.display_category) {
+            crumbs.push({
+              label: species.display_category,
+              href: `/browse?category=${encodeURIComponent(species.display_category)}`,
+            });
+          }
+          // Genus crumb from taxonomy path
+          const genusNode = taxonomyPath.find((n) => n.rank === 'genus');
+          if (genusNode) {
+            const genusCommonName = GENUS_COMMON_NAMES[genusNode.slug] ?? genusNode.name;
+            crumbs.push({
+              label: genusCommonName,
+              href: `/plants/genus/${genusNode.slug}`,
+            });
+          }
+          crumbs.push({ label: species.canonical_name });
+          return crumbs;
+        })()}
       />
 
       <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
@@ -179,27 +197,45 @@ export default async function SpeciesPage({ params }: Props) {
         />
       )}
 
-      {relatedSpecies.length > 0 && (
-        <section className={communityListings.length > 0 ? 'border-b border-border-subtle pb-[var(--spacing-zone)]' : undefined}>
-          <Text variant="h2" className="mb-2">
-            Related Species
-          </Text>
-          <Text variant="sm" color="secondary" className="mb-2">
-            Other {species.genus} species:
-          </Text>
-          <div className="flex flex-wrap gap-2">
-            {relatedSpecies.map((item) => (
-              <Link
-                key={item.slug}
-                href={`/plants/${item.slug}`}
-                className="inline-block rounded-full border border-border-subtle bg-surface-primary px-3 py-1 text-sm text-accent transition-colors hover:border-accent hover:bg-accent-subtle"
-              >
-                {item.canonical_name}
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+      {relatedSpecies.length > 0 && (() => {
+        const genusNode = taxonomyPath.find((n) => n.rank === 'genus');
+        const genusCommonName = genusNode ? (GENUS_COMMON_NAMES[genusNode.slug] ?? genusNode.name) : null;
+        const totalSpeciesInGenus = relatedSpecies.length + 1;
+        return (
+          <section className={communityListings.length > 0 ? 'border-b border-border-subtle pb-[var(--spacing-zone)]' : undefined}>
+            <Text variant="h2" className="mb-2">
+              Related Species
+            </Text>
+            {genusNode && genusCommonName ? (
+              <Text variant="sm" color="secondary" className="mb-2">
+                Part of{' '}
+                <Link href={`/plants/genus/${genusNode.slug}`} className="text-accent hover:text-accent-hover">
+                  {genusCommonName}
+                </Link>{' '}
+                ({totalSpeciesInGenus} species){' '}
+                <Link href={`/plants/genus/${genusNode.slug}`} className="text-accent hover:text-accent-hover">
+                  &rarr; View all
+                </Link>
+              </Text>
+            ) : (
+              <Text variant="sm" color="secondary" className="mb-2">
+                Other {species.genus} species:
+              </Text>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {relatedSpecies.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/plants/${item.slug}`}
+                  className="inline-block rounded-full border border-border-subtle bg-surface-primary px-3 py-1 text-sm text-accent transition-colors hover:border-accent hover:bg-accent-subtle"
+                >
+                  {item.canonical_name}
+                </Link>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
 
       {communityListings.length > 0 && (
         <section>

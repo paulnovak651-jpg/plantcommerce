@@ -1,11 +1,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Cultivar, PlantEntity } from '@/lib/types';
+import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
 
 interface PlantCategoryRow {
   id: string;
   slug: string;
   canonical_name: string;
   display_category: string | null;
+  taxonomy_node_id: string | null;
 }
 
 interface CultivarCategoryRow {
@@ -24,6 +26,7 @@ export interface CategoryGroup {
   cultivar_count: number;
   nursery_count: number;
   top_species: Array<{ slug: string; canonical_name: string }>;
+  top_genera: Array<{ slug: string; common_name: string; species_count: number }>;
 }
 
 export interface RelatedSpecies {
@@ -159,10 +162,11 @@ export async function getHomepageCategories(
     { data: speciesRows, error: speciesError },
     { data: cultivarRows, error: cultivarError },
     { data: offerRows, error: offerError },
+    { data: genusRows, error: genusError },
   ] = await Promise.all([
     supabase
       .from('plant_entities')
-      .select('id, slug, canonical_name, display_category')
+      .select('id, slug, canonical_name, display_category, taxonomy_node_id')
       .eq('curation_status', 'published')
       .order('canonical_name'),
     supabase
@@ -173,16 +177,26 @@ export async function getHomepageCategories(
       .from('inventory_offers')
       .select('cultivar_id, nursery_id')
       .eq('offer_status', 'active'),
+    supabase
+      .from('taxonomy_nodes')
+      .select('id, slug, name, taxonomy_ranks!inner(rank_name)')
+      .eq('taxonomy_ranks.rank_name', 'genus'),
   ]);
 
-  if (speciesError || cultivarError || offerError) {
-    console.error('getHomepageCategories error:', speciesError ?? cultivarError ?? offerError);
+  if (speciesError || cultivarError || offerError || genusError) {
+    console.error('getHomepageCategories error:', speciesError ?? cultivarError ?? offerError ?? genusError);
     return [];
   }
 
   const species = (speciesRows ?? []) as PlantCategoryRow[];
   const cultivars = (cultivarRows ?? []) as CultivarCategoryRow[];
   const offers = (offerRows ?? []) as ActiveOfferRow[];
+
+  // Build genus lookup: taxonomy_node_id → { slug, name }
+  const genusMap = new Map<string, { slug: string; name: string }>();
+  for (const g of (genusRows ?? []) as Array<{ id: string; slug: string; name: string }>) {
+    genusMap.set(g.id, { slug: g.slug, name: g.name });
+  }
 
   const cultivarToSpecies = new Map<string, string>();
   const speciesCultivarCounts = new Map<string, number>();
@@ -213,6 +227,7 @@ export async function getHomepageCategories(
       canonical_name: string;
       cultivar_count: number;
       nursery_count: number;
+      genus_slug: string | null;
     }>;
   };
 
@@ -234,6 +249,7 @@ export async function getHomepageCategories(
 
     const cultivarCount = speciesCultivarCounts.get(sp.id) ?? 0;
     const nurseries = speciesNurseries.get(sp.id) ?? new Set<string>();
+    const genus = sp.taxonomy_node_id ? genusMap.get(sp.taxonomy_node_id) : null;
 
     group.speciesIds.add(sp.id);
     group.cultivarCount += cultivarCount;
@@ -246,24 +262,50 @@ export async function getHomepageCategories(
       canonical_name: sp.canonical_name,
       cultivar_count: cultivarCount,
       nursery_count: nurseries.size,
+      genus_slug: genus?.slug ?? null,
     });
   }
 
   return Array.from(groups.entries())
-    .map(([category, group]) => ({
-      category,
-      species_count: group.speciesIds.size,
-      cultivar_count: group.cultivarCount,
-      nursery_count: group.nurseryIds.size,
-      top_species: group.speciesStats
-        .sort((a, b) => {
-          if (b.nursery_count !== a.nursery_count) return b.nursery_count - a.nursery_count;
-          if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
-          return a.canonical_name.localeCompare(b.canonical_name);
-        })
+    .map(([category, group]) => {
+      // Build top_genera by grouping species within this category by genus
+      const genusAcc = new Map<string, { slug: string; species_count: number; cultivar_count: number }>();
+      for (const sp of group.speciesStats) {
+        if (!sp.genus_slug) continue;
+        let ga = genusAcc.get(sp.genus_slug);
+        if (!ga) {
+          ga = { slug: sp.genus_slug, species_count: 0, cultivar_count: 0 };
+          genusAcc.set(sp.genus_slug, ga);
+        }
+        ga.species_count += 1;
+        ga.cultivar_count += sp.cultivar_count;
+      }
+
+      const topGenera = Array.from(genusAcc.values())
+        .sort((a, b) => b.cultivar_count - a.cultivar_count)
         .slice(0, 3)
-        .map(({ slug, canonical_name }) => ({ slug, canonical_name })),
-    }))
+        .map((g) => ({
+          slug: g.slug,
+          common_name: GENUS_COMMON_NAMES[g.slug] ?? g.slug,
+          species_count: g.species_count,
+        }));
+
+      return {
+        category,
+        species_count: group.speciesIds.size,
+        cultivar_count: group.cultivarCount,
+        nursery_count: group.nurseryIds.size,
+        top_species: group.speciesStats
+          .sort((a, b) => {
+            if (b.nursery_count !== a.nursery_count) return b.nursery_count - a.nursery_count;
+            if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
+            return a.canonical_name.localeCompare(b.canonical_name);
+          })
+          .slice(0, 3)
+          .map(({ slug, canonical_name }) => ({ slug, canonical_name })),
+        top_genera: topGenera,
+      };
+    })
     .sort((a, b) => {
       if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
       return a.category.localeCompare(b.category);

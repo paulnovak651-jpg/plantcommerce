@@ -24,6 +24,8 @@ export interface BrowsePlant {
   zone_max: number | null;
   sun_requirement: string | null;
   growth_rate: string | null;
+  genus_slug: string | null;
+  genus_name: string | null;
 }
 
 interface PlantRow {
@@ -32,6 +34,7 @@ interface PlantRow {
   canonical_name: string;
   botanical_name: string | null;
   display_category: string | null;
+  taxonomy_node_id: string | null;
 }
 
 interface CultivarRow {
@@ -61,10 +64,11 @@ export async function getAllBrowsePlants(
     { data: cultivarRows, error: cultivarError },
     { data: offerRows, error: offerError },
     { data: profileRows, error: profileError },
+    { data: genusRows, error: genusError },
   ] = await Promise.all([
     supabase
       .from('plant_entities')
-      .select('id, slug, canonical_name, botanical_name, display_category')
+      .select('id, slug, canonical_name, botanical_name, display_category, taxonomy_node_id')
       .eq('curation_status', 'published')
       .order('canonical_name'),
     supabase
@@ -78,10 +82,14 @@ export async function getAllBrowsePlants(
     supabase
       .from('species_growing_profiles')
       .select('plant_entity_id, usda_zone_min, usda_zone_max, sun_requirement, growth_rate'),
+    supabase
+      .from('taxonomy_nodes')
+      .select('id, slug, name, taxonomy_ranks!inner(rank_name)')
+      .eq('taxonomy_ranks.rank_name', 'genus'),
   ]);
 
-  if (plantError || cultivarError || offerError || profileError) {
-    console.error('getAllBrowsePlants error:', plantError ?? cultivarError ?? offerError ?? profileError);
+  if (plantError || cultivarError || offerError || profileError || genusError) {
+    console.error('getAllBrowsePlants error:', plantError ?? cultivarError ?? offerError ?? profileError ?? genusError);
     return [];
   }
 
@@ -89,6 +97,12 @@ export async function getAllBrowsePlants(
   const cultivars = (cultivarRows ?? []) as CultivarRow[];
   const offers = (offerRows ?? []) as OfferRow[];
   const profiles = (profileRows ?? []) as ProfileRow[];
+
+  // Build genus lookup: taxonomy_node_id → { slug, name }
+  const genusMap = new Map<string, { slug: string; name: string }>();
+  for (const g of (genusRows ?? []) as Array<{ id: string; slug: string; name: string }>) {
+    genusMap.set(g.id, { slug: g.slug, name: g.name });
+  }
 
   const cultivarToPlant = new Map<string, string>();
   const plantCultivarCount = new Map<string, number>();
@@ -120,6 +134,7 @@ export async function getAllBrowsePlants(
 
   return plants.map((plant) => {
     const profile = profileMap.get(plant.id);
+    const genus = plant.taxonomy_node_id ? genusMap.get(plant.taxonomy_node_id) : null;
     return {
       id: plant.id,
       slug: plant.slug,
@@ -132,6 +147,8 @@ export async function getAllBrowsePlants(
       zone_max: profile?.zone_max ?? null,
       sun_requirement: profile?.sun_requirement ?? null,
       growth_rate: profile?.growth_rate ?? null,
+      genus_slug: genus?.slug ?? null,
+      genus_name: genus?.name ?? null,
     };
   });
 }
@@ -190,10 +207,11 @@ export async function getBrowsePlants(
     { data: cultivarRows, error: cultivarError },
     { data: offerRows, error: offerError },
     { data: profileRows, error: profileError },
+    { data: genusRows, error: genusError },
   ] = await Promise.all([
     supabase
       .from('plant_entities')
-      .select('id, slug, canonical_name, botanical_name, display_category')
+      .select('id, slug, canonical_name, botanical_name, display_category, taxonomy_node_id')
       .eq('curation_status', 'published')
       .order('canonical_name'),
     supabase
@@ -207,12 +225,16 @@ export async function getBrowsePlants(
     supabase
       .from('species_growing_profiles')
       .select('plant_entity_id, usda_zone_min, usda_zone_max, sun_requirement, growth_rate'),
+    supabase
+      .from('taxonomy_nodes')
+      .select('id, slug, name, taxonomy_ranks!inner(rank_name)')
+      .eq('taxonomy_ranks.rank_name', 'genus'),
   ]);
 
-  if (plantError || cultivarError || offerError || profileError) {
+  if (plantError || cultivarError || offerError || profileError || genusError) {
     console.error(
       'getBrowsePlants error:',
-      plantError ?? cultivarError ?? offerError ?? profileError
+      plantError ?? cultivarError ?? offerError ?? profileError ?? genusError
     );
     return { plants: [], total: 0 };
   }
@@ -222,6 +244,12 @@ export async function getBrowsePlants(
     const cultivars = (cultivarRows ?? []) as CultivarRow[];
     const offers = (offerRows ?? []) as OfferRow[];
     const profiles = (profileRows ?? []) as ProfileRow[];
+
+    // Build genus lookup
+    const genusLookup = new Map<string, { slug: string; name: string }>();
+    for (const g of (genusRows ?? []) as Array<{ id: string; slug: string; name: string }>) {
+      genusLookup.set(g.id, { slug: g.slug, name: g.name });
+    }
 
     const cultivarToPlant = new Map<string, string>();
     const plantCultivarCount = new Map<string, number>();
@@ -264,6 +292,7 @@ export async function getBrowsePlants(
 
     let filtered: BrowsePlant[] = plants.map((plant) => {
       const profile = profileMap.get(plant.id);
+      const genus = plant.taxonomy_node_id ? genusLookup.get(plant.taxonomy_node_id) : null;
       return {
         id: plant.id,
         slug: plant.slug,
@@ -276,6 +305,8 @@ export async function getBrowsePlants(
         zone_max: profile?.zone_max ?? null,
         sun_requirement: profile?.sun_requirement ?? null,
         growth_rate: profile?.growth_rate ?? null,
+        genus_slug: genus?.slug ?? null,
+        genus_name: genus?.name ?? null,
       };
     });
 
@@ -340,4 +371,78 @@ export async function getBrowsePlants(
     console.error('getBrowsePlants error:', error);
     return { plants: [], total: 0 };
   }
+}
+
+export interface GenusBrowseGroup {
+  genus_slug: string;
+  genus_name: string;
+  genus_common_name: string;
+  species_count: number;
+  cultivar_count: number;
+  nursery_count: number;
+  display_category: string | null;
+}
+
+/** Group filtered browse plants by genus for the genus-grouped view. */
+export function groupBrowsePlantsByGenus(
+  plants: BrowsePlant[],
+  genusCommonNames: Record<string, string>
+): GenusBrowseGroup[] {
+  const map = new Map<string, {
+    genus_slug: string;
+    genus_name: string;
+    species_count: number;
+    cultivar_count: number;
+    nurseries: Set<string>;
+    display_category: string | null;
+  }>();
+
+  // We don't have individual nursery IDs here, so we sum nursery_count.
+  // This slightly overcounts when nurseries overlap across species, but is
+  // acceptable for a browse-page summary.
+  for (const plant of plants) {
+    if (!plant.genus_slug || !plant.genus_name) continue;
+
+    let group = map.get(plant.genus_slug);
+    if (!group) {
+      group = {
+        genus_slug: plant.genus_slug,
+        genus_name: plant.genus_name,
+        species_count: 0,
+        cultivar_count: 0,
+        nurseries: new Set(),
+        display_category: plant.display_category,
+      };
+      map.set(plant.genus_slug, group);
+    }
+
+    group.species_count += 1;
+    group.cultivar_count += plant.cultivar_count;
+    // Approximate: we don't have individual nursery IDs, so add nursery_count
+    // This is used only for display and sorting, not exact deduplication
+    for (let i = 0; i < plant.nursery_count; i++) {
+      group.nurseries.add(`${plant.id}-${i}`);
+    }
+    if (!group.display_category && plant.display_category) {
+      group.display_category = plant.display_category;
+    }
+  }
+
+  const groups: GenusBrowseGroup[] = Array.from(map.values()).map((g) => ({
+    genus_slug: g.genus_slug,
+    genus_name: g.genus_name,
+    genus_common_name: genusCommonNames[g.genus_slug] ?? g.genus_name,
+    species_count: g.species_count,
+    cultivar_count: g.cultivar_count,
+    nursery_count: g.nurseries.size,
+    display_category: g.display_category,
+  }));
+
+  // Sort by cultivar count desc, then name asc
+  groups.sort((a, b) => {
+    if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
+    return a.genus_common_name.localeCompare(b.genus_common_name);
+  });
+
+  return groups;
 }

@@ -18,6 +18,7 @@ const defaultColor = { from: '#2d6a4f', to: '#1b4332' };
 
 export function CategoryCard({ group }: { group: CategoryGroup }) {
   const colors = categoryColors[group.category] || defaultColor;
+  const hasGenera = group.top_genera && group.top_genera.length > 0;
 
   return (
     <Link
@@ -30,12 +31,31 @@ export function CategoryCard({ group }: { group: CategoryGroup }) {
       >
         <h3 className="font-serif text-lg font-semibold text-white">{group.category}</h3>
         <p className="mt-1 text-sm text-white/70">
-          {group.species_count} species  {group.cultivar_count} cultivars
+          {group.species_count} species &middot; {group.cultivar_count} cultivars
         </p>
         {group.nursery_count > 0 && (
           <p className="mt-0.5 text-xs text-white/50">
             {group.nursery_count} nurseries with stock
           </p>
+        )}
+        {hasGenera && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {group.top_genera.map((g) => (
+              <span
+                key={g.slug}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = `/plants/genus/${g.slug}`;
+                }}
+                className="inline-block cursor-pointer rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium text-white/90 transition-colors hover:bg-white/25"
+              >
+                {g.common_name}
+                {g.species_count > 1 && (
+                  <span className="ml-1 text-white/60">({g.species_count})</span>
+                )}
+              </span>
+            ))}
+          </div>
         )}
       </div>
     </Link>
