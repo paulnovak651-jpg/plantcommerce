@@ -40,6 +40,7 @@ export async function getPlantEntityBySlug(
     .from('plant_entities')
     .select('*')
     .eq('slug', slug)
+    .eq('curation_status', 'published')
     .single();
 
   if (error) return null;

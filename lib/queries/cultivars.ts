@@ -5,11 +5,13 @@ export async function getCultivarBySlug(supabase: SupabaseClient, slug: string) 
     .from('cultivars')
     .select(`
       *,
-      plant_entities (
-        id, slug, canonical_name, botanical_name, genus, family
+      plant_entities!inner (
+        id, slug, canonical_name, botanical_name, genus, family, curation_status
       )
     `)
     .eq('slug', slug)
+    .eq('curation_status', 'published')
+    .eq('plant_entities.curation_status', 'published')
     .single();
 
   if (error) return null;

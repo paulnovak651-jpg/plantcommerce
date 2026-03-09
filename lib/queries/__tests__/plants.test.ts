@@ -1,5 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { getHomepageCategories, getOfferStatsForSpecies } from '@/lib/queries/plants';
+import {
+  getHomepageCategories,
+  getOfferStatsForSpecies,
+  getPlantEntityBySlug,
+} from '@/lib/queries/plants';
 
 type Row = Record<string, unknown>;
 
@@ -14,6 +18,7 @@ interface QueryChain extends PromiseLike<{ data: Row[]; error: null }> {
   eq: (column: string, value: unknown) => QueryChain;
   in: (column: string, values: unknown[]) => QueryChain;
   order: (_column: string) => QueryChain;
+  single: () => Promise<{ data: Row | null; error: { message: string } | null }>;
 }
 
 function createMockSupabase(tables: MockTables): SupabaseClient {
@@ -33,6 +38,12 @@ function createMockSupabase(tables: MockTables): SupabaseClient {
           return chain;
         },
         order: (_column: string) => chain,
+        single: async () => {
+          if (filteredRows.length !== 1) {
+            return { data: null, error: { message: 'Expected a single row' } };
+          }
+          return { data: filteredRows[0], error: null };
+        },
         then: <TResult1 = { data: Row[]; error: null }, TResult2 = never>(
           onfulfilled?:
             | ((value: { data: Row[]; error: null }) => TResult1 | PromiseLike<TResult1>)
@@ -88,6 +99,41 @@ describe('getOfferStatsForSpecies', () => {
     const supabase = createMockSupabase({ inventory_offers: [] });
     const stats = await getOfferStatsForSpecies(supabase, ['c1', 'c2']);
     expect(stats).toEqual({ nurseryCount: 0, perCultivar: {} });
+  });
+});
+
+describe('getPlantEntityBySlug', () => {
+  it('returns the entity when slug exists and is published', async () => {
+    const supabase = createMockSupabase({
+      plant_entities: [
+        {
+          id: 's1',
+          slug: 'published-species',
+          canonical_name: 'Published Species',
+          curation_status: 'published',
+        },
+      ],
+    });
+
+    const entity = await getPlantEntityBySlug(supabase, 'published-species');
+    expect(entity).not.toBeNull();
+    expect(entity?.slug).toBe('published-species');
+  });
+
+  it('returns null when slug exists but entity is draft', async () => {
+    const supabase = createMockSupabase({
+      plant_entities: [
+        {
+          id: 's2',
+          slug: 'draft-species',
+          canonical_name: 'Draft Species',
+          curation_status: 'draft',
+        },
+      ],
+    });
+
+    const entity = await getPlantEntityBySlug(supabase, 'draft-species');
+    expect(entity).toBeNull();
   });
 });
 

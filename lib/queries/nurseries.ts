@@ -20,6 +20,7 @@ export async function getNurseryBySlug(supabase: SupabaseClient, slug: string) {
     .from('nurseries')
     .select('*')
     .eq('slug', slug)
+    .eq('curation_status', 'published')
     .single();
 
   if (error) return null;
