@@ -431,6 +431,30 @@ export async function completeImportRun(
     throw new Error(`Failed to complete import_run: ${error.message}`);
 }
 
+/**
+ * Mark active offers as 'stale' if they were not seen in the current scrape.
+ * Returns the count of offers marked stale.
+ */
+export async function markStaleOffers(
+  supabase: SupabaseClient,
+  nurseryId: string,
+  importRunStartedAt: string
+): Promise<number> {
+  const { data, error } = await supabase
+    .from('inventory_offers')
+    .update({ offer_status: 'stale' })
+    .eq('nursery_id', nurseryId)
+    .eq('offer_status', 'active')
+    .lt('last_seen_at', importRunStartedAt)
+    .select('id');
+
+  if (error) {
+    throw new Error(`Failed to mark stale offers: ${error.message}`);
+  }
+
+  return data?.length ?? 0;
+}
+
 // ── Helpers ──
 
 export async function markNurseryScraped(

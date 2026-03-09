@@ -4,6 +4,7 @@ import { createPipelineClient, buildAliasIndexFromSupabase } from '@/lib/pipelin
 import { processProductName } from '@/lib/resolver/pipeline';
 import type { AliasEntry, EntityType } from '@/lib/resolver/types';
 import { buildPaginationLinks, parsePagination } from '@/lib/pagination';
+import { withRateLimit } from '@/lib/api-rate-limit';
 
 const VALID_LISTING_TYPES = new Set(['wts', 'wtb']);
 const VALID_MATERIAL_TYPES = new Set([
@@ -42,7 +43,7 @@ function normalizeEmail(raw: unknown): string | null {
   return EMAIL_RE.test(email) ? email : null;
 }
 
-export async function POST(request: Request) {
+export const POST = withRateLimit(async function POST(request: Request) {
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;
@@ -208,9 +209,9 @@ export async function POST(request: Request) {
     undefined,
     undefined
   );
-}
+}, { max: 30 });
 
-export async function GET(request: Request) {
+export const GET = withRateLimit(async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const cultivarId = searchParams.get('cultivarId');
   const plantEntityId = searchParams.get('plantEntityId');
@@ -245,4 +246,4 @@ export async function GET(request: Request) {
     count ?? 0
   );
   return apiSuccess(data ?? [], { total: count ?? 0, ...pagination }, links);
-}
+}, { max: 30 });

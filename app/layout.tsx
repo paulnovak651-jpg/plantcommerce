@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { SkipNav } from '@/components/SkipNav';
 import { MobileMenu } from '@/components/MobileMenu';
 import { NavLinks } from '@/components/NavLinks';
+import { ZonePrompt, ZoneBanner } from '@/components/ZonePrompt';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -75,6 +76,7 @@ export default async function RootLayout({
               </Link>
 
               <div className="hidden items-center gap-4 text-xs text-text-tertiary md:flex">
+                <ZonePrompt />
                 <Link href="/nurseries" className="uppercase tracking-wide hover:text-accent">Nurseries</Link>
                 <Link href="/marketplace" className="uppercase tracking-wide hover:text-accent">Marketplace</Link>
               </div>
@@ -90,6 +92,8 @@ export default async function RootLayout({
             </div>
           </nav>
         </header>
+
+        <ZoneBanner />
 
         <main id="main-content" className="page-enter">
           {children}

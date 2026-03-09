@@ -7,6 +7,7 @@ import { PlantCard } from '@/components/PlantCard';
 import { PlantFilterSidebar } from '@/components/PlantFilterSidebar';
 import { SortBar } from '@/components/SortBar';
 import { Pagination } from '@/components/Pagination';
+import { getUserZone } from '@/lib/zone-persistence';
 
 export interface BrowseFiltersState {
   categories: string[];
@@ -50,6 +51,40 @@ const PER_PAGE = 24;
 export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState<BrowseFiltersState>(() => filtersFromParams(searchParams));
+
+  // Pre-fill zone from localStorage if URL doesn't already have zone params
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    if (!sp.get('zoneMin') && !sp.get('zoneMax')) {
+      const zone = getUserZone();
+      if (zone) {
+        setFilters((prev) => ({
+          ...prev,
+          zoneMin: String(zone),
+          zoneMax: String(zone),
+        }));
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Listen for zone changes from ZonePrompt
+  useEffect(() => {
+    function handleZoneChanged(e: Event) {
+      const zone = (e as CustomEvent<number | null>).detail;
+      if (zone) {
+        setFilters((prev) => ({
+          ...prev,
+          zoneMin: String(zone),
+          zoneMax: String(zone),
+          page: 1,
+        }));
+      } else {
+        setFilters((prev) => ({ ...prev, zoneMin: '', zoneMax: '', page: 1 }));
+      }
+    }
+    window.addEventListener('zone-changed', handleZoneChanged);
+    return () => window.removeEventListener('zone-changed', handleZoneChanged);
+  }, []);
 
   // Sync URL (no navigation) when filters change
   useEffect(() => {
@@ -115,17 +150,29 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     });
   }, []);
 
+  // Derive a combined zone badge when min and max are the same
+  const zoneMatch = filters.zoneMin && filters.zoneMax && filters.zoneMin === filters.zoneMax
+    ? filters.zoneMin
+    : null;
+
   const activeChips: Array<{ label: string; onRemove: () => void }> = [];
   if (filters.categories.length > 0) {
     filters.categories.forEach((cat) => {
       activeChips.push({ label: cat, onRemove: () => toggleInList('categories', cat) });
     });
   }
-  if (filters.zoneMin) {
-    activeChips.push({ label: `Zone min: ${filters.zoneMin}`, onRemove: () => updateFilters({ zoneMin: '' }) });
-  }
-  if (filters.zoneMax) {
-    activeChips.push({ label: `Zone max: ${filters.zoneMax}`, onRemove: () => updateFilters({ zoneMax: '' }) });
+  if (zoneMatch) {
+    activeChips.push({
+      label: `Showing plants for Zone ${zoneMatch}`,
+      onRemove: () => updateFilters({ zoneMin: '', zoneMax: '' }),
+    });
+  } else {
+    if (filters.zoneMin) {
+      activeChips.push({ label: `Zone min: ${filters.zoneMin}`, onRemove: () => updateFilters({ zoneMin: '' }) });
+    }
+    if (filters.zoneMax) {
+      activeChips.push({ label: `Zone max: ${filters.zoneMax}`, onRemove: () => updateFilters({ zoneMax: '' }) });
+    }
   }
   if (filters.available) {
     activeChips.push({ label: 'In stock', onRemove: () => updateFilters({ available: false }) });

@@ -9,6 +9,7 @@ import {
 } from '@/lib/queries/cultivars';
 import { apiSuccess, apiNotFound, apiError } from '@/lib/api-helpers';
 import { buildPaginationLinks, parsePagination } from '@/lib/pagination';
+import { withRateLimit } from '@/lib/api-rate-limit';
 
 type SparseFields = string[] | null;
 
@@ -139,7 +140,7 @@ function buildCultivarPayload(
  * GET /api/plants/corylus-avellana
  * GET /api/plants/corylus-avellana/jefferson
  */
-export async function GET(
+export const GET = withRateLimit(async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string[] }> }
 ) {
@@ -220,4 +221,4 @@ export async function GET(
     'Expected /api/plants/{species} or /api/plants/{species}/{cultivar}',
     400
   );
-}
+}, { max: 60 });

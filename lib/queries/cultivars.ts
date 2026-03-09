@@ -41,7 +41,8 @@ export async function getOffersForCultivar(supabase: SupabaseClient, cultivarId:
       )
     `)
     .eq('cultivar_id', cultivarId)
-    .eq('offer_status', 'active')
+    .in('offer_status', ['active', 'stale'])
+    .order('offer_status')       // active first, stale second
     .order('raw_price_text');
 
   if (error) return [];

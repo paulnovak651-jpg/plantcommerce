@@ -96,6 +96,58 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="mx-auto max-w-5xl px-4 py-16">
+        <Text variant="h1" className="text-center">How It Works</Text>
+        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+          {[
+            {
+              title: 'Search',
+              description: 'Find the exact cultivar you\'re looking for across multiple nurseries',
+              icon: (
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <circle cx="11" cy="11" r="8" />
+                  <path strokeLinecap="round" d="m21 21-4.35-4.35" />
+                </svg>
+              ),
+            },
+            {
+              title: 'Compare',
+              description: 'See prices, availability, and forms side-by-side',
+              icon: (
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h18M3 18h18" />
+                  <path strokeLinecap="round" d="M9 6v12M15 6v12" />
+                </svg>
+              ),
+            },
+            {
+              title: 'Buy',
+              description: 'Go directly to the nursery\'s product page to purchase',
+              icon: (
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-4.5-4.5L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
+              ),
+            },
+          ].map((step, i) => (
+            <div
+              key={step.title}
+              className="flex flex-col items-center rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary px-6 py-8 text-center"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/10 text-accent">
+                {step.icon}
+              </div>
+              <p className="mt-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
+                Step {i + 1}
+              </p>
+              <Text variant="h3" className="mt-3">{step.title}</Text>
+              <p className="mt-2 text-sm text-text-secondary">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Browse by Category */}
       <section className="mx-auto max-w-7xl px-4 py-12">
         <Text variant="h1">Browse by Category</Text>

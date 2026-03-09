@@ -6,8 +6,9 @@ import { apiSuccess } from '@/lib/api-helpers';
 import { buildPaginationLinks } from '@/lib/pagination';
 import { parseQuery } from '@/lib/search/parseQuery';
 import { scoreResults } from '@/lib/search/scoring';
+import { withRateLimit } from '@/lib/api-rate-limit';
 
-export async function GET(request: NextRequest) {
+export const GET = withRateLimit(async function GET(request: NextRequest) {
   const { query: q, limit, offset, zone, category, inStock } = parseSearchApiParams(
     request.nextUrl.searchParams
   );
@@ -79,4 +80,4 @@ export async function GET(request: NextRequest) {
   );
 
   return apiSuccess(paged, { total: scoredTotal, limit, offset }, links);
-}
+}, { max: 60 });

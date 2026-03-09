@@ -5,9 +5,10 @@ interface EmptyStateProps {
   title: string;
   description: string;
   action?: { label: string; href: string };
+  children?: React.ReactNode;
 }
 
-export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action, children }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center rounded-[var(--radius-lg)] border border-dashed border-border bg-surface-primary px-6 py-12 text-center">
       {icon && <div className="mb-3 text-text-tertiary">{icon}</div>}
@@ -21,6 +22,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
           {action.label}
         </Link>
       )}
+      {children && <div className="mt-6 w-full max-w-md">{children}</div>}
     </div>
   );
 }

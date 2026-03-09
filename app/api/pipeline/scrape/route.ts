@@ -7,6 +7,7 @@ import {
   createImportRun,
   completeImportRun,
   markNurseryScraped,
+  markStaleOffers,
 } from '@/lib/pipeline/supabase-pipeline';
 import {
   createScraperFromConfig,
@@ -27,6 +28,7 @@ interface NurseryRunSummary {
   resolved: number;
   unmatched: number;
   errored: number;
+  staleMarked: number;
   scrapeErrors: string[];
   writeErrors: string[];
   durationMs: number;
@@ -49,8 +51,31 @@ export async function GET(request: NextRequest) {
 
   const startTime = Date.now();
 
+  // Seasonal frequency: daily during spring bare-root season (Feb-Apr),
+  // weekly (Monday only) the rest of the year.
+  // Manual runs via ?nursery=slug bypass this check.
+  const nurseryFilter = request.nextUrl.searchParams.get('nursery');
+  if (!nurseryFilter) {
+    const now = new Date();
+    const month = now.getUTCMonth(); // 0-indexed: Jan=0, Feb=1, Mar=2, Apr=3
+    const dayOfWeek = now.getUTCDay(); // 0=Sun, 1=Mon
+    const isSpring = month >= 1 && month <= 3; // Feb, Mar, Apr
+    const isMonday = dayOfWeek === 1;
+
+    if (!isSpring && !isMonday) {
+      pipelineLog('info', 'pipeline_skipped_off_season', {
+        month: month + 1,
+        dayOfWeek,
+        reason: 'Non-spring, non-Monday — skipping until next Monday',
+      });
+      return apiSuccess({
+        skipped: true,
+        reason: 'Off-season: scrapes run weekly (Mondays) outside Feb-Apr',
+      });
+    }
+  }
+
   try {
-    const nurseryFilter = request.nextUrl.searchParams.get('nursery');
     const supabase = createPipelineClient();
     const scrapers = await selectScrapers(supabase, nurseryFilter);
 
@@ -221,6 +246,7 @@ async function runNurseryPipeline(
         resolved: 0,
         unmatched: 0,
         errored: 0,
+        staleMarked: 0,
         scrapeErrors: scrapeResult.errors,
         writeErrors: [],
         durationMs: Date.now() - nurseryStart,
@@ -246,6 +272,7 @@ async function runNurseryPipeline(
         resolved: 0,
         unmatched: 0,
         errored: 0,
+        staleMarked: 0,
         scrapeErrors: [],
         writeErrors: [],
         durationMs: Date.now() - nurseryStart,
@@ -317,6 +344,16 @@ async function runNurseryPipeline(
       scrapedAt: scrapeResult.scrapedAt,
     });
 
+    // Mark offers not seen in this scrape as stale
+    const importRunStartedAt = scrapeResult.scrapedAt ?? new Date().toISOString();
+    const staleCount = await markStaleOffers(supabase, nursery.id, importRunStartedAt);
+    if (staleCount > 0) {
+      pipelineLog('info', 'stale_offers_marked', {
+        nursery: scraper.nurserySlug,
+        staleCount,
+      });
+    }
+
     if (totalProducts > 0) {
       const resolveRate = resolved / totalProducts;
       const errorRate = errored / totalProducts;
@@ -350,6 +387,7 @@ async function runNurseryPipeline(
       resolved,
       unmatched,
       errored,
+      staleMarked: staleCount,
       scrapeErrors: scrapeResult.errors,
       writeErrors: errorSamples.map((e) => `${e.product}: ${e.error}`),
       durationMs,
@@ -386,6 +424,7 @@ async function runNurseryPipeline(
       resolved: 0,
       unmatched: 0,
       errored: 1,
+      staleMarked: 0,
       scrapeErrors: [],
       writeErrors: [],
       durationMs: Date.now() - nurseryStart,

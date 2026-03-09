@@ -6,6 +6,8 @@ interface AlertSignupFormProps {
   cultivarId: string;
   plantEntityId: string | null;
   cultivarName: string;
+  /** When true, renders without outer border/padding (for embedding in EmptyState) */
+  compact?: boolean;
 }
 
 interface AlertCreateResponse {
@@ -25,6 +27,7 @@ export function AlertSignupForm({
   cultivarId,
   plantEntityId,
   cultivarName,
+  compact = false,
 }: AlertSignupFormProps) {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -68,7 +71,7 @@ export function AlertSignupForm({
   }
 
   return (
-    <div className="rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary p-4 sm:p-5">
+    <div className={compact ? 'text-left' : 'rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary p-4 sm:p-5'}>
       <div className="flex items-center gap-2">
         <svg
           className="h-5 w-5 text-accent"

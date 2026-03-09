@@ -24,6 +24,7 @@ import { ListingCard } from '@/components/ListingCard';
 import { PriceComparisonTable } from '@/components/PriceComparisonTable';
 import { AlertSignupForm } from '@/components/AlertSignupForm';
 import { getApprovedListingsForCultivar } from '@/lib/queries/listings';
+import { getLatestPriceChanges } from '@/lib/queries/price-history';
 
 interface Props {
   params: Promise<{ speciesSlug: string; cultivarSlug: string }>;
@@ -128,6 +129,9 @@ export default async function CultivarPage({ params }: Props) {
     getApprovedListingsForCultivar(supabase, cultivar.id),
   ]);
 
+  const offerIds = offers.map((o: any) => o.id as string).filter(Boolean);
+  const priceChanges = await getLatestPriceChanges(supabase, offerIds);
+
   const latestScrapeIso =
     offers.reduce<string | null>((latest, offer: any) => {
       const value = offer.nurseries?.last_scraped_at as string | null | undefined;
@@ -153,6 +157,9 @@ export default async function CultivarPage({ params }: Props) {
       saleForm: (offer.sale_form as string | null) ?? null,
       productUrl: (offer.product_page_url as string | null) ?? null,
       location,
+      offerStatus: (offer.offer_status as string) ?? 'active',
+      lastSeenAt: (offer.last_seen_at as string | null) ?? null,
+      priceChange: priceChanges.get(offer.id) ?? null,
     };
   });
 
@@ -352,19 +359,28 @@ export default async function CultivarPage({ params }: Props) {
           </div>
         ) : (
           <EmptyState
-            title="No offers yet"
-            description="No nursery offers yet. We're adding new sources regularly."
-          />
+            title="No nurseries currently stock this cultivar"
+            description="Get notified when it becomes available"
+          >
+            <AlertSignupForm
+              cultivarId={cultivar.id}
+              plantEntityId={species?.id ?? null}
+              cultivarName={cultivar.canonical_name}
+              compact
+            />
+          </EmptyState>
         )}
       </section>
 
-      <section>
-        <AlertSignupForm
-          cultivarId={cultivar.id}
-          plantEntityId={species?.id ?? null}
-          cultivarName={cultivar.canonical_name}
-        />
-      </section>
+      {offers.length > 0 && (
+        <section>
+          <AlertSignupForm
+            cultivarId={cultivar.id}
+            plantEntityId={species?.id ?? null}
+            cultivarName={cultivar.canonical_name}
+          />
+        </section>
+      )}
 
       {/* MINI MAP */}
       {nurseryPins.length > 0 && (
