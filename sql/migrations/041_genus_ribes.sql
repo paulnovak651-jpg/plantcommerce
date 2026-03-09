@@ -20,7 +20,7 @@ VALUES (
   'a0000000-0000-0000-0000-000000000003', TRUE, 7,
   'Includes currants, gooseberries, and several other shrub groups important in temperate food systems.'
 )
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 INSERT INTO taxonomy_nodes (
   id, rank_id, name, common_name, slug, parent_id, notable_for_permaculture, display_order, description
@@ -32,7 +32,7 @@ VALUES (
   'b0000000-0000-0000-0000-000000000007', TRUE, 1,
   'Currants and gooseberries. Shade-tolerant, cold-hardy berry shrubs with high wildlife and preserves value.'
 )
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 INSERT INTO taxonomy_nodes (
   id, rank_id, name, common_name, slug, parent_id, notable_for_permaculture, display_order, description
@@ -44,7 +44,7 @@ VALUES (
   'c0000000-0000-0000-0000-000000000012', TRUE, 1,
   'Cold-hardy berry shrubs including black currants, red currants, gooseberries, and clove currants.'
 )
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- PART 1: PLANT ENTITIES
@@ -52,7 +52,7 @@ ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO plant_entities (
   slug, canonical_name, botanical_name, family, genus, species,
-  entity_type, taxonomy_confidence, taxonomy_node_id, description, curation_status
+  entity_type, taxonomy_confidence, taxonomy_node_id, description, curation_status, display_category
 )
 VALUES
   (
@@ -64,9 +64,10 @@ VALUES
     'nigrum',
     'species',
     'verified',
-    'd0000000-0000-0000-0000-000000000017',
+    (SELECT id FROM taxonomy_nodes WHERE slug = 'genus-ribes'),
     'Cold-hardy currant shrub valued for high-antioxidant fruit, preserves, cordials, and low-input berry production in cool climates.',
-    'published'
+    'published',
+    'Currants & Gooseberries'
   ),
   (
     'ribes-rubrum',
@@ -77,9 +78,10 @@ VALUES
     'rubrum',
     'species',
     'verified',
-    'd0000000-0000-0000-0000-000000000017',
+    (SELECT id FROM taxonomy_nodes WHERE slug = 'genus-ribes'),
     'Productive and long-lived currant shrub used for fresh eating, jelly, and ornamental-edible hedgerows.',
-    'published'
+    'published',
+    'Currants & Gooseberries'
   ),
   (
     'ribes-uva-crispa',
@@ -90,9 +92,10 @@ VALUES
     'uva-crispa',
     'species',
     'verified',
-    'd0000000-0000-0000-0000-000000000017',
+    (SELECT id FROM taxonomy_nodes WHERE slug = 'genus-ribes'),
     'Cold-hardy shrub berry with tart-sweet fruit, valued for pies, preserves, and productive partial-shade plantings.',
-    'published'
+    'published',
+    'Currants & Gooseberries'
   ),
   (
     'ribes-aureum',
@@ -103,9 +106,10 @@ VALUES
     'aureum',
     'species',
     'verified',
-    'd0000000-0000-0000-0000-000000000017',
+    (SELECT id FROM taxonomy_nodes WHERE slug = 'genus-ribes'),
     'North American currant with fragrant clove-scented flowers, broad wildlife value, and resilience in dryland or continental systems.',
-    'published'
+    'published',
+    'Currants & Gooseberries'
   )
 ON CONFLICT (slug) DO NOTHING;
 
