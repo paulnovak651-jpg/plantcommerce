@@ -1,20 +1,11 @@
 import { Text } from '@/components/ui/Text';
 import type { CommunityListing } from '@/lib/types';
+import { daysAgo, formatPrice } from '@/lib/format';
 
-function daysAgo(iso: string): string {
-  const ms = Date.now() - new Date(iso).getTime();
-  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-  if (days === 0) return 'Today';
-  if (days === 1) return '1 day ago';
-  if (days < 30) return `${days} days ago`;
-  const months = Math.floor(days / 30);
-  return `${months} month${months > 1 ? 's' : ''} ago`;
-}
-
-function formatPrice(priceCents: number | null): string {
+function formatListingPrice(priceCents: number | null): string {
   if (priceCents === null) return 'Trade / Contact';
   if (priceCents === 0) return 'Free';
-  return `$${(priceCents / 100).toFixed(2)}`;
+  return formatPrice(null, priceCents);
 }
 
 export function ListingCard({ listing }: { listing: CommunityListing }) {
@@ -56,7 +47,7 @@ export function ListingCard({ listing }: { listing: CommunityListing }) {
           </Text>
         )}
         <Text variant="caption" color="secondary">
-          {formatPrice(listing.price_cents)}
+          {formatListingPrice(listing.price_cents)}
         </Text>
         <Text variant="caption" color="secondary">
           {listing.location_state}

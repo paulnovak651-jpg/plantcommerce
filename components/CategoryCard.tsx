@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import type { CategoryGroup } from '@/lib/queries/plants';
 
@@ -41,8 +43,9 @@ export function CategoryCard({ group }: { group: CategoryGroup }) {
         {hasGenera && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {group.top_genera.map((g) => (
-              <span
+              <button
                 key={g.slug}
+                type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   window.location.href = `/plants/genus/${g.slug}`;
@@ -53,7 +56,7 @@ export function CategoryCard({ group }: { group: CategoryGroup }) {
                 {g.species_count > 1 && (
                   <span className="ml-1 text-white/60">({g.species_count})</span>
                 )}
-              </span>
+              </button>
             ))}
           </div>
         )}

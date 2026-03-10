@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Surface } from '@/components/ui/Surface';
 import { Text } from '@/components/ui/Text';
+import { formatPrice, toDisplayToken, daysAgo } from '@/lib/format';
 
 interface PriceChangeInfo {
   priceCentsOld: number;
@@ -26,19 +27,9 @@ interface PriceComparisonTableProps {
   offers: OfferItem[];
 }
 
-function formatPrice(price: string | null, priceCents: number | null): string {
-  if (price) return price;
-  if (priceCents != null) return `$${(priceCents / 100).toFixed(2)}`;
-  return 'Contact nursery';
-}
-
 function formatLastSeen(lastSeenAt: string | null | undefined): string | null {
   if (!lastSeenAt) return null;
-  const diff = Date.now() - new Date(lastSeenAt).getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days <= 0) return 'Last seen today';
-  if (days === 1) return 'Last seen 1 day ago';
-  return `Last seen ${days} days ago`;
+  return `Last seen ${daysAgo(lastSeenAt).toLowerCase()}`;
 }
 
 function PriceChangeIndicator({ change }: { change: PriceChangeInfo }) {
@@ -62,11 +53,6 @@ function PriceChangeIndicator({ change }: { change: PriceChangeInfo }) {
       was {oldPrice}
     </span>
   );
-}
-
-function toDisplayToken(value: string | null): string | null {
-  if (!value || value === 'unknown') return null;
-  return value.replace(/_/g, ' ');
 }
 
 export function PriceComparisonTable({ offers }: PriceComparisonTableProps) {

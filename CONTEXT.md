@@ -1,6 +1,6 @@
 # PlantCommerce — Project Context
 
-> **Last updated:** 2026-03-01
+> **Last updated:** 2026-03-10
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder
@@ -11,26 +11,29 @@
 
 ## What This Is
 
-A plant comparison and community marketplace platform for the permaculture community. Users search for a cultivar, see which nurseries carry it, compare prices and availability, and post WTS/WTB community listings. Think "Kayak for plants" with a community trading layer.
+A comprehensive plant information and sourcing platform for the permaculture community. It combines a structured plant database (taxonomy, growing profiles, pollination data), a nursery inventory aggregator (automated scrapers pull live pricing across North America), and a community marketplace (WTS/WTB listings).
 
 No user accounts (v1). No payments. Nursery offers are read-only aggregated data; community listings are anon-submitted and admin-moderated.
 
 ---
 
-## Current State (Honest Assessment)
+## Current State (as of 2026-03-10)
 
-- **Foundation:** Solid. 99 tests passing, TypeScript strict, CI green. 33 routes (API + UI).
-- **Live data:** 3 nurseries live (Burnt Ridge 18 offers, Grimo 28 offers, Raintree validated). Pipeline consent-gated.
-- **Deployment:** ✅ Live at https://plantfinder-cyan.vercel.app (commit 4b57a89). Cron: Monday 6am UTC.
-- **Knowledge graph:** Taxonomy tree (37 nodes, Kingdom→Genus) + growing profiles for 4 Corylus species in Supabase.
-- **Visual data:** Sprint 4 Phase 1 ✅ — RangeBar, IconRating, TraitGrid components. Species + cultivar pages show visual growing bars.
-- **Explorer:** Sprint 4 Phase 2 ✅ — `/browse` Explorer: FilterBar (zone/category/availability), enhanced Cladogram (mini zone bars, cultivar counts, category dimming), detail panel with TraitGrid, nav: Search | Explore | Nurseries.
-- **Species pages:** Stats line (N cultivars · N nurseries with stock), availability badges on cultivar cards.
-- **Nursery maps:** Sprint 4 Phase 3 ✅ — Leaflet + OpenStreetMap, green pins, fitBounds. 300px map on nursery index, 200px mini-map on cultivar page. Nursery detail cleanup (ALL CAPS names → title case, no Sales Type card, Last Updated hidden if null).
-- **Community marketplace:** Sprint 4 Phase 4 ✅ — `community_listings` table (migration 013, RLS), anonymous WTS/WTB submissions at `/listings/new`, auto-resolver (ilike cultivar match), 90-day expiry. Admin moderation at `/admin/listings`. ListingCard + ListingForm components. Listing sections on cultivar + species pages.
-- **Search:** Zone-aware materialized view — "zone 4 hazelnut" returns results.
-- **Admin tools:** `/admin/unmatched` + `/admin/listings` (both token-protected).
-- **User stickiness:** Low. Community listings are the first user-generated content hook. No accounts yet.
+- **Foundation:** Solid. 99+ tests passing, TypeScript strict, CI green. 48 SQL migrations applied.
+- **Multi-genus:** 15+ genera seeded — hazelnuts, chestnuts, walnuts, hickories, apples, stone fruit, persimmons, mulberries, elderberries, grapes, blueberries, figs, pears, gooseberries/currants, raspberries/blackberries, kiwi, goumi, sea buckthorn, hackberry.
+- **Live data:** 3 nurseries live (Burnt Ridge, Grimo, Raintree). Pipeline consent-gated. Cron: Monday 6am UTC.
+- **Deployment:** Live at https://plantfinder-cyan.vercel.app.
+- **Scrapers:** Data-driven registry with generic Shopify + WooCommerce scrapers. Config-driven — adding a nursery is a registry entry.
+- **Knowledge graph:** Taxonomy tree (37+ nodes, Kingdom→Genus) + growing profiles + pollination profiles.
+- **Browse/Search:** Full filtering (zone, category, availability, genus grouping), active filter chips, skeleton loaders, sort options, pagination.
+- **Genus hubs:** `/plants/genus/[slug]` pages with species cards, growing profiles, breadcrumbs (Category → Genus → Species → Cultivar).
+- **Price comparison:** Side-by-side nursery comparison tables with best-price tags and mobile card layout.
+- **Nursery maps:** Leaflet + OpenStreetMap on nursery index + cultivar pages.
+- **Community marketplace:** Anonymous WTS/WTB listings, admin moderation, 90-day expiry.
+- **Stock alerts:** Email signup for availability/price notifications.
+- **Pollination checker:** Species-level pollination compatibility tool.
+- **Admin tools:** `/admin/unmatched` + `/admin/listings` (token-protected).
+- **UI polish:** 20+ visual refinements — nav highlighting, custom checkboxes, filter chips, animations, skeleton loaders, grain textures, per-category card colors, botanical sketch placeholders, typography refinements.
 
 ---
 
@@ -103,11 +106,13 @@ Scraper (fetches nursery HTML)
 
 | Nursery | Status |
 |---------|--------|
-| Burnt Ridge | ✅ Live, 18 offers in DB |
-| Grimo | ✅ Live (run completed 2026-02-26) |
-| Raintree | ✅ Live (pipeline validated 2026-02-26) |
-| One Green World | ❌ Needs scraper (consent required first) |
-| 6 others | ❌ In DB, nothing built (consent required first) |
+| Burnt Ridge | ✅ Live (custom scraper) |
+| Grimo Nut Nursery | ✅ Live (custom scraper) |
+| Raintree Nursery | ✅ Live (custom scraper) |
+| One Green World | ❌ Needs consent |
+| 6 others | ❌ In DB, needs consent first |
+
+Generic Shopify and WooCommerce scrapers available — new nurseries can be onboarded via config.
 
 ---
 
@@ -116,59 +121,50 @@ Scraper (fetches nursery HTML)
 ### Claude Code (CLI)
 - Persistent memory across sessions, Supabase MCP, GitHub MCP
 - Good for: architecture decisions, reviews, cross-cutting concerns, TypeScript issues, DB queries
-- Updates this file and the shared context repo after significant sessions
 
 ### Codex (local, runs in project folder)
 - Edits files directly, pushes to git
 - Good for: scraper implementation, refactoring, UI work
 - No persistent memory. Reads AGENTS.md on startup for context.
 
-### Claude Opus (desktop, separate account)
-- Strategy, design decisions, system thinking
-- Fetches raw context URL at session start: https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
-
 ---
 
 ## Known Gaps & Open Questions
 
-### Immediate blockers
-1. ~~**Vercel deployment**~~ ✅ Done — live at plantfinder-cyan.vercel.app
-2. ~~**Unmatched names queue**~~ ✅ Admin UI implemented and operational
-3. **Parser generalization** — hazelnut-specific, needs work before expanding to other plant families
-4. ~~**Cron automation**~~ ✅ Done — Vercel cron registered, runs Monday 6am UTC
-5. ~~**Search refresh**~~ ✅ Validated end-to-end with Raintree live run
+### Remaining work
+1. **No user accounts yet** — community listings work without auth; next step is Supabase Auth for trust tiers, saved searches, price alerts
+2. **Nursery consent outreach** — 3 nurseries being scraped but none formally consented yet
+3. **More nursery coverage** — only 3 of 10 nurseries have live scrapers; consent needed before expanding
+4. **Price history UI** — price_history table exists but no frontend surface yet
 
-### Architecture gaps
-6. ~~**No admin interface**~~ ✅ `/admin/unmatched` implemented for unmatched review workflow
-7. **No user accounts yet** — community listings work without auth (v1); next step is Supabase Auth for trust tier progression, saved searches, price alerts
-8. ~~**No error monitoring**~~ ✅ `/api/pipeline/health` endpoint implemented
-9. **No nursery consent tracking** — need `consent_status` on nurseries table before scaling scraper count
-
-### Strategic questions (unanswered)
-10. What's the user retention story beyond v1?
-11. How does the parser generalize across plant families without becoming a maintenance nightmare?
-12. What is the first concrete growth loop to reach 50 recurring users?
-13. What's the right consent model for nursery data? (See Nursery Consent Strategy below)
+### Strategic questions
+5. What's the user retention story beyond v1?
+6. What is the first concrete growth loop to reach 50 recurring users?
+7. How do we position this for nursery partnerships/affiliate model?
 
 ---
 
 ## Priority Order
 
-1. ~~**Deploy to Vercel**~~ ✅ Live at plantfinder-cyan.vercel.app
-2. ~~**Admin UI for unmatched queue**~~ ✅ Implemented
-3. ~~**Run Grimo scraper live**~~ ✅ Completed (2026-02-26)
-4. ~~**Set up Vercel Cron**~~ ✅ Registered, runs Monday 6am UTC
-5. ~~**Foundation hardening sprint**~~ ✅ Done (2026-02-26)
-6. ~~**Generalize the parser**~~ ✅ Done (2026-02-26) — config-driven, genus registry
-7. ~~**UI polish pass (Sprint 2)**~~ ✅ Deployed to Vercel (2026-02-26)
-8. ~~**Sprint 3: "Depth Before Breadth"**~~ ✅ Complete (2026-02-26) — taxonomy, growing profiles, UI polish deployed
-9. ~~**Sprint 4 Phase 1**~~ ✅ Done — RangeBar, IconRating, TraitGrid; species + cultivar pages show visual bars; homepage cleanup
-10. ~~**Sprint 4 Phase 2**~~ ✅ Done (2026-02-26) — Explorer page, FilterBar, enhanced Cladogram, nav simplified, species page stats + badges
-11. ~~**Sprint 4 Phase 3**~~ ✅ Done — Leaflet nursery maps (index + cultivar mini-map), nursery detail cleanup
-12. ~~**Sprint 4 Phase 4**~~ ✅ Done — Community marketplace foundation (listings table, API, form, admin, cards on cultivar/species pages)
-13. **Nursery consent & outreach** ← NEXT — draft outreach template, contact existing 3 nurseries
-14. **Build remaining scrapers** — One Green World + others, only after consent obtained
-15. **Phase 5: Auth + engagement** — Supabase Auth, tie listings to accounts, trust tier progression, price alerts
+### Completed
+- ✅ Deploy to Vercel (live at plantfinder-cyan.vercel.app)
+- ✅ Foundation hardening (ESM fix, offer key safety, error boundaries, health monitoring)
+- ✅ Parser generalization (config-driven, genus registry)
+- ✅ Knowledge graph (taxonomy tree, growing profiles, pollination)
+- ✅ UI/UX overhaul (Explorer, filters, maps, visual data, 20+ polish items)
+- ✅ Community marketplace (listings, moderation, auto-resolver)
+- ✅ Stock alerts + pollination checker
+- ✅ Data-driven scraper registry (Shopify + WooCommerce generic scrapers)
+- ✅ Genus hub pages + genus-level browsing (Sprint 5)
+- ✅ Multi-genus data seeding (15+ genera, 48 migrations)
+- ✅ Price comparison tables, API rate limiting, pagination
+
+### Current priorities
+1. **Nursery consent & outreach** ← NEXT — draft outreach template, contact existing 3 nurseries
+2. **Build remaining scrapers** — One Green World + others, only after consent obtained
+3. **Auth + engagement** — Supabase Auth, tie listings to accounts, trust tier progression
+4. **Price history UI** — surface trends from price_history table
+5. **Expand genus data** — more cultivar coverage for seeded genera
 
 ---
 
@@ -191,9 +187,9 @@ Scraper (fetches nursery HTML)
 ### TODO
 - [x] Add `consent_status` column to `nurseries` table with enum (migration 004 applied)
 - [x] Gate pipeline to skip non-approved nurseries (`declined` skipped, `pending` still runs)
+- [x] Polish site before broader outreach (Sprint 5 + UI polish complete)
 - [ ] Draft outreach email template
 - [ ] Contact Burnt Ridge, Grimo, Raintree
-- [ ] Polish site before broader outreach
 
 ---
 
@@ -271,7 +267,7 @@ Interactive system map available at `/system-map` (dev tool, not linked in nav).
 | Pre-2026 | Preserve raw_inventory_rows always | Never lose source data, enables re-parsing as resolver improves |
 | Pre-2026 | 12-method resolver priority chain | Maximizes match accuracy across messy nursery naming conventions |
 | 2026-02 | Codex for scraper implementation, Claude Code for architecture | Play to each tool's strengths |
-| 2026-02 | Shared context repo for cross-AI sync | Single source of truth across Claude Code, Codex, Claude Opus, ChatGPT |
+| 2026-03 | Retired shared claude-context repo | In-repo docs (CONTEXT.md, VISION.md, AGENTS.md) are the source of truth |
 | 2026-02-25 | Deployed to Vercel (Hobby plan, direct push) | plantfinder-cyan.vercel.app — cron registered Monday 6am UTC |
 | 2026-02-25 | Vercel project "plantfinder" (diverged from plantcommerce repo) | GitHub integration points at old plantfinder repo; direct CLI deploy used for now |
 | 2026-02-26 | Foundation hardening sprint completed | ESM imports, offer key safety, dead code removal, parser audit, Raintree live run, error boundaries, health monitoring |
@@ -287,5 +283,3 @@ Interactive system map available at `/system-map` (dev tool, not linked in nav).
 
 - Claude Code: loaded via memory system automatically
 - Codex: reads `AGENTS.md` on startup (references this file)
-- Claude Opus (desktop): fetch https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
-- ChatGPT: browse the same URL above

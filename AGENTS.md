@@ -1,7 +1,6 @@
 # Plant Commerce — Agent Instructions
 
 > Auto-loaded by agents on startup. Read before doing any work.
-> At session start, fetch and read: https://raw.githubusercontent.com/paulnovak651-jpg/claude-context/main/plantcommerce.md
 > Dashboard: http://localhost:3001/dashboard
 
 ---

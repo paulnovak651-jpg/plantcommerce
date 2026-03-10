@@ -50,11 +50,16 @@ export async function listNurseriesPaged(
   }
 
   const nurseryIds = nurseries.map((nursery) => nursery.id as string);
-  const { data: offerRows } = await supabase
-    .from('inventory_offers')
-    .select('nursery_id')
-    .eq('offer_status', 'active')
-    .in('nursery_id', nurseryIds);
+
+  let offerRows: NurseryOfferCountRow[] | null = null;
+  if (nurseryIds.length > 0) {
+    const { data } = await supabase
+      .from('inventory_offers')
+      .select('nursery_id')
+      .eq('offer_status', 'active')
+      .in('nursery_id', nurseryIds);
+    offerRows = data as NurseryOfferCountRow[] | null;
+  }
 
   const offerCounts = new Map<string, number>();
   for (const row of (offerRows ?? []) as NurseryOfferCountRow[]) {

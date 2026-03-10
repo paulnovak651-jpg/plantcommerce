@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server';
 import { apiError, apiSuccess } from '@/lib/api-helpers';
+import { withRateLimit } from '@/lib/api-rate-limit';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -10,7 +11,7 @@ function normalizeEmail(raw: unknown): string | null {
   return EMAIL_RE.test(email) ? email : null;
 }
 
-export async function POST(request: Request) {
+export const POST = withRateLimit(async function POST(request: Request) {
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;
@@ -18,6 +19,9 @@ export async function POST(request: Request) {
     return apiError('INVALID_JSON', 'Request body must be valid JSON', 400);
   }
 
+  if (typeof body.email === 'string' && body.email.length > 254) {
+    return apiError('INVALID_FIELD', 'email must be 254 characters or less', 400);
+  }
   const email = normalizeEmail(body.email);
   if (!email) {
     return apiError('INVALID_FIELD', 'email must be a valid email address', 422);
@@ -84,4 +88,4 @@ export async function POST(request: Request) {
     status: data.status as string,
     duplicate: false,
   });
-}
+}, { max: 10 });

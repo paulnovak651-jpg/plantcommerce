@@ -9,6 +9,10 @@ import { getStatusSummary } from '@/lib/status/summary';
 import { GET as publicStatusGET } from '@/app/api/status/route';
 import { GET as adminStatusGET } from '@/app/api/admin/status/route';
 
+function mockRequest(url = 'http://localhost/api/status'): Request {
+  return new Request(url, { headers: { 'x-forwarded-for': '127.0.0.1' } });
+}
+
 const mockedGetStatusSummary = vi.mocked(getStatusSummary);
 
 const ENV_KEYS = [
@@ -53,7 +57,7 @@ describe('/api/status', () => {
   it('returns 503 when required Supabase env vars are missing', async () => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-    const response = await publicStatusGET();
+    const response = await publicStatusGET(mockRequest());
     const body = await response.json();
 
     expect(response.status).toBe(503);
@@ -81,7 +85,7 @@ describe('/api/status', () => {
       },
     });
 
-    const response = await publicStatusGET();
+    const response = await publicStatusGET(mockRequest());
     const body = await response.json();
 
     expect(response.status).toBe(200);

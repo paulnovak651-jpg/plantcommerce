@@ -1,5 +1,6 @@
 import { apiError, apiSuccess } from '@/lib/api-helpers';
 import { getStatusSummary } from '@/lib/status/summary';
+import { withRateLimit } from '@/lib/api-rate-limit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -8,7 +9,7 @@ export const dynamic = 'force-dynamic';
  * GET /api/status
  * Public, read-only status summary for integrations (ChatGPT, monitoring, etc.).
  */
-export async function GET() {
+export const GET = withRateLimit(async function GET(request: Request) {
   try {
     if (
       !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -22,5 +23,5 @@ export async function GET() {
   } catch (err) {
     return apiError('SERVER_ERROR', String(err), 500);
   }
-}
+}, { max: 30 });
 

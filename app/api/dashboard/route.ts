@@ -1,15 +1,19 @@
 import { NextRequest } from 'next/server';
 import { apiSuccess, apiError } from '@/lib/api-helpers';
 import { createServiceClient } from '@/lib/supabase/server';
+import { requireAdminStatusAuth } from '@/lib/pipeline/auth';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/dashboard
  * Returns full Command Center state: tasks + sessions.
- * Public read — no auth required.
+ * Requires admin auth.
  */
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const auth = requireAdminStatusAuth(request);
+  if (!auth.ok) return auth.response;
+
   try {
     const supabase = createServiceClient();
 

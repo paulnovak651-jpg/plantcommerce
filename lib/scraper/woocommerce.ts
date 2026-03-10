@@ -10,9 +10,13 @@ interface WcProduct {
 
 async function fetchJson(url: string, delayMs: number): Promise<{ data: unknown; totalPages: number }> {
   if (delayMs > 0) await new Promise((resolve) => setTimeout(resolve, delayMs + Math.random() * 500));
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
   const response = await fetch(url, {
     headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; PlantCommerce/1.0)' },
+    signal: controller.signal,
   });
+  clearTimeout(timeout);
   if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   const totalPages = parseInt(response.headers.get('X-WP-TotalPages') || '1', 10);
   return { data: await response.json(), totalPages: Number.isFinite(totalPages) ? totalPages : 1 };
@@ -82,9 +86,14 @@ export class WooCommerceScraper implements NurseryScraper {
   }
 
   private async fetchStoreProductsByCategory(categoryId: number, seen: Set<number>, out: ScrapedProduct[]): Promise<void> {
+    const MAX_PAGES = 100;
     let page = 1;
     let totalPages = 1;
     while (page <= totalPages) {
+      if (page > MAX_PAGES) {
+        console.warn(`[WooCommerce] Hit max page limit (${MAX_PAGES}) for category ${categoryId}`);
+        break;
+      }
       const endpoint = `${this.baseUrl}/wp-json/wc/store/v1/products?category=${categoryId}&per_page=100&page=${page}`;
       const response = await fetchJson(endpoint, this.delayMs);
       totalPages = response.totalPages;
@@ -99,9 +108,14 @@ export class WooCommerceScraper implements NurseryScraper {
   }
 
   private async fetchStoreProductsFromWpFallback(seen: Set<number>, out: ScrapedProduct[]): Promise<void> {
+    const MAX_PAGES = 100;
     let page = 1;
     let totalPages = 1;
     while (page <= totalPages) {
+      if (page > MAX_PAGES) {
+        console.warn(`[WooCommerce] Hit max page limit (${MAX_PAGES}) for wp/v2 fallback`);
+        break;
+      }
       const endpoint = `${this.baseUrl}/wp-json/wp/v2/product?per_page=100&page=${page}&_fields=slug`;
       const response = await fetchJson(endpoint, this.delayMs);
       totalPages = response.totalPages;

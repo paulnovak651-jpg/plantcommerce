@@ -22,7 +22,8 @@ export class BurntRidgeScraper implements NurseryScraper {
   }
 
   async scrapeCategory(
-    categoryUrl: string = HAZELNUT_CATEGORY_URL
+    categoryUrl: string = HAZELNUT_CATEGORY_URL,
+    depth: number = 0
   ): Promise<ScrapeResult> {
     const result: ScrapeResult = {
       nurserySlug: this.nurserySlug,
@@ -53,10 +54,14 @@ export class BurntRidgeScraper implements NurseryScraper {
 
       const nextPageUrl = this.extractNextPageUrl(categoryHtml, categoryUrl);
       if (nextPageUrl) {
-        console.log(`[Burnt Ridge] Following pagination: ${nextPageUrl}`);
-        const nextResult = await this.scrapeCategory(nextPageUrl);
-        result.products.push(...nextResult.products);
-        result.errors.push(...nextResult.errors);
+        if (depth >= 10) {
+          console.warn(`[Burnt Ridge] Hit max recursion depth (10) at ${nextPageUrl}`);
+        } else {
+          console.log(`[Burnt Ridge] Following pagination: ${nextPageUrl}`);
+          const nextResult = await this.scrapeCategory(nextPageUrl, depth + 1);
+          result.products.push(...nextResult.products);
+          result.errors.push(...nextResult.errors);
+        }
       }
     } catch (err) {
       result.errors.push(`Category scrape failed: ${err}`);

@@ -1,4 +1,5 @@
 import { apiSuccess } from '@/lib/api-helpers';
+import { withRateLimit } from '@/lib/api-rate-limit';
 
 const schema = {
   version: '2026-02-27',
@@ -161,6 +162,6 @@ const schema = {
   },
 } as const;
 
-export async function GET() {
+export const GET = withRateLimit(async function GET(request: Request) {
   return apiSuccess(schema, undefined, { self: '/api/schema' });
-}
+}, { max: 30 });

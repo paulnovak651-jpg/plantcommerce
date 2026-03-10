@@ -1,13 +1,20 @@
 # Plant Commerce — Vision & Status Document
 
-*Last updated: 2026-02-24. For sharing with collaborators and AI agents.*
+*Last updated: 2026-03-10. For sharing with collaborators and AI agents.*
 
 
 ## What Is This?
 
-Plant Commerce is a **plant comparison platform for the permaculture community** — think PCPartPicker for nursery stock. A user searches for a plant cultivar (say, "Jefferson Hazelnut"), sees which nurseries carry it, compares prices and availability, and finds the best option.
+Plant Commerce is a **comprehensive plant information and sourcing platform for the permaculture community**. It combines three things that don't exist together anywhere else:
 
-The platform solves a real problem: permaculture growers spend hours manually checking individual nursery websites to find specific cultivars. There's no aggregator. Nurseries don't list on Amazon. Product names are inconsistent ("Jefferson Hazelnut", "JEFFERSON FILBERT (Corylus avellana)", "'Jefferson' Hazel Layer"). The information is scattered, unstandardized, and tedious to compare.
+1. **A plant database** — structured botanical data across multiple genera, with taxonomy, growing profiles, pollination info, and cultivar-level detail.
+2. **A nursery inventory aggregator** — automated scrapers pull live pricing and availability from nurseries across North America, letting users compare options side-by-side.
+3. **A community marketplace** — users can post WTS/WTB listings for plant material, connecting growers directly.
+
+The platform solves a real problem: permaculture growers spend hours manually checking individual nursery websites to find specific cultivars. There's no aggregator. Nurseries don't list on Amazon. Product names are inconsistent. The information is scattered, unstandardized, and tedious to compare. Plant Commerce brings it all into one place.
+
+**Business entity:** Even Flow Nursery LLC
+**Live URL:** https://plantfinder-cyan.vercel.app
 
 ## The Core Insight
 
@@ -25,182 +32,183 @@ Our pipeline decomposes these into structured components (botanical name, propag
 ```
 ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
 │   Scrapers   │───▶│    Parser    │───▶│   Resolver   │───▶│    Writer    │
-│  (per-site)  │    │ (decompose)  │    │ (12 methods) │    │ (Supabase)   │
+│  (registry)  │    │ (config-driven│    │ (12 methods) │    │ (Supabase)   │
 └──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
                                                                    │
                     ┌──────────────┐    ┌──────────────┐           │
                     │   Frontend   │◀───│   REST API   │◀──────────┘
-                    │  (Next.js)   │    │  (7 routes)  │
+                    │  (Next.js)   │    │ (20 routes)  │
                     └──────────────┘    └──────────────┘
 ```
 
-**Tech stack**: Next.js 16 (App Router, Turbopack), React 19, Tailwind 4, Supabase (PostgreSQL + RLS + materialized views), Cheerio (scraping), Vitest (testing), GitHub Actions CI.
+**Tech stack**: Next.js 16.1.6 (App Router, Turbopack), React 19, Tailwind CSS 4, Supabase (PostgreSQL + RLS + materialized views), Cheerio (scraping), Leaflet (maps), Vitest (testing), GitHub Actions CI.
 
-**Data model** (all in Supabase/PostgreSQL):
-- `plant_entities` — Species (e.g., Corylus avellana = European Hazelnut)
-- `cultivars` — Named varieties (e.g., Jefferson, Dorris, Yamhill)
-- `aliases` — Alternate names for matching (Geneva → Gene)
-- `nurseries` — Businesses that sell plants
-- `inventory_offers` — Live listings linking cultivar + nursery + price
-- `unmatched_names` — Products the resolver couldn't match (for review)
-- `import_runs` — Pipeline execution history with diagnostics
-- `raw_inventory_rows` — Every scraped product preserved for re-processing
-- `material_search_index` — Materialized view powering full-text search
+**Design system**: "The Field Guide" — warm linen palette, Fraunces + Satoshi fonts, botanical line-art aesthetic.
 
 ## What's Been Built
 
-### Data Layer
-| Table | Rows | Notes |
-|-------|------|-------|
-| `plant_entities` | 7 | 5 Corylus species + 2 others (Gevuina, hybrid group) |
-| `cultivars` | 61 | Named hazelnut varieties with breeder, origin, patent status |
-| `aliases` | 20 | Alternate name mappings |
-| `nurseries` | 10 | Burnt Ridge, Grimo, Oikos, Badgersett, Nolin River, etc. |
-| `inventory_offers` | 18 | Live offers from 1 nursery (Burnt Ridge) |
-| `import_runs` | 2 | Pipeline run history |
+### Data Layer (Supabase PostgreSQL)
+
+**Core tables:**
+- `plant_entities` — species-level records across 15+ genera (Corylus, Castanea, Juglans, Carya, Malus, Prunus, Diospyros, Morus, Sambucus, Vitis, Vaccinium, Ficus, Pyrus, Ribes, Rubus, Actinidia, Elaeagnus, Hippophae, Celtis, and more)
+- `cultivars` — named varieties with breeder, origin, patent status
+- `aliases` — alternate name mappings for resolver matching
+- `legal_identifiers` — patent/trademark info
+
+**Commerce tables:**
+- `nurseries` — 10 nurseries with lat/lng coordinates; 3 live with inventory
+- `inventory_offers` — live listings linking cultivar + nursery + price
+- `price_history` — tracks price changes over time
+
+**Community tables:**
+- `community_listings` — user-submitted WTS/WTB listings (anonymous v1, admin-moderated, 90-day expiry)
+- `stock_alerts` — email notifications for availability/price changes
+
+**Knowledge graph:**
+- `taxonomy_ranks` — 6 ranks (Kingdom → Genus)
+- `taxonomy_nodes` — 37+ nodes, self-referential tree
+- `species_growing_profiles` — USDA zones, chill hours, height/spread, pH, bearing age, sun/water/growth rate
+- `species_pollination_profiles` — pollination compatibility data
+
+**Pipeline tables:**
+- `import_runs` — tracks each scrape session
+- `raw_inventory_rows` — verbatim scraped data (always preserved)
+- `unmatched_names` — product names the resolver couldn't match
+
+**Search:**
+- `material_search_index` — materialized view with trigram indexes, zone token expansion, category filtering, availability counts
+
+**48 SQL migrations** applied.
 
 ### Pipeline (the engine)
-- **Scraper** (`lib/scraper/burnt-ridge.ts`): Fetches nursery product pages using Cheerio. Rate-limited (2s between requests), retry with backoff, user-agent rotation.
-- **Parser** (`lib/resolver/parser.ts`): Decomposes raw product names into: core name, botanical name, propagation method, sale form, organic status, patent info, trademark, age/size, marketing text, stripped tokens.
-- **Resolver** (`lib/resolver/resolver.ts`): 12-method matching chain in priority order — direct match (0.95), strip/add "the" (0.95), botanical fallback (0.85), botanical match (0.85), raw match (0.75), species keyword (0.80), generic default (0.50), word match (0.60), bigram (0.80), trigram (0.80), unresolved (0.0).
-- **Writer** (`lib/pipeline/supabase-pipeline.ts`): Idempotent select-then-insert/update to `inventory_offers` + `unmatched_names`. Builds alias index from live DB.
-- **Observability** (`lib/pipeline/logger.ts`): Structured JSON logging, duration tracking, error samples (capped at 20), alert thresholds for low resolve rate (<50%) and high error rate (>20%).
 
-**First run results**: 19 products scraped from Burnt Ridge, 18 resolved (94.7%), 1 unmatched, 0 write errors, 61 seconds.
+- **Scrapers**: Data-driven registry with generic Shopify and WooCommerce scrapers + custom scrapers (Burnt Ridge, Grimo, Raintree). Config-driven — adding a nursery is a registry entry, not code.
+- **Parser** (`lib/resolver/parser.ts`): Config-driven decomposition. Genus-specific noise terms and patterns loaded from `ParserConfig`. Supports multi-genus parsing.
+- **Resolver** (`lib/resolver/resolver.ts`): 12-method matching chain with confidence scoring. Genus-specific configs in `lib/resolver/genus-config.ts`.
+- **Writer** (`lib/pipeline/supabase-pipeline.ts`): Idempotent upserts, price change detection, stale offer management.
+- **Pipeline health**: `/api/pipeline/health` tracks scraper staleness, resolve rates, error rates.
+- **Consent-gated**: Pipeline skips nurseries with `consent_status = 'declined'`.
+- **Cron**: Vercel cron runs Monday 6am UTC.
 
-### Frontend (7 pages)
-- `/` — Home with search bar + "Browse by Species" grid
-- `/plants/[speciesSlug]` — Species page with cultivar list
-- `/plants/[speciesSlug]/[cultivarSlug]` — Cultivar detail with "Where to Buy" section showing nursery offers
-- `/nurseries` — All 10 nurseries
-- `/nurseries/[nurserySlug]` — Nursery detail with inventory
-- `/search?q=` — Full-text search with offer counts
-- SEO: JSON-LD structured data (Product, Offer, Organization, BreadcrumbList), sitemap.xml, robots.txt
+### Frontend (16 pages)
 
-### API (7 endpoints)
-- `GET /api` — Discovery endpoint (lists all endpoints, data types)
-- `GET /api/search?q=&limit=` — Full-text search via materialized view
-- `GET /api/plants/[speciesSlug]` — Species + cultivar list
-- `GET /api/plants/[speciesSlug]/[cultivarSlug]` — Cultivar + offers + aliases
-- `GET /api/nurseries` — All nurseries
-- `GET /api/nurseries/[nurserySlug]` — Nursery + inventory
-- `GET /api/pipeline/scrape` — Trigger scraping (CRON_SECRET-protected)
-- `GET /api/pipeline/status` — Import run history with diagnostics
-- Standard envelope: `{ ok: true, data, meta, links }` / `{ ok: false, error: { code, message } }`
-- AI-readable docs at `/llms.txt` and `/llms-full.txt`
+| Page | Description |
+|------|-------------|
+| `/` | Homepage with search, category cards, stats, "How It Works" |
+| `/browse` | Explorer with zone/category/availability filters, species or genus grouping, sort options, active filter chips, skeleton loaders |
+| `/search` | Full-text search with zone/category/in-stock filters |
+| `/plants/genus/[genusSlug]` | Genus hub — all species in a genus with growing profiles, breadcrumbs |
+| `/plants/[speciesSlug]` | Species detail — taxonomy lineage, growing profile grid, cultivar cards with availability badges, section dividers, related species pills |
+| `/plants/[speciesSlug]/[cultivarSlug]` | Cultivar detail — price comparison table (best price tag, mobile cards), nursery map, stock alert signup, pollination info |
+| `/nurseries` | Nursery index with Leaflet map |
+| `/nurseries/[nurserySlug]` | Nursery detail with inventory |
+| `/marketplace` | Community marketplace listings |
+| `/marketplace/submit` | Submit WTS/WTB listing |
+| `/listings/new` | Listing submission form |
+| `/pollination` | Pollination compatibility checker |
+| `/admin/unmatched` | Admin: unmatched name resolution |
+| `/admin/listings` | Admin: listing moderation |
+| `/dashboard` | Command Center dashboard |
+| `/system-map` | Interactive system architecture map |
+
+### API (20 endpoints)
+
+Plants, cultivars, nurseries, search, pipeline trigger/status/health, community listings, stock alerts, admin tools, schema endpoint, dashboard/sessions/tasks. Standard envelope: `{ ok: true, data, meta, links }`. Rate-limited. AI-readable docs at `/llms.txt` and `/llms-full.txt`.
+
+### UI Polish
+
+- Nav active state highlighting
+- Custom-styled checkboxes
+- Active filter chips with clear-all
+- Mobile filter sheet slide animation
+- Skeleton loaders for browse grid
+- Page fade-in transitions
+- Botanical sketch placeholder for missing images
+- Category cards with distinct per-category color gradients
+- Hero grain texture overlay
+- Frosted-glass stat cards
+- Price comparison table with mobile card layout
+- Typography refinements (serif h3, tabular price numerals)
+- Species page section dividers
+- Related species pill links
 
 ### Tests & CI
-- **65 tests across 5 suites**, all passing in <1 second:
-  - Parser: 23 tests (104-case table-driven from real nursery data + edge cases)
-  - Resolver: 15 tests (all 12 resolution methods + alias index building)
-  - Pipeline contract: 7 tests (PipelineOutput field validation)
-  - API envelope: 10 tests (success/error/404 shapes)
-  - Scraper: 10 tests (HTML fixture with mocked fetch)
-- **GitHub Actions CI**: typecheck (`tsc --noEmit`) + test on push/PR to master
-
-### Codebase Stats
-- **6,136 lines** of TypeScript/TSX/SQL across 61 source files
-- **6 runtime dependencies** (Next.js, React, Supabase, Cheerio)
-- **3 SQL migrations** applied
+- **99+ tests** across multiple suites, all passing
+- GitHub Actions CI: typecheck (`tsc --noEmit`) + test on push/PR to master
 
 ## What's Generic vs. Domain-Specific
 
-We audited every file for hardcoded assumptions. Here's the breakdown:
-
-### Already generic (works for any plant genus today)
-- Entire database schema (tables, enums, indexes, RLS policies)
-- TypeScript type system (`EntityType`, `MaterialType`, `ResolutionMethod`, etc.)
-- Alias index building algorithm
-- 10 of 12 resolver match strategies
-- All Supabase integration code (writer, import runs, MV refresh)
+### Already generic (works for any plant genus)
+- Entire database schema, types, enums, indexes, RLS policies
+- Alias index building + 10 of 12 resolver strategies
+- All Supabase integration code
 - All UI pages (render dynamically from DB data)
 - All API endpoints and query functions
 - Search, sitemap, SEO structured data
+- Scraper registry (Shopify/WooCommerce generic scrapers)
+- Parser config system (genus configs loaded at runtime)
 
-### Hazelnut-specific (concentrated in 3 files)
-- **`parser.ts`**: Noise terms (Hazelnut, Filbert, Hazel — 13 regexes), botanical extraction (only Corylus/Gevuina), "Hazel Layer" propagation term
-- **`resolver.ts`**: `SPECIES_KEYWORDS` map (5 Corylus species), generic default → European Hazelnut
-- **`scrape/route.ts`**: Hardcoded to BurntRidgeScraper (no registry)
+### Adding a new genus
+1. Create a genus config in `lib/resolver/genus-config.ts` — ~50 lines
+2. Seed species + cultivar data via SQL migration
+3. Register in the genus config registry
+4. Nursery scrapers if needed (or use generic Shopify/WooCommerce scrapers)
 
-### Plant-specific (wouldn't transfer to livestock/mushrooms without model changes)
-- `PropagationMethod` enum (grafted, layered, tissue_cultured, seedling, seed, cutting)
-- `SaleForm` enum (bare_root, potted, plug, tubeling, container, field_dug)
-- "Nursery" as the supplier concept (embedded in URLs, DB, UI)
+This has been proven — the project has expanded from a single genus (hazelnuts) to 15+ genera across nut trees, fruit trees, berries, vines, and support species.
 
-### What it would take to add a second genus (e.g., walnuts)
-1. A genus config (noise terms + species keywords) — ~50 lines
-2. Generalize 2 botanical regexes in parser.ts — ~20 minutes
-3. Seed data for Juglans species + cultivars — data entry
-4. Scrapers for walnut nurseries — real work, but each is independent
+## Current State (as of 2026-03-10)
 
-### What it would take for non-plant niches (mushrooms, livestock)
-- **Mushrooms**: Mostly works. Species → strain/variety → supplier → offer. Would need new `PropagationMethod` values (spawn, liquid culture). "Nursery" → "Supplier" rename. The resolver pipeline transfers cleanly.
-- **Livestock**: Bigger rework. Breed → bloodline loosely maps, but the offer model is fundamentally different (not "in stock at a URL"). ~40-50% architecture reuse, significant model changes.
+### What's working
+- Multi-genus platform with 15+ genera seeded across fruit, nut, berry, vine, and support species
+- 3 nurseries live with scraped inventory (Burnt Ridge, Grimo, Raintree)
+- Data-driven scraper pipeline with generic Shopify + WooCommerce support
+- Config-driven parser and resolver (genus registry pattern)
+- Full browse/search/filter experience with zone, category, availability, and genus grouping
+- Genus hub pages for hierarchical browsing (Category → Genus → Species → Cultivar)
+- Price comparison tables, nursery maps, stock alerts, pollination checker
+- Community marketplace with anonymous listings and admin moderation
+- 48 migrations, 99+ tests, TypeScript strict, CI green
+- Live at https://plantfinder-cyan.vercel.app
 
-## Current State & What's Next
+### What's next
+1. **Nursery consent & outreach** — draft outreach template, contact existing 3 nurseries for retroactive consent
+2. **Build remaining scrapers** — One Green World + others, only after consent
+3. **Auth & engagement** — Supabase Auth, tie listings to accounts, trust tier progression
+4. **Expand genus coverage** — seed more cultivar data for existing genera, add new genera as nursery data comes in
+5. **Price history UI** — surface price trends from the price_history table
 
-### Completed (Waves 1-3)
-- ✅ Data model + schema + seed data (61 cultivars, 10 nurseries)
-- ✅ Frontend with species/cultivar/nursery pages + search
-- ✅ REST API with standard envelope + AI-readable docs
-- ✅ Pipeline E2E: scraper → parser → resolver → writer
-- ✅ First live run: 18 real offers from Burnt Ridge
-- ✅ Test suite (65 tests) + GitHub Actions CI
-- ✅ Pipeline observability (structured logging, diagnostics, status endpoint)
+## Nursery Consent Strategy
 
-### Not yet built
-- ❌ Only 1 of 10 nurseries has live inventory (18 offers). The other 9 show empty.
-- ❌ No scraper registry — adding nurseries requires code changes to the route
-- ❌ Parser is hazelnut-only (noise terms, botanical patterns hardcoded)
-- ❌ No admin UI for reviewing unmatched names or managing aliases
-- ❌ No user accounts or saved searches
-- ❌ No price tracking over time (only current snapshot)
-- ❌ No email/notification when a cultivar becomes available
-- ❌ No rate limiting on public API
-- ❌ No Vercel cron schedule (pipeline is manual-trigger only)
-- ❌ Single genus (hazelnuts). Architecture supports multi-genus but no second genus seeded.
+**Policy: Consent first, scrape second.** No new nursery scrapers without nursery awareness/approval.
 
-### Recommended next priorities
-1. **Scraper registry + 2-3 more nursery scrapers** — The platform needs comparison data to be useful. Grimo, One Green World, and Raintree are good candidates.
-2. **Parser generalization** — Make noise terms and botanical patterns config-driven so adding genera doesn't mean editing regex.
-3. **Vercel cron schedule** — Weekly automated scraping so data stays fresh.
-4. **Admin review for unmatched names** — Turn resolver misses into new aliases, closing the feedback loop.
-
-## Open Questions for Discussion
-
-1. **Depth vs. breadth**: Should we go deep on hazelnuts first (more nurseries, better coverage, price history) or expand to a second genus (walnuts, chestnuts) to prove the multi-genus architecture?
-
-2. **Monetization**: This solves a real problem for permaculture growers. Possible models: affiliate links to nurseries, premium features (price alerts, availability notifications), nursery subscriptions for enhanced listings, API access for other tools.
-
-3. **Community features**: Should this stay a pure data platform, or add community elements (reviews, growing guides, cultivar ratings)? The data model could support it but it changes the product scope significantly.
-
-4. **Data freshness**: Nursery inventory changes seasonally. How often should we scrape? Weekly during dormant season (when bare-root ships), daily during spring rush? How do we handle "sold out" gracefully?
-
-5. **Scaling the resolver**: At 61 cultivars the alias index is small. When we hit 500+ cultivars across multiple genera, will the word/bigram matching produce false positives? The confidence scoring system is designed for this but hasn't been stress-tested.
-
-6. **Non-plant expansion**: The architecture could extend to mushroom spawn suppliers, seed companies, or other niche agriculture marketplaces. Is that the long-term vision, or should it stay focused on perennial plants?
+- Existing nurseries (Burnt Ridge, Grimo, Raintree): notify and request retroactive approval
+- New nurseries: contact first, get approval, then build scraper
+- Value proposition: PlantCommerce drives traffic TO nurseries — all purchases happen on their sites
+- The permaculture community is small and trust-based; consent eliminates legal and reputational risk
 
 ## Repository
 
-- **GitHub**: github.com/paulnovak651-jpg/plantcommerce (private)
-- **Branch**: master
-- **Latest commit**: `1a46976` — Pipeline observability
-- **Live dev**: localhost:3000 (Next.js + Turbopack)
-- **Database**: Supabase project `bwfhdyjjuubpzwjngquo`
+- **GitHub**: github.com/paulnovak651-jpg/plantcommerce
+- **Branch**: master (single branch)
+- **Live**: https://plantfinder-cyan.vercel.app (Vercel)
+- **Database**: Supabase project `plantfinder`
+- **Dev**: localhost:3000 (Next.js + Turbopack)
 
-## Key Files for New Contributors
+## Key Files
 
 | Purpose | File |
 |---------|------|
-| Data model types | `lib/resolver/types.ts` |
-| Parser (name decomposition) | `lib/resolver/parser.ts` |
-| Resolver (12-method matching) | `lib/resolver/resolver.ts` |
-| Pipeline orchestration | `lib/resolver/pipeline.ts` |
-| DB integration (writer) | `lib/pipeline/supabase-pipeline.ts` |
-| Scraper example | `lib/scraper/burnt-ridge.ts` |
-| API helpers (envelope) | `lib/api-helpers.ts` |
-| Full SQL schema | `sql/deploy_wave1_complete.sql` |
-| Test data (104 real products) | `data/hazelnut_raw_offers_testset.json` |
-| Canonical entities (seed data) | `data/hazelnut_canonical_entities_v1.json` |
-| Pipeline entry point | `app/api/pipeline/scrape/route.ts` |
-| Search endpoint | `app/api/search/route.ts` |
+| Project context | `CONTEXT.md` |
+| Agent instructions | `AGENTS.md` |
+| Design system | `DESIGN_SYSTEM.md` |
+| Product roadmap | `ROADMAP.md` |
+| Parser logic | `lib/resolver/parser.ts` |
+| Resolver (12-method chain) | `lib/resolver/resolver.ts` |
+| Genus configs | `lib/resolver/genus-config.ts` |
+| Pipeline writer | `lib/pipeline/supabase-pipeline.ts` |
+| Scraper registry | `lib/scraper/index.ts` |
+| DB queries | `lib/queries/` |
+| Supabase clients | `lib/supabase/server.ts` |
+| API helpers | `lib/api-helpers.ts` |
+| SQL migrations | `sql/migrations/` |
+| Scraper playbook | `docs/nursery-scraper-playbook.md` |

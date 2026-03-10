@@ -73,6 +73,14 @@ export const POST = withRateLimit(async function POST(request: Request) {
   ) {
     return apiError('INVALID_FIELD', 'raw_cultivar_text is required (min 2 chars)', 422);
   }
+  if ((raw_cultivar_text as string).length > 200) {
+    return apiError('INVALID_FIELD', 'raw_cultivar_text must be 200 characters or less', 400);
+  }
+  if (
+    typeof raw_species_text === 'string' && raw_species_text.length > 200
+  ) {
+    return apiError('INVALID_FIELD', 'raw_species_text must be 200 characters or less', 400);
+  }
   if (
     !location_state ||
     typeof location_state !== 'string' ||
@@ -80,15 +88,30 @@ export const POST = withRateLimit(async function POST(request: Request) {
   ) {
     return apiError('INVALID_FIELD', 'location_state is required', 422);
   }
+  if ((location_state as string).length > 50) {
+    return apiError('INVALID_FIELD', 'location_state must be 50 characters or less', 400);
+  }
 
   const resolvedMaterialType =
     typeof material_type === 'string' && VALID_MATERIAL_TYPES.has(material_type)
       ? material_type
       : 'unknown';
 
+  if (typeof contact_email === 'string' && contact_email.length > 254) {
+    return apiError('INVALID_FIELD', 'contact_email must be 254 characters or less', 400);
+  }
   const normalizedEmail = normalizeEmail(contact_email);
   if (contact_email && !normalizedEmail) {
     return apiError('INVALID_FIELD', 'contact_email must be a valid email address', 422);
+  }
+  if (typeof notes === 'string' && notes.length > 1000) {
+    return apiError('INVALID_FIELD', 'notes must be 1000 characters or less', 400);
+  }
+  if (typeof quantity === 'number' && quantity > 999999) {
+    return apiError('INVALID_FIELD', 'quantity must be 999999 or less', 400);
+  }
+  if (typeof price_cents === 'number' && price_cents > 99999999) {
+    return apiError('INVALID_FIELD', 'price_cents must be 99999999 or less', 400);
   }
 
   const supabase = createServiceClient();

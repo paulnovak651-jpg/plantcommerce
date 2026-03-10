@@ -98,8 +98,13 @@ export class ShopifyScraper implements NurseryScraper {
 
     for (const collection of targetCollections) {
       try {
+        const MAX_PAGES = 50; // 50 × 250 = 12,500 products max
         let page = 1;
         while (true) {
+          if (page > MAX_PAGES) {
+            console.warn(`[Shopify] Hit max page limit (${MAX_PAGES}) for collection: ${collection}`);
+            break;
+          }
           const endpoint = this.toCollectionProductsJsonUrl(collection, page);
           const payload = await this.fetchJson<ShopifyCollectionResponse>(endpoint);
           const products = payload.products ?? [];

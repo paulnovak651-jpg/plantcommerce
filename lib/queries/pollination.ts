@@ -136,6 +136,14 @@ export async function getPollinationCheckerData(
 
   const pollinizerIds = pollinizerSpecies.map((row) => row.id);
 
+  if (pollinizerIds.length === 0) {
+    return {
+      species,
+      profile: (profileRow as PollinationProfileRow | null) ?? null,
+      pollinizers: [],
+    };
+  }
+
   const { data: cultivarRows, error: cultivarError } = await supabase
     .from('cultivars')
     .select('id, plant_entity_id')
