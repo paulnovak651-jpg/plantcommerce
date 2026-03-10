@@ -1,0 +1,719 @@
+[
+  {
+    "cultivar": {
+      "slug": "kanza-pecan",
+      "canonical_name": "Kanza",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA-ARS / L.D. Romberg",
+      "origin_location": "Brownwood, TX (cross); adapted for northern pecan belt",
+      "year_released": 1996,
+      "patent_status": "none",
+      "description": "Northern-adapted USDA pecan with outstanding scab resistance and consistent production. Cross of Major x Shoshoni, widely regarded as the best all-around cultivar for zones 6-8.",
+      "notes": "Protogynous (Type II). 74 nuts/lb. One of the most recommended cultivars for permaculture plantings in the transition zone between northern and southern pecan regions. Female parent of several newer USDA releases."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "nut_weight_g": 6.2,
+      "kernel_percentage": 51.0,
+      "flavor_profile": "Rich, buttery flavor with golden-colored kernels. Wide dorsal grooves.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "resistant",
+        "black_aphid": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate. Easier to manage than many northern selections.",
+      "tree_form": "Upright-spreading, medium-sized tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "pawnee-pecan",
+      "canonical_name": "Pawnee",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA-ARS",
+      "origin_location": "Brownwood, TX",
+      "year_released": 1984,
+      "patent_status": "none",
+      "description": "Very early ripening pecan with large nuts and high kernel percentage. Widely available and popular for home orchards in zones 6-9.",
+      "notes": "Protandrous (Type I). 44 nuts/lb. Susceptible to scab — best in drier climates or where fungicide is applied. Very early maturity (mid-September) makes it viable further north than its zone rating suggests."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "excellent",
+      "nut_weight_g": 10.4,
+      "kernel_percentage": 58.0,
+      "flavor_profile": "Light-colored kernel with excellent eating quality. Mild, sweet flavor.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "susceptible",
+        "downy_spot": "moderate",
+        "black_aphid": "resistant"
+      },
+      "bloom_period": "early",
+      "harvest_season": "very_early",
+      "vigor": "Vigorous. Strong central leader.",
+      "tree_form": "Upright, strong central leader"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "hark-pecan",
+      "canonical_name": "Hark",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection from wild stand",
+      "origin_location": "Alexis, IL",
+      "year_released": 2015,
+      "patent_status": "none",
+      "description": "Promising northern pecan with excellent scab resistance and good nut quality. Named and released from a seedling tree in western Illinois.",
+      "notes": "Protandrous (Type I). ~62 nuts/lb. Easier to train than Kanza as a young tree with more naturally spreading growth habit. Possible Major parentage. Good partner for Kanza (Type II)."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 7.35,
+      "kernel_percentage": 56.0,
+      "flavor_profile": "Light-colored, well-filled kernels with sweet, rich flavor.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous. Naturally spreading growth habit.",
+      "tree_form": "Spreading, open canopy"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "major-pecan",
+      "canonical_name": "Major",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Native selection by Mrs. L.B. Major",
+      "origin_location": "Henderson County, KY (Green River / Ohio River confluence)",
+      "year_released": 1908,
+      "patent_status": "none",
+      "description": "Historic northern pecan standard. Native selection from the northernmost pecan range with outstanding cold hardiness and reliable production. Female parent of Kanza and Osage.",
+      "notes": "Protandrous (Type I). 78 nuts/lb. Small nut but dependable cropper. One of the oldest named northern pecan cultivars. Foundational variety for USDA breeding program."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 6.0,
+      "kernel_percentage": 49.0,
+      "flavor_profile": "Cream to golden kernels with broad, shallow dorsal grooves. Good flavor.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate. Slow to come into bearing.",
+      "tree_form": "Large, spreading crown typical of native pecan"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "greenriver-pecan",
+      "canonical_name": "Greenriver",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection from Pecan Experiment Field",
+      "origin_location": "Chetopa, KS (open-pollinated seedling)",
+      "year_released": 2011,
+      "patent_status": "none",
+      "description": "Northern pecan with good nut size for the region and reliable production. Open-pollinated seedling selected at the Kansas Pecan Experiment Field.",
+      "notes": "Protogynous (Type II). ~70 nuts/lb. Oval elliptic nuts with ridges on shell. Golden kernels. Good pollinizer for Type I cultivars like Major and Hark."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 6.4,
+      "kernel_percentage": 51.0,
+      "flavor_profile": "Golden-colored kernels with wide dorsal grooves. Pleasant, sweet flavor.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous.",
+      "tree_form": "Upright-spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "posey-pecan",
+      "canonical_name": "Posey",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection from wild stand (Ed Yates planting)",
+      "origin_location": "Chrisney, IN",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Hardy northern pecan from Indiana with distinctive flat nut shape and thick shucks. Reliable producer in zones 5-8 with good cold tolerance.",
+      "notes": "Protogynous (Type II). ~68 nuts/lb. Strongly flattened nut shape with prominent wing ridges on sutures. Dark colored shells. Most likely an open-pollinated seedling."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 6.2,
+      "kernel_percentage": 54.0,
+      "flavor_profile": "Well-filled kernels. Sweet, slightly richer flavor than typical southern pecans.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous. Large tree.",
+      "tree_form": "Large, spreading native form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "shepherd-pecan",
+      "canonical_name": "Shepherd",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Native selection by Jerrell Shepherd",
+      "origin_location": "Chariton County, MO",
+      "year_released": 1978,
+      "patent_status": "none",
+      "description": "Consistent-yielding northern pecan from Missouri with good scab resistance. Named for Jerrell Shepherd who purchased the original farm in 1978.",
+      "notes": "Protandrous (Type I). 65 nuts/lb. Found on the Vernon Munson farm along the Grand River floodplain. Scions grafted at Shepherd Farms near Clifton Hills, MO. Good complement to Kanza and Posey (Type II)."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 7.0,
+      "kernel_percentage": 53.0,
+      "flavor_profile": "Well-filled kernels with good cracking quality and pleasant flavor.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous. Consistent yielder.",
+      "tree_form": "Upright-spreading, large tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "colby-pecan",
+      "canonical_name": "Colby",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "A.S. Colby / J.C. McDaniel, University of Illinois",
+      "origin_location": "Illinois",
+      "year_released": 1957,
+      "patent_status": "none",
+      "description": "Classic far-northern pecan and widely used seedstock for the northern pecan industry. Native seedling selection with proven cold hardiness to zone 5.",
+      "notes": "Protogynous (Type II). ~60 nuts/lb. Medium-large oval nut. Grafted form is thin-shelled and heavy-producing. Often used as seedling rootstock. 160 days to ripen."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 7.6,
+      "kernel_percentage": 45.0,
+      "flavor_profile": "Golden kernels, sweet and meaty. Medium-size oblong shape.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "disease_resistance": {
+        "pecan_scab": "moderate",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous. Large tree.",
+      "tree_form": "Spreading, large crown"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "mullahy-pecan",
+      "canonical_name": "Mullahy",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Native selection",
+      "origin_location": "Burlington, IA (Mississippi River)",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Ultra-northern pecan from Iowa adapted to the shortest growing seasons. Found along the Mississippi River on Jim Mullahy's farm near Burlington.",
+      "notes": "Protogynous (Type II). ~79 nuts/lb. Small nut but extremely cold-hardy. One of the most northern-adapted named pecan cultivars. Good pollinizer for Hark and Shepherd."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "fair",
+      "nut_weight_g": 5.8,
+      "kernel_percentage": 48.0,
+      "flavor_profile": "Small but well-filled kernels with sweet flavor typical of northern pecans.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate.",
+      "tree_form": "Medium-sized, spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "warren-pecan",
+      "canonical_name": "Warren",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Native selection by Dale Warren",
+      "origin_location": "Wheeling, MO (Grand River floodplain)",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Northern pecan selected for earliness of ripening, hardiness, productivity, and nut cracking quality. From a native grove in Missouri.",
+      "notes": "Suited for zones 5b-8. Selected for overall performance in short-season northern environments. Available from several specialty nut tree nurseries."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 6.5,
+      "kernel_percentage": 50.0,
+      "flavor_profile": "Good cracking quality with sweet, well-filled kernels.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "moderate",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate to vigorous.",
+      "tree_form": "Spreading, native pecan form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "lucas-pecan",
+      "canonical_name": "Lucas",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Native selection",
+      "origin_location": "Northern pecan range",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Northern pecan recommended for short-season areas in zones 5-8. Known for early ripening and reliable kernel filling even in cooler summers.",
+      "notes": "One of the earliest-ripening northern pecans. Available from Grimo Nut Nursery and other specialty sources."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "fair",
+      "nut_weight_g": 6.2,
+      "kernel_percentage": 54.0,
+      "flavor_profile": "Well-filled kernels with mild, sweet pecan flavor.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "moderate",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Moderate.",
+      "tree_form": "Medium-sized, upright-spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "yoder-no1-shagbark",
+      "canonical_name": "Yoder #1",
+      "species_slug": "carya-ovata",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection from Ohio",
+      "origin_location": "Ohio",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of the most popular named shagbark hickory selections. Medium-sized nut with good cracking quality from Ohio.",
+      "notes": "Late ripening; nuts often drop in the husk requiring hand-husking. Alternate bearing with good crops 2 out of 3 years. Among the most widely grafted shagbark cultivars."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "poor",
+      "nut_weight_g": 7.0,
+      "kernel_percentage": 28.0,
+      "flavor_profile": "Rich, sweet hickory flavor. Classic shagbark taste prized for baking and eating fresh.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "hickory_bark_beetle": "moderate",
+        "anthracnose": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "late",
+      "vigor": "Vigorous. Slow to establish but long-lived.",
+      "tree_form": "Large upright tree with characteristic shaggy bark"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "grainger-shagbark",
+      "canonical_name": "Grainger",
+      "species_slug": "carya-ovata",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection by John Hershey",
+      "origin_location": "Grainger County, TN",
+      "year_released": 1936,
+      "patent_status": "none",
+      "description": "One of the finest shagbark hickory selections. Exceptionally large nut approaching shellbark size, with thin shell that cracks into whole halves. Weevil-resistant and very productive.",
+      "notes": "Often cracks out in halves and large pieces. Weevil-resistant. Excellent flavor. Available from Grimo Nut Nursery, Rock Bridge Trees, and other specialty sources. Good pollinizer for other shagbarks."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "poor",
+      "nut_weight_g": 10.0,
+      "kernel_percentage": 30.0,
+      "flavor_profile": "Excellent rich hickory flavor. Thin shell cracks easily into halves.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "hickory_bark_beetle": "moderate",
+        "anthracnose": "moderate",
+        "hickory_weevil": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous. Productive, healthy tree.",
+      "tree_form": "Large, spreading shagbark form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "porter-shagbark",
+      "canonical_name": "Porter",
+      "species_slug": "carya-ovata",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection from Pennsylvania",
+      "origin_location": "Pennsylvania",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Excellent cracking shagbark hickory selected by the Pennsylvania Nut Growers Association. Winner of cracking contests with well-filled kernels.",
+      "notes": "Among the most popular current shagbark cultivars alongside Yoder and Wilcox. Nuts crack out well. Available from specialty nut nurseries."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "poor",
+      "nut_weight_g": 7.5,
+      "kernel_percentage": 29.0,
+      "flavor_profile": "Rich hickory flavor. Well-filled kernels that crack cleanly.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "hickory_bark_beetle": "moderate",
+        "anthracnose": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous. Slow to bear.",
+      "tree_form": "Large upright-spreading shagbark"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "wilcox-shagbark",
+      "canonical_name": "Wilcox",
+      "species_slug": "carya-ovata",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection from wild stand",
+      "origin_location": "Eastern United States",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Popular shagbark hickory selection known for reliable production and good nut quality. One of the three most widely propagated shagbark cultivars.",
+      "notes": "Among the most popular current shagbark cultivars alongside Yoder and Porter. Available from Grimo Nut Nursery and other specialty sources."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "poor",
+      "nut_weight_g": 7.0,
+      "kernel_percentage": 28.0,
+      "flavor_profile": "Classic shagbark hickory flavor. Sweet, rich, and distinctive.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "hickory_bark_beetle": "moderate",
+        "anthracnose": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous.",
+      "tree_form": "Large shagbark form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "keystone-shellbark",
+      "canonical_name": "Keystone",
+      "species_slug": "carya-laciniosa",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection by Fayette Etter",
+      "origin_location": "Franklin County, PA",
+      "year_released": 1955,
+      "patent_status": "none",
+      "description": "Historic shellbark hickory selection discovered by Fayette Etter along a creek in Pennsylvania. Named for the Keystone State. Original tree lost to flooding, preserved through grafting.",
+      "notes": "Fayette Etter rescued scion wood before the original tree was destroyed in a flood. Very large, sweet nuts. One of the most prized shellbark selections. Limited nursery availability."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "poor",
+      "nut_weight_g": 18.0,
+      "kernel_percentage": 25.0,
+      "flavor_profile": "Very large, sweet shellbark nut. Rich flavor superior to most hickories.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "hickory_bark_beetle": "moderate",
+        "anthracnose": "moderate"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "late",
+      "vigor": "Moderate to vigorous. Slow to establish.",
+      "tree_form": "Large upright tree, less shaggy bark than C. ovata"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "henry-shellbark",
+      "canonical_name": "Henry",
+      "species_slug": "carya-laciniosa",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection by Fayette Etter",
+      "origin_location": "Franklin County, PA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Highly productive shellbark hickory with lateral bearing habit and high weevil resistance. Very large nut that is well-filled and cracks fairly easily.",
+      "notes": "Lateral bearing habit makes it one of the most productive shellbark selections. Mid to late October ripening. Discovered by Fayette Etter in Franklin County, PA."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "poor",
+      "nut_weight_g": 17.0,
+      "kernel_percentage": 26.0,
+      "flavor_profile": "Large, well-filled nut with sweet shellbark flavor. Cracks fairly easily.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "hickory_bark_beetle": "moderate",
+        "hickory_weevil": "resistant",
+        "anthracnose": "moderate"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "late",
+      "vigor": "Vigorous. Lateral bearing increases productivity.",
+      "tree_form": "Large upright shellbark form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "james-hican",
+      "canonical_name": "James",
+      "species_slug": "carya-x-hican",
+      "material_type": "cultivar_clone",
+      "breeder": "Unknown (natural hybrid selection)",
+      "origin_location": "Eastern United States",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Precocious hican with very large nuts resembling jumbo shellbark in size but with elongated pecan-like shape. More productive than most shellbark hickories and reportedly self-fertile.",
+      "notes": "Self-fertile — unusual among hicans, most of which need cross-pollination. Nuts crack easier than hickory but not as easily as pecan. Available from Stark Bros and Nolin River Nut Tree Nursery. Size similar to jumbo shellbark with definite pecan-like ridging."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "nut_weight_g": 16.0,
+      "kernel_percentage": 30.0,
+      "flavor_profile": "Intermediate between pecan and hickory. Rich, complex flavor with pecan sweetness and hickory depth.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "moderate",
+        "hickory_bark_beetle": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous. Faster growth than pure hickory.",
+      "tree_form": "Large, upright tree with pecan-like form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "burton-hican",
+      "canonical_name": "Burton",
+      "species_slug": "carya-x-hican",
+      "material_type": "cultivar_clone",
+      "breeder": "Natural hybrid selection",
+      "origin_location": "Kentucky",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Hardy, prolific hican (pecan x shagbark hickory) with good cracking quality. One of the best hican selections for northern food forests.",
+      "notes": "Pecan x shagbark hickory cross. Among the best hicans alongside Dooley. Hardy, prolific, and cracks well. Available from Rock Bridge Trees, Nolin River, and other specialty nurseries."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 10.0,
+      "kernel_percentage": 32.0,
+      "flavor_profile": "Pecan-like sweetness with hickory richness. Good cracking quality.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "moderate",
+        "hickory_bark_beetle": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous. Grows faster than pure hickory parents.",
+      "tree_form": "Large spreading tree, intermediate between pecan and hickory form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "dooley-hican",
+      "canonical_name": "Dooley",
+      "species_slug": "carya-x-hican",
+      "material_type": "cultivar_clone",
+      "breeder": "Natural hybrid selection",
+      "origin_location": "Oklahoma",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Productive hican with qualities similar to Burton — hardy, prolific, and good cracking. Pecan parentage from Oklahoma combined with hickory hardiness.",
+      "notes": "Often listed alongside Burton as one of the two best hicans. Sometimes crossed with Burton to produce Dooley-Burton hybrid seedlings. Available from specialty nut tree nurseries."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": 9.0,
+      "kernel_percentage": 33.0,
+      "flavor_profile": "Pecan-like flavor with hickory undertones. Well-filled kernels.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "moderate",
+        "hickory_bark_beetle": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous.",
+      "tree_form": "Large tree, intermediate hickory-pecan form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "abbott-hican",
+      "canonical_name": "Abbott",
+      "species_slug": "carya-x-hican",
+      "material_type": "cultivar_clone",
+      "breeder": "Selection by A.N. Abbott",
+      "origin_location": "Morrison, IL",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Bitternut hickory x pecan hybrid ('bitcan') with extra cold hardiness and early ripening. Combines pecan tree form and flavor with bitternut's extreme northern range.",
+      "notes": "Bitternut x pecan parentage gives this cultivar hardiness beyond typical pecan or hican range. Discovered by A.N. Abbott in Morrison, Illinois. The bitternut parent (C. cordiformis) is the most cold-hardy Carya species."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "good",
+      "nut_weight_g": 6.0,
+      "kernel_percentage": 35.0,
+      "flavor_profile": "Pecan-like flavor, milder than shagbark hicans. Some bitternut influence may be detectable.",
+      "flavor_rating": "fair",
+      "storage_quality": "fair",
+      "disease_resistance": {
+        "pecan_scab": "moderate",
+        "hickory_bark_beetle": "resistant"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous. Fast-growing like bitternut parent.",
+      "tree_form": "Upright, pecan-like form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "blyth-shagbark",
+      "canonical_name": "Blyth",
+      "species_slug": "carya-ovata",
+      "material_type": "cultivar_clone",
+      "breeder": "Grimo Nut Nursery (seedling of Neilson)",
+      "origin_location": "Niagara-on-the-Lake, Ontario, Canada",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Canadian shagbark hickory selection from Grimo Nut Nursery. Seedling of Neilson with similar large nut size and good cracking quality. Proven in cold Ontario winters.",
+      "notes": "Seedling of Neilson selection. Large nut for a shagbark with good cracking quality. Available from Grimo Nut Nursery. Excellent choice for Canadian and northern US food forests."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "poor",
+      "nut_weight_g": 9.0,
+      "kernel_percentage": 28.0,
+      "flavor_profile": "Sweet, rich hickory flavor. Large kernel for a shagbark.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "hickory_bark_beetle": "moderate",
+        "anthracnose": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous.",
+      "tree_form": "Large shagbark form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "witte-pecan",
+      "canonical_name": "Witte",
+      "species_slug": "carya-illinoinensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Native selection from wild stand",
+      "origin_location": "Northern pecan range",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Ultra-northern pecan adapted to zone 6 and farther north. Wild stand selection with proven cold hardiness for short-season permaculture plantings.",
+      "notes": "One of the hardiest northern pecan selections alongside Mullahy and Martzahn. Small nut typical of ultra-northern pecans. Available from specialty northern nut tree nurseries."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "fair",
+      "nut_weight_g": 5.5,
+      "kernel_percentage": 48.0,
+      "flavor_profile": "Small but sweet, well-filled kernels. Typical northern pecan quality.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "disease_resistance": {
+        "pecan_scab": "resistant",
+        "downy_spot": "moderate"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate.",
+      "tree_form": "Medium-sized, spreading"
+    }
+  }
+]

@@ -1,0 +1,686 @@
+[
+  {
+    "cultivar": {
+      "slug": "shenandoah",
+      "canonical_name": "Shenandoah",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Neal Peterson",
+      "origin_location": "Maryland, USA",
+      "year_released": 2004,
+      "patent_status": "trademarked",
+      "description": "One of the original six Peterson Pawpaw selections, Shenandoah is prized for its very large fruit with mild, sweet flavor and firmer-than-wild texture. Single-fruited clusters simplify harvest and reduce rot from fruit-to-fruit contact. Widely available and one of the most commercially planted pawpaw cultivars in North America.",
+      "notes": "Trademarked as Shenandoah(TM). Fruit up to 1 lb. One of the mildest-flavored Peterson selections, making it a good introductory pawpaw for people unfamiliar with the species. Flesh is firmer than wild pawpaws. Bears in single-fruited clusters."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Very large, up to 454 g (1 lb); typically 280-400 g (10-14 oz). Single-fruited clusters.",
+      "flavor_profile": "Sweet, mild custard flavor with light tropical notes. One of the mildest Peterson selections.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "phyllosticta_leaf_spot": "moderate",
+        "notes": "Pawpaws are generally pest and disease free due to acetogenins in foliage"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright pyramidal, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "susquehanna",
+      "canonical_name": "Susquehanna",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Neal Peterson",
+      "origin_location": "Maryland, USA",
+      "year_released": 2004,
+      "patent_status": "trademarked",
+      "description": "Widely considered one of the finest pawpaw cultivars ever released, Susquehanna combines very large fruit size with rich, complex flavor and exceptional fleshiness. The firm, buttery texture and low seed-to-flesh ratio make it outstanding for fresh eating. A top choice for serious pawpaw growers.",
+      "notes": "Trademarked as Susquehanna(TM). Fruit over 1 lb possible. Stronger pawpaw flavor than Shenandoah. Approximately 5% seed by weight. Firm buttery texture. One of the most sought-after cultivars in the nursery trade."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Very large, commonly 340-450+ g (12-16+ oz); individual fruit can exceed 1 lb.",
+      "flavor_profile": "Rich, sweet, complex pawpaw flavor. Stronger tropical notes than Shenandoah. Buttery custard texture.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate",
+      "tree_form": "Upright pyramidal, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "potomac",
+      "canonical_name": "Potomac",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Neal Peterson",
+      "origin_location": "Maryland, USA",
+      "year_released": 2004,
+      "patent_status": "trademarked",
+      "description": "Peterson's largest-fruited selection, Potomac produces exceptionally fleshy fruit averaging 12 ounces with only about 4% seed by weight. The firm, melting texture and sweet rich flavor make it a premier fresh-eating cultivar. Extremely high flesh-to-seed ratio.",
+      "notes": "Trademarked as Potomac(R). Approximately 4% seed by weight, the lowest of the Peterson selections. Firm melting smooth texture. Medium yellow flesh. Among the most commercially important pawpaw cultivars."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Very large, typically 340 g (12 oz) average. Extremely fleshy with ~4% seed by weight.",
+      "flavor_profile": "Sweet and rich with firm melting smooth texture. Medium yellow flesh.",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright pyramidal, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "rappahannock",
+      "canonical_name": "Rappahannock",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Neal Peterson",
+      "origin_location": "Maryland, USA",
+      "year_released": 2004,
+      "patent_status": "trademarked",
+      "description": "A Peterson selection notable for its distinctive horizontal leaf habit and yellowish fruit skin at ripeness. The brighter yellow pulp has a simple, pleasant medium-intensity flavor. Selected for overall eating quality rather than extreme fruit size.",
+      "notes": "Trademarked as Rappahannock(R). Unique horizontal leaf arrangement. Fruit displays yellowish color when ripe, unusual among pawpaws. Brighter yellow pulp than most cultivars. Earlier ripening than some Peterson selections."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, approximately 170-250 g (6-9 oz). Focused on eating quality over size.",
+      "flavor_profile": "Medium-intensity, simple pleasant flavor. Brighter yellow pulp.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright with distinctive horizontal leaf habit, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "wabash",
+      "canonical_name": "Wabash",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Neal Peterson",
+      "origin_location": "Maryland, USA",
+      "year_released": 2004,
+      "patent_status": "trademarked",
+      "description": "A Peterson selection with medium-large fruit, sweet rich flavor, and very fleshy texture. The yellow to orangish flesh color is distinctive. Low seed weight at approximately 6% by weight makes for efficient eating.",
+      "notes": "Trademarked as Wabash(R). About 6% seed by weight. Medium firm creamy smooth texture. Yellow to orangish flesh color. Very fleshy."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium-large, typically 225-340 g (8-12 oz). Approximately 6% seed by weight.",
+      "flavor_profile": "Sweet and rich. Creamy smooth texture. Yellow to orangish flesh.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright pyramidal, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "allegheny",
+      "canonical_name": "Allegheny",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Neal Peterson",
+      "origin_location": "Maryland, USA",
+      "year_released": 2004,
+      "patent_status": "trademarked",
+      "description": "A smaller-fruited Peterson selection prized for its distinctive sweet, rich flavor with a hint of citrus. Medium fleshiness with about 8% seed by weight. The citrus overtone sets it apart from other Peterson selections.",
+      "notes": "Trademarked as Allegheny(TM). About 8% seed by weight. Yellow flesh. Medium firm smooth texture. The hint of citrus in the flavor profile is unique among Peterson selections."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, typically under 225 g (8 oz). About 8% seed by weight.",
+      "flavor_profile": "Sweet, rich with a distinctive hint of citrus. Medium firm smooth texture. Yellow flesh.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright pyramidal, 15-20 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "tallahatchie",
+      "canonical_name": "Tallahatchie",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Neal Peterson",
+      "origin_location": "Maryland, USA",
+      "year_released": 2018,
+      "patent_status": "trademarked",
+      "description": "Peterson's seventh and final cultivar release, Tallahatchie is distinguished by its exquisite flavor with floral notes, smooth silky texture, and extended harvest window. Large clusters ripen unevenly from mid to late season, providing a longer picking period. Highly regarded for ice cream production.",
+      "notes": "Trademarked as Tallahatchie(R). Few seeds (5% by volume). Fruit averages 9 oz. Pleasant aroma. Sweet mellow flavor with floral notes. Snake Jones of KSU recommended it as essential for pawpaw ice cream. Large clusters ripen unevenly, extending harvest."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium-large, averaging 255 g (9 oz). About 5% seed by volume. Bears in large clusters.",
+      "flavor_profile": "Sweet mellow flavor with distinctive floral notes. Very smooth silky texture. Pleasant aroma.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "ksu-atwood",
+      "canonical_name": "KSU-Atwood",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Kentucky State University",
+      "origin_location": "Frankfort, Kentucky, USA",
+      "year_released": 2009,
+      "patent_status": "trademarked",
+      "description": "The first cultivar released from the KSU pawpaw breeding program, named in honor of Rufus B. Atwood, former KSU president who led desegregation efforts in Kentucky education. A high-yielding, medium-fruited, mid to late season cultivar with a distinctive mango-banana-pineapple flavor profile.",
+      "notes": "Trademarked as KSU-Atwood(TM). First KSU release. Named for Rufus B. Atwood (KSU president 1929-1962). High yielding. Unique mango-banana-pineapple-like flavor distinguishes it from other cultivars. Mid to late season ripening."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, averaging 184 g (6.5 oz) per fruit at KSU.",
+      "flavor_profile": "Distinctive mango-banana-pineapple-like flavor. Sweet with tropical fruit overtones.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "ksu-benson",
+      "canonical_name": "KSU-Benson",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Kentucky State University",
+      "origin_location": "Frankfort, Kentucky, USA",
+      "year_released": 2016,
+      "patent_status": "trademarked",
+      "description": "The second KSU cultivar release, a high-yielding early-season selection with round, medium-sized fruit. Named for Dr. Harold R. Benson who directed the KSU Land Grant Program for over 36 years. Its early ripening makes it valuable for extending the pawpaw harvest season.",
+      "notes": "Trademarked as KSU-Benson(TM). Designated KSU7-5 in trials. Named for Dr. Harold R. Benson. Early season ripening is the earliest of the three KSU releases. Round fruit shape. High yielding."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, averaging 180 g (5-8 oz) per fruit. Round fruit shape.",
+      "flavor_profile": "Sweet with tropical fruit notes. Creamy custard texture.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "ksu-chappell",
+      "canonical_name": "KSU-Chappell",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Kentucky State University",
+      "origin_location": "Frankfort, Kentucky, USA",
+      "year_released": 2018,
+      "patent_status": "trademarked",
+      "description": "The third and largest-fruited KSU release, producing fruit averaging 214 grams. Ripens mid-season, between KSU-Benson (early) and KSU-Atwood (mid-late). Sweet banana-pineapple flavor. Together with Benson and Atwood, provides a full-season harvest progression.",
+      "notes": "Trademarked as KSU-Chappell(TM). Largest fruit of the three KSU releases at 214 g average (2016-2018 data). Mid-season ripening. Sweet banana-pineapple flavor. Bridges the harvest gap between early Benson and mid-late Atwood."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Large, averaging 214 g (7.5 oz) per fruit. Largest of the three KSU releases.",
+      "flavor_profile": "Sweet banana-pineapple flavor. Creamy custard texture.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "nc-1",
+      "canonical_name": "NC-1",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "R. Douglas Campbell",
+      "origin_location": "Ontario, Canada",
+      "year_released": 1976,
+      "patent_status": "none",
+      "description": "A cross of Overleese and Davis selected by R. Douglas Campbell in Ontario, Canada. NC-1 is notable as the most cold-hardy named pawpaw cultivar, successfully fruiting in southern Ontario. Large fruit with few seeds, thin skin, yellow flesh, and early ripening make it a reliable producer for northern growers.",
+      "notes": "Overleese (Indiana) x Davis (Michigan) cross. One of the earliest-ripening named cultivars. Averages 180 g/fruit and 45 fruit/tree at KSU. Very few seeds. Thin skin. Early September ripening in Kentucky, mid-September in Ontario. Excellent choice for USDA Zone 5 plantings."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large, averaging 180 g (6.3 oz) per fruit with few seeds. Thin skin. 45 fruit/tree average at KSU.",
+      "flavor_profile": "Sweet with mild banana-custard notes. Yellow flesh. Clean finish.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free. NC-1 shows good cold tolerance."
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Moderate",
+      "tree_form": "Upright, 15-20 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "overleese",
+      "canonical_name": "Overleese",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Rushville, Indiana, USA",
+      "year_released": 1950,
+      "patent_status": "none",
+      "description": "A wild selection found by W.B. Ward in Rushville, Indiana in 1950. One of the oldest and most proven pawpaw cultivars, Overleese produces large oval fruit with creamy yellow-orange flesh and excellent flavor. Won Best Fruit at the Ohio Pawpaw Festival in 2011. Parent of NC-1.",
+      "notes": "Selected from the wild by W.B. Ward. Parent of NC-1 (crossed with Davis). Large oval fruit averaging over 170 g. Very good seed-to-flesh ratio. Creamy yellow-orange flesh. One of the most reliable older cultivars still in the nursery trade."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Large, averaging over 170 g (6 oz). Oval fruit shape. Very good seed-to-flesh ratio.",
+      "flavor_profile": "Excellent creamy custard flavor with melon undertones. Yellow-orange flesh.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright spreading, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "sunflower",
+      "canonical_name": "Sunflower",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Chanute, Kansas, USA",
+      "year_released": 1970,
+      "patent_status": "none",
+      "description": "A wild selection found by Milo Gibson near Chanute, Kansas in 1970. One of the most widely available pawpaw cultivars, notable for coming from the western edge of the pawpaw's native range. Medium-sized fruit with classic pawpaw flavor, though some reports note an occasional bitter aftertaste in certain years.",
+      "notes": "Found in the wild by Milo Gibson. From the western edge of pawpaw range in Kansas. Medium fruit averaging 155 g (5.5 oz). Some reports of occasional bitter aftertaste. Very widely available in the nursery trade. Good choice for western edge of pawpaw range."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, averaging 155 g (5.5 oz) per fruit.",
+      "flavor_profile": "Classic banana-custard pawpaw flavor. Some reports of occasional mild bitter aftertaste in certain years.",
+      "flavor_rating": "fair",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "smoothies", "ice_cream"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "davis",
+      "canonical_name": "Davis",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Bellevue, Michigan, USA",
+      "year_released": 1959,
+      "patent_status": "none",
+      "description": "Selected from the wild in Michigan by the late Corwin Davis in 1959. A foundational cultivar in pawpaw breeding — parent of NC-1 (with Overleese) and grandparent of Maria's Joy. Medium-sized fruit up to 5 inches long with yellow flesh and reliable productivity. Good cold storage characteristics.",
+      "notes": "Selected from a wild grove in Michigan by Corwin Davis. Parent of NC-1 (with Overleese). Grandparent of Maria's Joy. Fruit up to 5 inches long. Green skin, yellow flesh. Ripens first week of October in Michigan. Keeps well in cold storage for a pawpaw."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, up to 12.5 cm (5 inches) long. Green skin, yellow flesh.",
+      "flavor_profile": "Fruity banana-like flavor with creamy custard-like flesh.",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "smoothies", "ice_cream"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright, 15-20 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "mango",
+      "canonical_name": "Mango",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Tifton, Georgia, USA",
+      "year_released": 1970,
+      "patent_status": "none",
+      "description": "A wild selection obtained from collector Major C. Collins in Tifton, Georgia in 1970. Named for the vivid orange-yellow color of the pulp (not for mango flavor). The most vigorous pawpaw cultivar available, quickly growing into a small tree. Large fruit with rich orange-yellow flesh and candied banana flavor.",
+      "notes": "Named for pulp color, not flavor. Obtained from Major C. Collins in Tifton, Georgia. Most vigorous pawpaw cultivar. Unusually colorful orange-yellow flesh. Some reports of mushy texture when fully ripe. Grows faster than most pawpaw cultivars."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large, approximately 140-200 g (5-7 oz) per fruit. Rich orange-yellow flesh.",
+      "flavor_profile": "Candied banana flavor with custard texture. Rich orange-yellow pulp. Can be mushy when fully ripe.",
+      "flavor_rating": "good",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "smoothies", "ice_cream"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Very vigorous — the most vigorous pawpaw cultivar available",
+      "tree_form": "Upright, fast-growing, 20-30 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "prolific",
+      "canonical_name": "Prolific",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Corwin Davis",
+      "origin_location": "Bellevue, Michigan, USA",
+      "year_released": 1985,
+      "patent_status": "none",
+      "description": "Selected by Corwin Davis near Bellevue, Michigan in the mid-1980s. True to its name, Prolific is exceptionally productive and comes into bearing earlier than most pawpaw cultivars. Medium-sized fruit with mild flavor and creamy texture. Parent of Maria's Joy (crossed with Davis). Important in breeding programs.",
+      "notes": "Comes into bearing a few years before other cultivars. Exceptionally productive. Parent of Maria's Joy (Prolific x Davis). Some reports of occasional bitter aftertaste. Light-colored flesh. Oval smooth skin, greenish-yellow when ripe."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "excellent",
+      "fruit_size_notes": "Medium, approximately 100-150 g (3.5-5 oz). Oval shape with smooth greenish-yellow skin.",
+      "flavor_profile": "Mild flavor with creamy texture. Light-colored flesh. Some reports of occasional bitter aftertaste.",
+      "flavor_rating": "fair",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright, compact, 12-18 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "marias-joy",
+      "canonical_name": "Maria's Joy",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Jerry Lehman",
+      "origin_location": "Terre Haute, Indiana, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A Davis x Prolific cross bred by Jerry Lehman of Terre Haute, Indiana. Produces medium to large kidney-shaped fruit with yellow flesh and a complex mango-pineapple-bubblegum flavor. Won the Ohio Pawpaw Festival Biggest Pawpaw Contest in 2012. One of the most commercially available Lehman selections.",
+      "notes": "Davis x Prolific cross. Bred by Jerry Lehman. Won Ohio Pawpaw Festival Biggest Pawpaw in 2012. Fruit 225-400 g (8-14 oz). Kidney-shaped. Yellow flesh. Mango-pineapple-bubblegum flavor. Good annual cropper. Widely available from multiple nurseries."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium to large, 225-400 g (8-14 oz), occasionally up to 454 g (1 lb). Kidney-shaped with yellow flesh.",
+      "flavor_profile": "Complex mango-pineapple-bubblegum flavor. Yellow flesh with custard texture.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "lehmans-delight",
+      "canonical_name": "Lehman's Delight",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Jerry Lehman",
+      "origin_location": "Terre Haute, Indiana, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of Jerry Lehman's award-winning selections from his breeding program in Terre Haute, Indiana. Won the Ohio Pawpaw Festival Biggest Pawpaw contest in 2011 and 2012, and placed second in the Best Pawpaw contest in 2013 and 2014. Large fruit with sweet flavor and creamy texture.",
+      "notes": "Won Ohio Pawpaw Festival Biggest Pawpaw 2011 and 2012. Second place Best Pawpaw 2013 and 2014 (beating 14 entries each year). Mid to late season producer. Selected from thousands of crosses at Lehman's Indiana farm."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large, award-winning size. Consistently among the largest fruits at pawpaw competitions.",
+      "flavor_profile": "Sweet flavor with creamy custard texture. High quality.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies", "baking"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "jerrys-big-girl",
+      "canonical_name": "Jerry's Big Girl",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": "Jerry Lehman",
+      "origin_location": "Terre Haute, Indiana, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of Jerry Lehman's largest-fruited selections, with fruit averaging 10-14 ounces and some exceeding 1 pound. Bred from crosses made at Lehman's Terre Haute, Indiana farm. Represents the cutting edge of pawpaw size breeding.",
+      "notes": "Extra-large fruit averaging 280-400 g (10-14 oz), with individual fruit over 454 g (1 lb) reported. One of Lehman's premier large-fruited selections."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Very large, averaging 280-400 g (10-14 oz). Individual fruit can exceed 454 g (1 lb).",
+      "flavor_profile": "Sweet custard flavor with tropical notes. Rich and complex.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "nyomis-delicious",
+      "canonical_name": "Nyomi's Delicious",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Berea, Kentucky, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Introduced by Cliff England from a tree growing in a backyard in Berea, Kentucky. A vigorous grower and heavy producer of plump 10-12 ounce fruit in clusters of 4-5. Thin-skinned with thick, extra-custardy yellow-orange flesh and very low seed weight. Early ripening.",
+      "notes": "Introduced by Cliff England (England's Orchard). Found in Nyomi's backyard in Berea, KY. Vigorous grower. Heavy producer. Fruit in clusters of 4-5. Very low seed count. Thin skin. Texture compared to ripe avocado. Early ripening."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Large, 280-340 g (10-12 oz) per fruit. Clusters of 4-5. Very low seed weight and count.",
+      "flavor_profile": "Mild, very pleasant, sweet flavor with hints of banana, pineapple, and mango. Extra-custardy texture like ripe avocado. Yellow-orange flesh.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free. Good disease resistance noted."
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Vigorous — fast growing",
+      "tree_form": "Upright, vigorous, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "pa-golden",
+      "canonical_name": "Pennsylvania Golden",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Pennsylvania, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A cold-hardy selection popular for growing in the northern range of pawpaw territory, particularly in Ontario, New York, and Pennsylvania. Comes into production sooner than many cultivars. Good flavor with productive trees. Widely planted in northern pawpaw trials.",
+      "notes": "Popular for northern range growing. Comes into production sooner than some cultivars. Productive and cold-hardy. Used in KSU research trials. Fruit size varies with reports ranging from 170-340 g (6-12 oz). Fairly low pulp-to-skin ratio."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Variable, 170-340 g (6-12 oz). Fairly low pulp-to-skin ratio noted.",
+      "flavor_profile": "Good flavor. Sweet custard notes.",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "smoothies", "ice_cream"],
+      "disease_resistance": {
+        "general": "resistant",
+        "notes": "Pawpaws are generally pest and disease free. Cold-hardy selection."
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright, 15-20 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "green-river-belle",
+      "canonical_name": "Green River Belle",
+      "species_slug": "asimina-triloba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Green River area, Kentucky, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A Kentucky selection named for the Green River region where it was found. Chosen for its large size and superior flavor with a distinctive subtle cinnamon aftertaste. Shows resilience during difficult spring conditions and resistance to Phyllosticta fungus, setting it apart from many cultivars.",
+      "notes": "Kentucky selection from Green River area. Subtle cinnamon aftertaste is distinctive. Resilient to frosty spring conditions. Reported Phyllosticta resistance. Low seed weight. Sweet mellow flavor with exquisite texture. Hardy USDA zones 5-9."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium to large. Chosen for large size. Low seed weight.",
+      "flavor_profile": "Sweet mellow flavor with exquisite texture and a distinctive subtle cinnamon aftertaste.",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "ice_cream", "smoothies"],
+      "disease_resistance": {
+        "general": "resistant",
+        "phyllosticta_leaf_spot": "resistant",
+        "notes": "Noted resistance to Phyllosticta fungus. Resilient in difficult spring frost conditions."
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright, 15-25 ft"
+    }
+  }
+]

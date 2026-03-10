@@ -1,0 +1,915 @@
+[
+  {
+    "cultivar": {
+      "slug": "bluecrop",
+      "canonical_name": "Bluecrop",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA / Frederick Coville & Elizabeth White",
+      "origin_location": "Whitesbog, New Jersey, USA",
+      "year_released": 1941,
+      "patent_status": "none",
+      "description": "The world's most widely planted highbush blueberry and the industry standard for over 80 years. Exceptionally adaptable, drought-tolerant when established, and reliably productive across a wide range of climates. Mid-season ripening with excellent all-around performance.",
+      "notes": "Self-fertile but yields improve with cross-pollination. Tolerates drought better than most highbush cultivars. Fruit can be tart if picked before fully ripe. One of the original USDA-New Jersey cooperative releases from the Coville breeding program. Widely available from virtually every nursery."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium to large, firm, light blue with good scar",
+      "flavor_profile": "Mildly sweet with slight tartness, classic blueberry flavor",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "tolerant",
+        "anthracnose": "susceptible",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous, upright-spreading, 5-6 ft",
+      "tree_form": "Upright-spreading, open canopy"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "duke",
+      "canonical_name": "Duke",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA-ARS / New Jersey Agricultural Experiment Station",
+      "origin_location": "New Jersey, USA",
+      "year_released": 1987,
+      "patent_status": "none",
+      "description": "Early-season northern highbush with consistent, heavy yields and good fruit quality. Blooms late but ripens early, which provides natural frost avoidance in spring — a valuable trait for permaculture growers in frost-prone sites.",
+      "notes": "Late bloom + early harvest is an unusual and highly valuable combination. Relatively compact bush. Fruit is medium-sized and firm. Widely planted commercially. Stores well. Requires firm pruning to maintain fruit size."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, firm, light blue with small dry scar",
+      "flavor_profile": "Mild, sweet, pleasant flavor; not the most complex",
+      "flavor_rating": "good",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "freezing", "baking"],
+      "disease_resistance": {
+        "mummy_berry": "resistant",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "early",
+      "vigor": "Moderate to vigorous, upright, 4-6 ft",
+      "tree_form": "Upright, somewhat compact"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "patriot",
+      "canonical_name": "Patriot",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA / Maine Agricultural Experiment Station",
+      "origin_location": "Maine, USA",
+      "year_released": 1976,
+      "patent_status": "none",
+      "description": "Cold-hardy northern highbush with exceptionally large, flavorful fruit. Named for the U.S. bicentennial. Notable for being the only highbush cultivar with documented resistance to Phytophthora root rot, making it ideal for heavier or wetter soils.",
+      "notes": "One of the most cold-hardy northern highbush cultivars, hardy to zone 3. Tolerates heavier, less-than-ideal soils better than most blueberries. Fruit is very large early in harvest, decreasing later. Excellent flavor. Widely available."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Very large early picks, medium later; dark blue, slightly soft",
+      "flavor_profile": "Excellent aromatic flavor, sweet with good complexity",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "baking", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "resistant",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "early",
+      "vigor": "Moderate, spreading, 4-5 ft",
+      "tree_form": "Low-spreading, open",
+      "zone_min_override": 3
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "liberty",
+      "canonical_name": "Liberty",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "Michigan State University / James Hancock",
+      "origin_location": "East Lansing, Michigan, USA",
+      "year_released": 2004,
+      "patent_status": "patented_expired",
+      "description": "Late-season northern highbush with exceptional disease resistance and very high yield potential. One of the three MSU cultivars (with Draper and Aurora) that revolutionized the commercial blueberry industry. Outstanding for low-input permaculture systems due to its disease resistance.",
+      "notes": "PP15,146 (filed 2003, expired ~2023). Excellent resistance to anthracnose fruit rot and mummy berry. Fruit is medium-large with good firmness and flavor. Very productive — can overproduce if not pruned. Extends the harvest season well into late summer."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large, firm, good light blue color",
+      "flavor_profile": "Sweet with mild tartness, good aromatic quality",
+      "flavor_rating": "good",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "freezing", "baking"],
+      "disease_resistance": {
+        "mummy_berry": "resistant",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "resistant",
+        "botrytis": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "late",
+      "vigor": "Vigorous, upright, 5-6 ft",
+      "tree_form": "Upright, vigorous"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "draper",
+      "canonical_name": "Draper",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "Michigan State University / James Hancock",
+      "origin_location": "East Lansing, Michigan, USA",
+      "year_released": 2004,
+      "patent_status": "patented_expired",
+      "description": "Mid-season northern highbush prized for its outstanding fruit quality and exceptional storage life. Named in honor of USDA blueberry breeder Dr. Arlen Draper. One of the most widely planted blueberry cultivars globally.",
+      "notes": "PP15,103 (filed 2003, expired ~2023). Fruit is very firm with excellent shelf life and small dry picking scar. Flavor is good fresh and improves in storage. Cane renewal pruning recommended. Has generated over $10 million in MSU intellectual property revenue."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Large, very firm, excellent light blue color with small dry scar",
+      "flavor_profile": "Sweet, crisp, flavor improves after a few days of storage",
+      "flavor_rating": "good",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "resistant",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous, upright, 5-6 ft",
+      "tree_form": "Upright, narrow"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "elliott",
+      "canonical_name": "Elliott",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA-ARS / Dr. George Darrow & Dr. Arthur Elliott",
+      "origin_location": "New Jersey, USA",
+      "year_released": 1973,
+      "patent_status": "none",
+      "description": "The latest-ripening northern highbush cultivar, extending the blueberry harvest well into September and even October in northern climates. Named for Dr. Arthur Elliott. Excellent disease resistance and outstanding storage quality make it ideal for low-input permaculture food forests.",
+      "notes": "Cross made in 1947, not released until 1973. Berries are smaller than some cultivars but very firm and store exceptionally well. Flavor is tart until fully ripe, then sweet. Outstanding resistance to anthracnose fruit rot. Very productive in maturity."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, very firm, light blue",
+      "flavor_profile": "Tart until fully ripe, then pleasantly sweet; good for processing",
+      "flavor_rating": "good",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "freezing", "baking", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "resistant",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "resistant",
+        "botrytis": "resistant"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "late",
+      "vigor": "Vigorous, upright, 5-7 ft",
+      "tree_form": "Upright, vigorous, large bush"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "jersey",
+      "canonical_name": "Jersey",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA / New Jersey Agricultural Experiment Station",
+      "origin_location": "New Jersey, USA",
+      "year_released": 1928,
+      "patent_status": "none",
+      "description": "One of the earliest named highbush blueberry cultivars, released in 1928 from the foundational USDA breeding program. Still widely grown for its reliable late-season production, vigorous growth, and adaptability. A heritage cultivar with nearly a century of proven performance.",
+      "notes": "Very vigorous and tall-growing. Good pollinator for other cultivars. Fruit is medium-sized with mild sweet flavor. Soft fruit makes it less suited for commercial shipping but fine for home use, processing, and U-pick. Extremely well-adapted and forgiving."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, somewhat soft, dark blue",
+      "flavor_profile": "Mild, sweet, classic blueberry flavor",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "baking", "preserves", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "susceptible",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Very vigorous, upright, 6-8 ft",
+      "tree_form": "Tall, upright, vigorous"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "chandler",
+      "canonical_name": "Chandler",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA-ARS",
+      "origin_location": "New Jersey, USA",
+      "year_released": 1994,
+      "patent_status": "none",
+      "description": "Northern highbush renowned for producing the largest fruit of any blueberry cultivar, with berries often exceeding the size of a quarter. Extended harvest period of 4-6 weeks per bush. Outstanding fresh-eating quality.",
+      "notes": "Berries can reach 3-4g each. Harvest window of 4-6 weeks is unusually long. Not the best for mechanical harvest due to variable ripening, but excellent for home gardens and U-pick. Requires good pruning for best fruit size. Hardy to zone 4."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Very large, often quarter-sized (3-4g), among the largest of any cultivar",
+      "flavor_profile": "Sweet, rich, excellent fresh-eating quality",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "baking"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous, upright-spreading, 5-6 ft",
+      "tree_form": "Upright-spreading, vigorous"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "legacy",
+      "canonical_name": "Legacy",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA-ARS / Arlen Draper",
+      "origin_location": "Beltsville, Maryland, USA",
+      "year_released": 1993,
+      "patent_status": "none",
+      "description": "A northern-southern highbush hybrid combining excellent fruit quality with heat tolerance and outstanding disease resistance. Bridges the 'zone gap' between northern and southern types, performing well in zones 5-8. Arguably the most permaculture-appropriate highbush cultivar due to disease resistance, vigor, and adaptability.",
+      "notes": "Hybrid of northern highbush and southern species for heat tolerance. Very upright and vigorous, almost tree-like. Outstanding resistance to mummy berry and anthracnose. Semi-evergreen in mild climates. Excellent bruise resistance and market firmness. Widely available and unpatented."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large, firm, light blue with small scar",
+      "flavor_profile": "Sweet, aromatic, excellent flavor with good complexity",
+      "flavor_rating": "excellent",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "freezing", "baking"],
+      "disease_resistance": {
+        "mummy_berry": "resistant",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "resistant",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Very vigorous, upright, 5-7 ft",
+      "tree_form": "Upright, almost tree-like, semi-evergreen in mild climates",
+      "zone_max_override": 8
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "oneal",
+      "canonical_name": "O'Neal",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "North Carolina Agricultural Research Service / USDA",
+      "origin_location": "North Carolina, USA",
+      "year_released": 1987,
+      "patent_status": "none",
+      "description": "Southern highbush blueberry widely regarded as the flavor standard for southern types. Large, dark blue berries with a complex sweet-wild taste. Adaptable from zone 6-9 and often considered the best-tasting southern highbush available.",
+      "notes": "Sets the flavor benchmark for southern highbush. Chill requirement approximately 400-500 hours. Self-fertile but benefits from cross-pollination. Earlier ripening than most southern highbush. Good for fresh eating. Somewhat susceptible to spring frost damage due to early bloom."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large, dark blue, somewhat soft",
+      "flavor_profile": "Complex, sweet, wild-blueberry character; the flavor standard for southern highbush",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "baking", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "resistant",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early",
+      "vigor": "Moderate, spreading, 4-5 ft",
+      "tree_form": "Semi-upright, spreading",
+      "zone_min_override": 6,
+      "zone_max_override": 9
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "emerald",
+      "canonical_name": "Emerald",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Florida / Paul Lyrene",
+      "origin_location": "Gainesville, Florida, USA",
+      "year_released": 1999,
+      "patent_status": "patented_expired",
+      "description": "Low-chill southern highbush that formed the backbone of the Florida blueberry industry alongside Jewel and Star. Large, firm berries with excellent flavor. Requires only 150-250 chill hours, making it suitable for zones 7-10 and mild-winter climates.",
+      "notes": "One of the most important cultivars in the history of southern blueberry production. Very vigorous and productive. Semi-evergreen in mild climates. Requires cross-pollination for best yields. Patent PP12,165 (expired)."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Large, firm, medium-dark blue with small dry scar",
+      "flavor_profile": "Sweet, aromatic, excellent fresh-eating quality",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early",
+      "vigor": "Very vigorous, upright-spreading, 5-6 ft",
+      "tree_form": "Upright-spreading, vigorous, semi-evergreen",
+      "zone_min_override": 7,
+      "zone_max_override": 10
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "jewel",
+      "canonical_name": "Jewel",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Florida / Paul Lyrene",
+      "origin_location": "Gainesville, Florida, USA",
+      "year_released": 1998,
+      "patent_status": "patented_expired",
+      "description": "Low-chill southern highbush with high yield potential and excellent internal berry quality. A cornerstone cultivar of the Florida blueberry industry. Berries remain tart until fully ripe, then develop excellent flavor.",
+      "notes": "Often planted alongside Emerald in commercial settings. Mid-season for Florida. Requires 200-300 chill hours. Needs cross-pollinator. Fruit tends to be tart until full maturity. Very productive when properly managed."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large, firm, dark blue",
+      "flavor_profile": "Tart until fully ripe, then sweet with excellent internal quality",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous, upright, 5-6 ft",
+      "tree_form": "Upright, vigorous",
+      "zone_min_override": 7,
+      "zone_max_override": 10
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "sunshine-blue",
+      "canonical_name": "Sunshine Blue",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "Dr. Arthur Elliott",
+      "origin_location": "Earleton, Florida, USA",
+      "year_released": 1979,
+      "patent_status": "none",
+      "description": "Compact, semi-evergreen southern highbush with extraordinary zone adaptability (5-10). Self-pollinating, ornamental, and productive — the quintessential permaculture blueberry for small spaces, containers, and edible landscapes. Only 150 chill hours required.",
+      "notes": "Cross of Avonblue x Sharpblue. Semi-evergreen to evergreen in mild climates with pink spring flowers and red fall foliage. Self-fertile (unusual for blueberries). Compact 3-4 ft size ideal for food forest understory, hedges, and containers. Tolerates higher pH soils better than most blueberries."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, dark blue, firm",
+      "flavor_profile": "Sweet, tangy, excellent flavor for a compact plant",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "mid",
+      "vigor": "Compact, mounding, 3-4 ft",
+      "tree_form": "Compact, mounding, ornamental; semi-evergreen",
+      "zone_min_override": 5,
+      "zone_max_override": 10
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "northblue",
+      "canonical_name": "Northblue",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Minnesota",
+      "origin_location": "St. Paul, Minnesota, USA",
+      "year_released": 1983,
+      "patent_status": "none",
+      "description": "Half-high blueberry (highbush x lowbush cross) with exceptional cold hardiness to -35F. Produces the largest fruit and highest yields of the original University of Minnesota half-high releases. Low stature allows snow cover protection in severe winters.",
+      "notes": "One of the first three half-high releases from the UMN breeding program (with Northsky and Northcountry). Produces 5-8 lbs per bush at maturity. Large, dark blue fruit with flavor superior to most highbush cultivars. 20-30 inch height. Requires cross-pollination. Hardy to zone 3."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large for a half-high, dark blue, nicely flavored",
+      "flavor_profile": "Rich, sweet, superior to most highbush; wild blueberry character",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Compact, 20-30 inches tall",
+      "tree_form": "Low, spreading, half-high",
+      "zone_min_override": 3,
+      "zone_max_override": 7
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "northcountry",
+      "canonical_name": "Northcountry",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Minnesota",
+      "origin_location": "St. Paul, Minnesota, USA",
+      "year_released": 1986,
+      "patent_status": "none",
+      "description": "Half-high blueberry with outstanding wild lowbush flavor and exceptional cold hardiness. Sky-blue berries with sweet flavor reminiscent of wild blueberries. Extremely cold-hardy and low-growing for snow cover protection.",
+      "notes": "Part of the original UMN half-high trio. Lowest growing of the three (18-24 inches). Sweet, wild-type flavor is highly prized. Ripens about 5 days earlier than Northblue. Requires cross-pollination. Makes an excellent edible groundcover or border plant in food forest settings."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, sky blue, sweet",
+      "flavor_profile": "Sweet, wild lowbush blueberry character, highly aromatic",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Compact, 18-24 inches tall",
+      "tree_form": "Low, spreading, groundcover-like",
+      "zone_min_override": 3,
+      "zone_max_override": 7
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "northsky",
+      "canonical_name": "Northsky",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Minnesota",
+      "origin_location": "St. Paul, Minnesota, USA",
+      "year_released": 1983,
+      "patent_status": "none",
+      "description": "The most cold-hardy of the University of Minnesota half-high releases, tolerating temperatures to -45F. Very low-growing and compact, ideal as an edible groundcover in extremely cold climates.",
+      "notes": "Smallest of the UMN half-high releases at 10-18 inches. Among the most cold-hardy blueberry cultivars in existence. Small but well-flavored fruit. Lower yields than Northblue but survives where few other blueberries can. Excellent for containers and edible landscaping."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "fair",
+      "fruit_size_notes": "Small to medium, sky blue, sweet",
+      "flavor_profile": "Sweet, pleasant wild-type flavor",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Very compact, 10-18 inches tall",
+      "tree_form": "Very low, spreading, miniature shrub",
+      "zone_min_override": 3,
+      "zone_max_override": 7
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "polaris",
+      "canonical_name": "Polaris",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Minnesota",
+      "origin_location": "St. Paul, Minnesota, USA",
+      "year_released": 1996,
+      "patent_status": "none",
+      "description": "Second-generation half-high from the University of Minnesota breeding program. Taller than the original trio (3-4 ft), with larger fruit, excellent flavor, and outstanding storage quality. Aromatic berries that store beautifully.",
+      "notes": "Part of the second wave of UMN half-highs along with Chippewa and St. Cloud. Medium-large berries with excellent aromatic flavor. Stores exceptionally well. Ripens about a week earlier than Northblue. Requires cross-pollination. Hardy to zone 3."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium to large, firm, stores well",
+      "flavor_profile": "Highly aromatic, sweet, excellent fresh-eating quality",
+      "flavor_rating": "excellent",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate, upright, 3-4 ft",
+      "tree_form": "Upright, moderate, half-high",
+      "zone_min_override": 3,
+      "zone_max_override": 7
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "chippewa",
+      "canonical_name": "Chippewa",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Minnesota",
+      "origin_location": "St. Paul, Minnesota, USA",
+      "year_released": 1996,
+      "patent_status": "none",
+      "description": "Second-generation half-high with the sweetest flavor of any UMN release. Taller growth habit (3-4 ft) for easier picking. Consistently high sugar content makes it a favorite for fresh eating in cold climates.",
+      "notes": "Released alongside Polaris and St. Cloud. Among the sweetest blueberries grown in northern climates. Medium-large, light blue fruit. Self-fertile to a degree but benefits from cross-pollination. Good yields. Hardy to zone 3."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large, light blue, firm",
+      "flavor_profile": "Very sweet, among the highest sugar content of any half-high",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate, upright, 3-4 ft",
+      "tree_form": "Upright, moderate, half-high",
+      "zone_min_override": 3,
+      "zone_max_override": 7
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "northland",
+      "canonical_name": "Northland",
+      "species_slug": "vaccinium-corymbosum",
+      "material_type": "cultivar_clone",
+      "breeder": "Michigan State University",
+      "origin_location": "East Lansing, Michigan, USA",
+      "year_released": 1967,
+      "patent_status": "none",
+      "description": "One of the most cold-hardy commercial northern highbush cultivars, with a spreading, semi-dwarf growth habit. Extremely heavy yields of small-medium berries with wild blueberry flavor character. Excellent for permaculture food forests in cold climates.",
+      "notes": "Half-high type though sometimes classified as a compact northern highbush. Very heavy yielder — branches often weigh down with fruit. 4 ft height. Wild-type flavor. Good disease resistance. Hardy to zone 3. One of the most forgiving and productive cultivars for beginners."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Small to medium, dark blue, soft",
+      "flavor_profile": "Wild blueberry character, sweet with aromatic complexity",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "baking", "preserves", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate, spreading, 3-4 ft",
+      "tree_form": "Spreading, semi-dwarf, arching",
+      "zone_min_override": 3
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "tifblue",
+      "canonical_name": "Tifblue",
+      "species_slug": "vaccinium-virgatum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Georgia / USDA-ARS",
+      "origin_location": "Tifton, Georgia, USA",
+      "year_released": 1955,
+      "patent_status": "none",
+      "description": "The most cold-hardy rabbiteye cultivar and one of the most widely planted. A foundational rabbiteye selection that has been a parent of many modern cultivars. Reliable, vigorous, and extremely long-lived — some plantings have produced for 50+ years.",
+      "notes": "Cross of Ethel x Clara. Parent of Ochlocknee and other modern cultivars. Requires 600-650 chill hours. Mid-late season. Berries are light blue with good firmness. Somewhat tart until fully ripe. Very vigorous, reaching 8-10 ft. Requires cross-pollination. Extremely adaptable to poor soils."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, light blue, firm, good scar",
+      "flavor_profile": "Mildly tart until fully ripe, then sweet; classic rabbiteye flavor",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Very vigorous, upright, 8-10 ft",
+      "tree_form": "Tall, upright, vigorous"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "powderblue",
+      "canonical_name": "Powderblue",
+      "species_slug": "vaccinium-virgatum",
+      "material_type": "cultivar_clone",
+      "breeder": "North Carolina State University / USDA-ARS",
+      "origin_location": "Raleigh, North Carolina, USA",
+      "year_released": 1978,
+      "patent_status": "none",
+      "description": "Late-season rabbiteye known for consistent heavy production, excellent fruit quality, and disease resistance. One of the most recommended rabbiteye cultivars for home gardens and permaculture food forests in the Southeast. Tolerates heat, drought, and poor soils.",
+      "notes": "Highly productive and reliable. Fruit slightly larger and darker than Tifblue. Requires 550-650 chill hours. Upright growth habit to 8 ft. Good resistance to leaf diseases. Excellent pollinator for other rabbiteye cultivars. Very long-lived."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium to large, powder blue color, firm",
+      "flavor_profile": "Sweet, good quality, mild",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "resistant",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "late",
+      "vigor": "Vigorous, upright, 6-8 ft",
+      "tree_form": "Upright, vigorous"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "brightwell",
+      "canonical_name": "Brightwell",
+      "species_slug": "vaccinium-virgatum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Georgia / USDA-ARS",
+      "origin_location": "Tifton, Georgia, USA",
+      "year_released": 1983,
+      "patent_status": "none",
+      "description": "Mid-season rabbiteye named for Dr. James Brightwell, a pioneer of rabbiteye blueberry breeding. Sweet, medium-large fruit on a productive, upright bush. One of the most recommended rabbiteye cultivars for home gardens.",
+      "notes": "Chill requirement 350-400 hours — among the lowest for rabbiteye, expanding its range southward. Good fresh-eating quality. Medium-sized berries with excellent sweetness. Good rain-cracking resistance. Excellent pollinator for Powderblue and Tifblue."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large, dark blue, good quality",
+      "flavor_profile": "Sweet, excellent fresh-eating quality for a rabbiteye",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous, upright, 6-8 ft",
+      "tree_form": "Upright, vigorous"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "premier",
+      "canonical_name": "Premier",
+      "species_slug": "vaccinium-virgatum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Georgia / USDA-ARS",
+      "origin_location": "Tifton, Georgia, USA",
+      "year_released": 1978,
+      "patent_status": "none",
+      "description": "Early-season rabbiteye with exceptionally large, flavorful berries. One of the first rabbiteye cultivars to ripen, extending the southern blueberry season. Excellent fresh-eating quality and good disease resistance including mummy berry tolerance.",
+      "notes": "Among the earliest-ripening rabbiteye cultivars. Very large fruit for a rabbiteye. Excellent flavor — considered one of the best-tasting rabbiteyes. Requires cross-pollination. 500-550 chill hours. Somewhat softer fruit, better for fresh eating than shipping."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large for rabbiteye, dark blue, somewhat soft",
+      "flavor_profile": "Excellent, sweet, rich; among the best-flavored rabbiteyes",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "baking", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "resistant",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous, upright-spreading, 6-8 ft",
+      "tree_form": "Upright-spreading, vigorous"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "climax",
+      "canonical_name": "Climax",
+      "species_slug": "vaccinium-virgatum",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Georgia / USDA-ARS",
+      "origin_location": "Tifton, Georgia, USA",
+      "year_released": 1974,
+      "patent_status": "none",
+      "description": "Very early-season rabbiteye valued for being one of the first blueberries to ripen in the South. Compact concentrated harvest makes it efficient for both home and commercial use. Good fresh-eating quality.",
+      "notes": "One of the earliest-ripening rabbiteyes — fruit ripens in May-June in the deep South. Concentrated harvest (most fruit ripens within a 2-week window). Medium-sized berries. 400-450 chill hours. Good pollinator for other rabbiteyes. Somewhat smaller bush than other rabbiteyes."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, dark blue, firm",
+      "flavor_profile": "Good flavor, sweet when fully ripe",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "freezing"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early",
+      "vigor": "Moderate to vigorous, upright, 5-7 ft",
+      "tree_form": "Upright, moderate"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "pink-lemonade",
+      "canonical_name": "Pink Lemonade",
+      "species_slug": "vaccinium-virgatum",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA-ARS",
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A rabbiteye-type blueberry producing unique bright pink berries that are sweeter than conventional blueberries. Ornamental and edible with excellent food forest potential — the pink fruit is also less attractive to birds. Four-season interest with pink flowers, pink fruit, and red fall foliage.",
+      "notes": "Developed by USDA approximately 50 years ago but only recently popularized in the nursery trade. Rabbiteye type with good heat tolerance. Pink berries are twice as sweet as typical blueberries. Bird deterrence from pink color is a significant permaculture advantage. 4-5 ft height. Requires cross-pollination."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, bright pink when ripe, firm",
+      "flavor_profile": "Very sweet, sweeter than typical blueberries, mild",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "baking", "preserves"],
+      "disease_resistance": {
+        "mummy_berry": "moderate",
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate, upright, 4-5 ft",
+      "tree_form": "Upright, ornamental, four-season interest"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "stevens-cranberry",
+      "canonical_name": "Stevens",
+      "species_slug": "vaccinium-macrocarpon",
+      "material_type": "cultivar_clone",
+      "breeder": "USDA",
+      "origin_location": "Whitesbog, New Jersey, USA",
+      "year_released": 1950,
+      "patent_status": "none",
+      "description": "The most widely planted cranberry cultivar in North America, accounting for approximately 50% of Wisconsin cranberry acreage. A cross of McFarlin x Potters Favorite. Vigorous, self-fertile, and productive with large, deep red berries. Excellent edible groundcover for permaculture food forests in acidic, moist sites.",
+      "notes": "Cross of McFarlin x Potters Favorite (a wild selection from Wisconsin Rapids, 1895). Does not require flooding for cultivation — can be grown as a dry-bed groundcover in home settings. 2-4 inch height, spreading by runners. Deep red berries ripen early fall. Self-fertile. Excellent for acidic bog edges, rain gardens, and food forest ground layer."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "fair",
+      "fruit_size_notes": "Large for cranberry, deep red, firm",
+      "flavor_profile": "Tart, classic cranberry flavor, best cooked or processed",
+      "flavor_rating": "good",
+      "storage_quality": "excellent",
+      "culinary_uses": ["preserves", "baking", "juice", "drying", "sauce"],
+      "disease_resistance": {
+        "mummy_berry": null,
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous, mat-forming, 2-4 inch height",
+      "tree_form": "Prostrate, mat-forming groundcover"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "ben-lear-cranberry",
+      "canonical_name": "Ben Lear",
+      "species_slug": "vaccinium-macrocarpon",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Wisconsin, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A wild cranberry clone from Wisconsin selected for early ripening, vigorous vine growth, and dark red berries. One of the most available cranberry cultivars in the nursery trade. Lower-growing and more compact than Stevens, making it an excellent edible groundcover.",
+      "notes": "Wild selection, not a bred cultivar. Early-ripening — about 2 weeks before Stevens. Small, tart, dark red berries. Very vigorous spreading vines at 6-12 inches height. Parent of Crimson Queen (Stevens x Ben Lear). Good for permaculture bog gardens, moist shade edges, and acidic ground layer. Hardy to zone 2."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Small to medium, dark red, tart",
+      "flavor_profile": "Tart, intense cranberry flavor, best for processing",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["preserves", "baking", "juice", "sauce"],
+      "disease_resistance": {
+        "mummy_berry": null,
+        "phytophthora_root_rot": "moderate",
+        "anthracnose": "moderate",
+        "botrytis": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous, mat-forming, 6-12 inch height",
+      "tree_form": "Prostrate, spreading groundcover",
+      "zone_min_override": 2
+    }
+  }
+]

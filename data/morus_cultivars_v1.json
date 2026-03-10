@@ -1,0 +1,514 @@
+[
+  {
+    "cultivar": {
+      "slug": "illinois-everbearing",
+      "canonical_name": "Illinois Everbearing",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "White County, Illinois, USA",
+      "year_released": 1958,
+      "patent_status": "none",
+      "description": "Chance seedling discovered by Peter Glaser on the Wabash River bottomlands in 1947 and introduced by Burgess Seed and Plant Co. in 1958. The benchmark cultivar against which all other mulberries are measured in North America. Extremely hardy, productive, and widely adapted.",
+      "notes": "Natural cross of M. alba x M. rubra. Self-fertile. Nearly seedless fruit. Bears heavily from early July through August/September. Hardy to zone 4 (-20F). One of the most widely available mulberry cultivars in the North American nursery trade."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "excellent",
+      "fruit_size_notes": "1.5 inches long, medium; resembles elongated blackberry",
+      "flavor_profile": "Sweet, rich, complex berry flavor with mild tartness",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking", "wine", "drying"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous, fast-growing",
+      "tree_form": "Upright spreading, 30-40 ft mature"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "silk-hope",
+      "canonical_name": "Silk Hope",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": "A.J. Bullard (selection)",
+      "origin_location": "Silk Hope, North Carolina, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Wild cross discovered by mulberry enthusiast A.J. Bullard near the town of Silk Hope, NC, once a center for silk production hopes. Better adapted to the heat and humidity of the Southeast than Illinois Everbearing, with reliably large fruit and resistance to popcorn disease.",
+      "notes": "M. alba x M. rubra hybrid. Self-fertile. Low chill requirement (200-400 hours). Particularly well-suited for Southern food forests. Fruit ripens over a 2-month period in early summer. Resistant to popcorn fungal infection in humid climates."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "1.5 inches long, slightly larger than Illinois Everbearing",
+      "flavor_profile": "Sweet, similar to Illinois Everbearing with good complexity",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking", "wine"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "resistant",
+        "canker": "resistant"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous",
+      "tree_form": "Upright spreading, 30-35 ft mature"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "oscar",
+      "canonical_name": "Oscar",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": "Oscar Clark (selection)",
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Selection introduced by naturalist Oscar Clark, widely regarded as having among the most flavorful fruit of any mulberry. Notable for its versatility -- fruit can be enjoyed at the red stage with a raspberry-like flavor, or fully ripe when black with deeper, richer flavor.",
+      "notes": "M. alba x M. rubra hybrid. Self-fertile. Early ripening. Hardy zones 4-8. Fast-growing shade tree. Produces heavy crops of medium-sized black fruit."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-sized berries, approximately 1-1.25 inches long",
+      "flavor_profile": "Raspberry-like when red; rich, deep, and complex when fully black. Among the best-flavored mulberries.",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking", "wine"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Vigorous, fast-growing",
+      "tree_form": "Upright spreading, 30-45 ft mature"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "wellington",
+      "canonical_name": "Wellington",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Geneva, New York, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Discovered on the property of Richard Wellington in Geneva, NY, and evaluated at the New York State Fruit Testing station. A heavy-producing tree with reliably winter-hardy wood and resistance to popcorn disease, making it well-suited to Northeast and mid-Atlantic food forests.",
+      "notes": "Probable wild cross of M. alba x M. rubra. Self-fertile. Low chill (200-400 hours). Hardy to zone 5. Reliably resistant to popcorn disease in hot, humid climates. Good general-purpose fruiting mulberry."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "1.25 inches long, medium cylindrical berries",
+      "flavor_profile": "Good, sweet flavor with balanced acidity; reddish-black fruit",
+      "flavor_rating": "good",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking", "wine"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "resistant",
+        "canker": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous",
+      "tree_form": "Upright spreading, to 30 ft mature"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "shangri-la",
+      "canonical_name": "Shangri-La",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Naples, Florida, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Florida selection that thrives in the South and areas with moderate winters and humid summers. Produces large, sweet-tart black berries on a vigorous tree. Especially valued for Southern and subtropical food forests where many other cultivars struggle with fungal pressure.",
+      "notes": "M. alba x M. rubra hybrid. Self-fertile. Can begin fruiting within 1-2 years, even in a container. Hardy zones 6-10. Fast-growing to about 25 ft. Fruit ripens over a long spring season."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "excellent",
+      "fruit_size_notes": "1.5 inches long, large black berries resembling long blackberries",
+      "flavor_profile": "Sweet-tart, rich flavor; high antioxidant fruit",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "juice", "wine", "baking"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early",
+      "vigor": "Very vigorous, fast-growing",
+      "tree_form": "Upright spreading, to 25 ft mature"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "early-bird",
+      "canonical_name": "Early Bird",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The earliest ripening of all mulberry varieties, producing fruit starting in early June. Valued in permaculture food forests for extending the mulberry harvest season when planted alongside mid- and late-season cultivars.",
+      "notes": "Self-fertile. Reddish-black fruit. Sweet, dark, highly-flavored. A good companion planting with Illinois Everbearing to extend the harvest window from early June through September."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "1.5 inches long x 0.5 inch wide, elongated blackberry shape",
+      "flavor_profile": "Sweet with distinctive, dark berry flavor",
+      "flavor_rating": "good",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early",
+      "vigor": "Vigorous",
+      "tree_form": "Upright spreading, medium-sized tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "kokuso",
+      "canonical_name": "Kokuso",
+      "species_slug": "morus-alba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Korea",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Dark-fruited Korean selection with earlier ripening than Illinois Everbearing and firm, high-quality fruit. Very productive over a 2-month period, making it an excellent food-forest mulberry. One of the most cold-hardy white mulberry selections.",
+      "notes": "M. alba cultivar from Korea. Self-fertile. Fruit is firm compared to other mulberries, making it better for drying and handling. Hardy zones 5-9. Seedless black fruit. Early bearing and heavy producer."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "2-2.5 inches long x 0.5 inch wide, large for mulberry",
+      "flavor_profile": "Very sweet and juicy; excellent fresh eating and drying quality",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying", "preserves", "baking"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous",
+      "tree_form": "Upright, medium to large tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "beautiful-day",
+      "canonical_name": "Beautiful Day",
+      "species_slug": "morus-alba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "White-fruited M. alba selection valued in permaculture for non-staining fruit, fast growth, zero chill requirement, and dual-purpose use (fruit + high-protein foliage for poultry, rabbits, goats, and sheep). Bears fruit while still small and young, even if pruned hard.",
+      "notes": "Self-fertile. Requires no chill to produce fruit reliably. Leaves can be dried for tea substitute or used as high-protein livestock feed. Grows quickly to about 30 ft but responds well to hard pruning. White juice does not stain. Ripens late June."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "excellent",
+      "fruit_size_notes": "Medium-small, sweet white berries",
+      "flavor_profile": "Sweet, mild, honey-like flavor; non-staining white fruit",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying", "baking"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "early_mid",
+      "vigor": "Very vigorous, fast-growing",
+      "tree_form": "Upright spreading, to 30 ft; responds well to coppicing"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "el-dorado",
+      "canonical_name": "El Dorado",
+      "species_slug": "morus-alba",
+      "material_type": "cultivar_clone",
+      "breeder": "Lucile Whitman (introduction)",
+      "origin_location": "Hungary (scionwood); introduced in Oregon, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "White-fruited mulberry introduced by Oregon's Lucile Whitman from Hungarian scionwood. Produces some of the largest white mulberries available, with sweet flavor and good complexity. A slower-growing, more compact tree than most M. alba selections.",
+      "notes": "Shiny large leaves. Non-staining white fruit. Slower grower reaching about 15 ft. One of the best white-fruited mulberry introductions for fresh eating."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Among the largest white mulberries; plump, full-sized berries",
+      "flavor_profile": "Sweet with good complexity; non-staining white fruit",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate, slow-growing for a mulberry",
+      "tree_form": "Compact, to 15 ft; smaller than typical M. alba"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "pakistan",
+      "canonical_name": "Pakistan",
+      "species_slug": "morus-macroura",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Pakistan / Himalayan region",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The signature cultivar of M. macroura, producing spectacularly long fruit up to 3-4.5 inches. Widely planted in warmer-zone food forests and popular in the rare-fruit community. Firmer fruit than most mulberries, making it easier to handle and less prone to staining.",
+      "notes": "Also known as 'Shahtoot' (King of Mulberries). Self-fertile. Hardy zones 7-10, possibly to 0F once established but hardiness reports vary. Can yield 15-25 lbs of fruit per tree. Ruby-red to dark purple fruit. Ripens July through September."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "3-4.5 inches long, spectacularly large; among the longest mulberry fruit",
+      "flavor_profile": "Sweet, rich, complex; firmer texture than other mulberries",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "preserves", "drying", "juice"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous, fast-growing",
+      "tree_form": "Upright spreading, 15-30 ft mature"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "gerardi-dwarf",
+      "canonical_name": "Gerardi Dwarf",
+      "species_slug": "morus-macroura",
+      "material_type": "cultivar_clone",
+      "breeder": "Louis Gerardi",
+      "origin_location": "Illinois, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Naturally dwarf mulberry selected by Louis Gerardi of Gerardi Nursery, Illinois. Produces full-sized, sweet, juicy fruit on a very compact tree reaching only about 8 ft tall and wide over several decades. Ideal for small-space food forests and container culture.",
+      "notes": "Reported to be a hybrid involving M. nigra 'Chelsea' and M. macroura, though taxonomy is debated. Growth between internodes only about 1 inch vs 5-6 inches on standard mulberries. Hardy zones 6-9. Dark purple to black fruit with rich, sweet, vinous quality."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Full-sized berries on a dwarf tree; dark purple-black, 1-1.5 inches",
+      "flavor_profile": "Rich, sweet, vinous quality; among the best-flavored mulberries",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Very slow-growing, naturally dwarf",
+      "tree_form": "Compact dwarf, 8 ft tall x 8 ft wide at maturity"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "noir-de-spain",
+      "canonical_name": "Noir de Spain",
+      "species_slug": "morus-nigra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Spain",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "True black mulberry (M. nigra) selection prized for intensely aromatic, deeply flavored fruit considered the pinnacle of mulberry flavor by many growers. Limited cold hardiness restricts it to zones 7-9, but where it thrives it is unsurpassed for flavor quality.",
+      "notes": "Large shrubby tree to 25 ft. Deep-red to black fruit. Hardy to about -5F (zone 7). Fruit bleeds heavily when picked -- messy but flavor is exceptional. Difficult to root from cuttings but grafts readily onto M. alba rootstock. Slow-growing compared to M. alba types. Ripens August-September."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "fruit_size_notes": "Medium, about 1 inch; deep red-black, juicy",
+      "flavor_profile": "Intensely sweet, aromatic, complex; widely considered the finest-flavored mulberry species",
+      "flavor_rating": "exceptional",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "wine", "juice"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "resistant",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "mid_late",
+      "vigor": "Slow-growing",
+      "tree_form": "Large shrub to small tree, 15-25 ft mature"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "wacissa",
+      "canonical_name": "Wacissa",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Wacissa, Florida, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Discovered in the small town of Wacissa, Florida, from a tree estimated at 70+ years old that continues to bear heavy crops. Valued for Southern food forests due to its adaptation to heat and humidity and reliable heavy production of sweet, dark fruit.",
+      "notes": "Presumed M. alba x M. rubra hybrid. Self-fertile. Produces heavy crops of 1.5 inch deep purple fruit. Fruit ripens late spring into summer. Well-suited to Florida and Gulf Coast food forests."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "1.5 inches long, deep purple, plump berries",
+      "flavor_profile": "Sweet, luscious; excellent fresh eating quality",
+      "flavor_rating": "good",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking", "smoothies"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early",
+      "vigor": "Vigorous",
+      "tree_form": "Large spreading tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "valdosta",
+      "canonical_name": "Valdosta",
+      "species_slug": "morus-alba-x-rubra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Valdosta, Georgia, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Southern selection passed to Just Fruits and Exotics by a customer from Valdosta, Georgia. Known for notably large fruit with a rich, deliciously sweet flavor. A good choice for Southeast food forests.",
+      "notes": "Presumed M. alba x M. rubra hybrid. Large 2-inch elongated dark fruit. Ripens in May in Florida/Georgia. Introduced through Just Fruits and Exotics nursery."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "2 inches long, large elongated dark berries",
+      "flavor_profile": "Rich, deliciously sweet with a hint of earthiness",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "early",
+      "harvest_season": "early",
+      "vigor": "Vigorous",
+      "tree_form": "Upright spreading, medium to large tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "teas-weeping",
+      "canonical_name": "Teas Weeping",
+      "species_slug": "morus-alba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Dramatically weeping mulberry that produces abundant sweet-tart berries in early summer. Valued in permaculture as both an ornamental and productive fruit tree that fits well into small-space food forest designs. Its weeping canopy creates accessible fruit at ground level.",
+      "notes": "M. alba 'Pendula'. Self-fertile. Hardy zones 4-9. Low chill requirement. Fast-growing and heat-loving. Fruit is smaller than upright cultivars but produced prolifically. Easy to harvest due to weeping form. 12-20 ft tall, 16-20 ft spread."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "0.75 inches long, small blackberry-like berries; abundant",
+      "flavor_profile": "Sweet-tart, tangy, blackberry-like",
+      "flavor_rating": "good",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "preserves", "baking"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Fast-growing",
+      "tree_form": "Weeping, 12-20 ft tall x 16-20 ft wide; cascading canopy"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "white-ivory",
+      "canonical_name": "White Ivory",
+      "species_slug": "morus-alba",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Pure white-fruited mulberry selection valued for non-staining fruit suitable for fresh eating and drying. A good permaculture choice where staining from dark mulberries is undesirable near patios, pathways, or laundry lines.",
+      "notes": "M. alba selection. Self-fertile. Sweet white fruit. Non-staining. Good for fresh eating and drying."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Medium, pure white berries",
+      "flavor_profile": "Sweet, honey-like, mild; non-staining white fruit",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying"],
+      "disease_resistance": {
+        "bacterial_blight": "moderate",
+        "popcorn_disease": "moderate",
+        "canker": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous",
+      "tree_form": "Upright spreading, medium to large tree"
+    }
+  }
+]

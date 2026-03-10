@@ -1,0 +1,935 @@
+[
+  {
+    "cultivar": {
+      "slug": "early-golden",
+      "canonical_name": "Early Golden",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Illinois, USA",
+      "year_released": 1880,
+      "patent_status": "none",
+      "description": "The first named American persimmon cultivar, selected from the wild in Illinois in 1880. A foundational parent of many subsequent cultivars including those in the Lehman and Claypool breeding programs.",
+      "notes": "Female parent of many modern cultivars. Very productive. Fruit 1.5 inch diameter, deep orange, sweet flavor reminiscent of dates. Hardy to -25F. Self-fertile."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "1.5 inch diameter, small-medium for American persimmon",
+      "flavor_profile": "Very sweet when ripe, date-like flavor",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "baking", "pulp", "drying"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate",
+      "tree_form": "Upright, medium-sized tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "prok",
+      "canonical_name": "Prok",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "New York, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Widely regarded as one of the best-tasting American persimmons, with large fruit and reliable production. Self-fertile female that produces seedless fruit without a male pollinator.",
+      "notes": "Fruit 2-2.5 inch diameter. Flavor sometimes described as milder and more Asian persimmon-like. Begins bearing 2-3 years after planting. Ripens late August through late September."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "excellent",
+      "nut_weight_g": null,
+      "fruit_size_notes": "2-2.5 inch diameter, large for American persimmon",
+      "flavor_profile": "Sweet, mild, somewhat Asian persimmon-like character",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "meader",
+      "canonical_name": "Meader",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": "Elwyn Meader",
+      "origin_location": "New Hampshire, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Cold-hardy American persimmon developed in New Hampshire, notable for parthenocarpic fruit set producing seedless fruit without pollination. One of the most northern-adapted selections.",
+      "notes": "Small fruit, apricot-sized, deep orange. Parthenocarpic female. Extremely cold-hardy, suited to northern growing. Falling somewhat out of favor due to small fruit size but still valuable for zone 5 plantings."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Apricot-sized, approximately 1-1.5 inch diameter",
+      "flavor_profile": "Sweet when fully ripe, good flavor",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized, somewhat compact"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "morris-burton",
+      "canonical_name": "Morris Burton",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Considered one of the finest native persimmons for flavor, with honey-like sweetness and few seeds. One of the earliest-producing cultivars, often bearing fruit by the third year.",
+      "notes": "Smaller fruit (1-1.5 inch) with orange-red color. Not as firm as other cultivars but excellent honey-like flavor. Very early to bear."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "excellent",
+      "nut_weight_g": null,
+      "fruit_size_notes": "1-1.5 inch diameter, small",
+      "flavor_profile": "Honey-like sweetness, few seeds, excellent quality",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "yates",
+      "canonical_name": "Yates",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Indiana, USA",
+      "year_released": 1983,
+      "patent_status": "none",
+      "description": "Large-fruited American persimmon originally introduced in 1956 as 'Juhl', rediscovered and reintroduced in 1983. Won first place at the Mitchell Persimmon Festival. Self-fertile and very productive.",
+      "notes": "Originally discovered in Indiana, introduced by Talbott's Nursery as 'Juhl' in 1956, rediscovered by Ed Yates of Cincinnati, OH in 1983. Fruit 1.5-2.5 inch diameter, orange-red with rich apricot-honey flavor. Ripens late August to September."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "1.5-2.5 inch diameter, medium-large",
+      "flavor_profile": "Rich apricot-honey flavor, nutty undertones",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "pulp", "baking", "drying"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Vigorous",
+      "tree_form": "Upright, productive"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "szukis",
+      "canonical_name": "Szukis",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Niagara region, Ontario, Canada",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Unique polygamodioecious American persimmon that produces female flowers on male plants and will fruit in isolation. Valuable as both a fruiting tree and pollenizer for female varieties in food forest plantings.",
+      "notes": "Probably a seedling of Early Golden sold to Lydia Szukis, a master gardener in Niagara. Produces 2 inch round fruit, ripens early to mid October. Can sport male branches that produce cherry-sized fruit."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "2 inch diameter, medium",
+      "flavor_profile": "Sweet, good quality",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "pulp"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized, irregular"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "john-rick",
+      "canonical_name": "John Rick",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": "J.C. McDaniel",
+      "origin_location": "Illinois, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Selected by Professor J.C. McDaniel at the University of Illinois. Larger fruit than Early Golden with excellent flavor and firmness, a productive and reliable selection for food forests.",
+      "notes": "Ripens early October in southern Indiana. Excellent flavor and firmness. Fruit contains 2-8 seeds. Larger than Early Golden. Very productive."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Larger than Early Golden, approximately 1.75-2 inch",
+      "flavor_profile": "Excellent sweet flavor, firm texture",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous",
+      "tree_form": "Upright, spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "ennis-seedless",
+      "canonical_name": "Ennis Seedless",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of the rare tetraploid (60-chromosome) American persimmon cultivars, producing completely seedless fruit. Excellent flavor with moderate productivity, valued for fresh eating.",
+      "notes": "Tetraploid cultivar (60 chromosomes vs. typical 90 for hexaploids). Ripens mid-October. Medium-sized fruit, soft texture, excellent flavor. Moderate productivity compared to hexaploid cultivars."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, approximately 1.5-2 inch diameter",
+      "flavor_profile": "Excellent sweet flavor, completely seedless",
+      "flavor_rating": "excellent",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating", "pulp"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "lehmans-delight",
+      "canonical_name": "Lehman's Delight",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": "Jerry Lehman",
+      "origin_location": "Terre Haute, Indiana, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of Jerry Lehman's finest breeding selections, producing very large fruit with smooth flesh, clear pulp, and excellent sweet flavor. One of the heaviest producing American persimmons despite compact tree size.",
+      "notes": "Also known as selection '100-46'. Early to mid-season ripening. Large fruit with reddish-orange blush. Smooth flesh with clear pulp. Not a large tree but extremely heavy-bearing."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Very large for American persimmon, 2+ inch diameter",
+      "flavor_profile": "Excellent sweet flavor, smooth flesh, clear pulp",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Moderate, compact",
+      "tree_form": "Compact, heavy-bearing"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "prairie-star",
+      "canonical_name": "Prairie Star",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": "James Claypool",
+      "origin_location": "Illinois, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "From Jim Claypool's breeding program, prized for unusually large, very sweet, firm and flavorful fruit. A hexaploid (90-chromosome) selection that produces seedless fruit south of the Ohio River.",
+      "notes": "Also known as Claypool H-118. Trademarked name by One Green World. Hardy to -25F. Bears 2-3 years after planting. Ripens late September. Yield 30+ lbs. Self-fertile."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "excellent",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Large, among the biggest American persimmon selections",
+      "flavor_profile": "Very sweet, firm, excellent flavor",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "pulp", "baking", "drying"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid_late",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, productive, 12 ft with pruning"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "prairie-dawn",
+      "canonical_name": "Prairie Dawn",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": "James Claypool",
+      "origin_location": "Illinois, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Early-ripening Claypool selection featuring abundant crops of large, golden-orange, sweet fruit. Self-fertile and produces seedless fruit at maturity, ideal for small-scale food forests.",
+      "notes": "Also known as Claypool H-55A. Hardy to -25F. Bears 2-3 years after planting. Ripens late September. Self-fertile, seedless. Mature size about 12 ft with pruning."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "excellent",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Large, golden-orange fruit",
+      "flavor_profile": "Sweet, flavorful, firm",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Compact, 12 ft with pruning"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "prairie-sun",
+      "canonical_name": "Prairie Sun",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": "James Claypool",
+      "origin_location": "Illinois, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Claypool selection with beautiful orange-yellow fruit that is early ripening, sweet, firm, and delicious. Self-fertile with abundant seedless fruit production.",
+      "notes": "Also known as Claypool A-33. Hardy to -25F. Bears 2-3 years after planting. Ripens late September. Yield 30+ lbs. Self-fertile."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "excellent",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Large, orange-yellow fruit",
+      "flavor_profile": "Sweet, firm, delicious",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Compact, productive"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "h-63a",
+      "canonical_name": "H-63A",
+      "species_slug": "diospyros-virginiana",
+      "material_type": "cultivar_clone",
+      "breeder": "Jerry Lehman",
+      "origin_location": "Terre Haute, Indiana, USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A Jerry Lehman selection noted for its exceptional butterscotch flavor with no detectable astringency. A standout among American persimmon breeding selections for flavor quality.",
+      "notes": "Fruits are excellent with no astringency and very strong sweet butterscotch flavor. From Lehman breeding program in Indiana."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, approximately 1.5-2 inch",
+      "flavor_profile": "Very strong sweet butterscotch flavor, no astringency",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "pulp"],
+      "disease_resistance": {
+        "persimmon_wilt": "moderate",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "fuyu",
+      "canonical_name": "Fuyu",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan (originally from China)",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The most widely planted persimmon cultivar in the world, and the global standard for sweet non-astringent persimmons. Can be eaten firm like an apple. Ideal gateway persimmon for permaculture plantings in zones 7-10.",
+      "notes": "Introduced to US in 1870 by USDA. Pollination-constant non-astringent (PCNA). Seedless. Fruit 5-7cm diameter, squat and round, deep orange. Harvest November-December. Zones 7-10."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, 5-7 cm (2-3 inch) diameter, squat round shape, 5-8 oz",
+      "flavor_profile": "Sweet, mild, non-astringent, firm apple-like texture when ripe",
+      "flavor_rating": "good",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "drying", "baking"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "late",
+      "vigor": "Vigorous",
+      "tree_form": "Upright to spreading, 15-25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "jiro",
+      "canonical_name": "Jiro",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Classic non-astringent persimmon considered a sibling to Fuyu with extra cold tolerance and heavy reliable crops. One of the most cold-hardy among standard Asian persimmons.",
+      "notes": "PCNA type. Similar to Fuyu but somewhat more cold-hardy. Heavy, reliable crops. Attractive form. Zones 7-10, some success in zone 6b."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium-large, slightly flattened, 3-4 inch diameter",
+      "flavor_profile": "Delicious sweet flavor, non-astringent, firm when ripe",
+      "flavor_rating": "excellent",
+      "storage_quality": "excellent",
+      "culinary_uses": ["fresh_eating", "drying", "baking"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "late",
+      "vigor": "Vigorous",
+      "tree_form": "Upright spreading, attractive form"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "ichi-ki-kei-jiro",
+      "canonical_name": "Ichi-Ki-Kei-Jiro",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The most cold-hardy non-astringent Asian persimmon available, a natural dwarf sport of Jiro. Excellent for small-space permaculture plantings and urban food forests in zones 6-9.",
+      "notes": "Natural dwarf, 10-15 ft. PCNA type. Self-pollinating. Zones 6-9, the hardiest non-astringent kaki. Early season ripening September-October. Bears 2-3 years after planting. Banana-mango flavor notes."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "excellent",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium-large, flat quadrant-shaped, bright orange",
+      "flavor_profile": "Sweet, mild, banana-mango notes, non-astringent",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "drying"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Dwarf, 10-15 ft",
+      "tree_form": "Natural dwarf, compact"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "saijo",
+      "canonical_name": "Saijo",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan (mountainous regions)",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of the most cold-hardy Asian persimmon cultivars, with an exceptionally rich, complex honey-sweet flavor. Self-fertile and seedless, ideal for northern zone 6-7 permaculture food forests.",
+      "notes": "Astringent type (PCA), must be fully soft to eat. Egg-shaped, conical fruit up to 3 inches long. Hardy to -10F, zones 6-10. Ripens mid-September to mid-October. Self-fertile, seedless or nearly so."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, egg-shaped, up to 3 inches long",
+      "flavor_profile": "Exceptionally rich, complex, honey-sweet, intensely sweet and juicy",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "drying", "baking", "pulp"],
+      "disease_resistance": {
+        "anthracnose": "resistant",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Upright, medium-sized"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "hachiya",
+      "canonical_name": "Hachiya",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The most popular astringent Asian persimmon, widely grown in California. Large acorn-shaped fruit with rich, sweet flesh when fully ripe. A standard variety for drying (hoshigaki) and baking.",
+      "notes": "Astringent type, must be fully soft to eat. Large fruit up to 4 inches long, acorn-shaped. Harvest November-December. Zones 7-10. Very productive in warm climates. The classic persimmon for hoshigaki dried persimmon."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Large, up to 4 inches long, acorn-shaped, 7-10 oz",
+      "flavor_profile": "Rich, sweet, complex flavor when fully ripe",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "drying", "baking", "pulp"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "late",
+      "vigor": "Vigorous",
+      "tree_form": "Upright, large tree to 25 ft"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "great-wall",
+      "canonical_name": "Great Wall",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "China (near the Great Wall)",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Discovered by plant geographer J. Russell Smith growing near the Great Wall of China in the 1920s-30s. One of the most cold-hardy Asian persimmon cultivars, surviving -5F winters without damage.",
+      "notes": "Astringent type (PCA). Medium-sized squarish fruit, 3 inch diameter, sunset orange with thick rich mango-flavored flesh. Zones 6-9. Self-fertile. Highly productive, hardy, and long-lived."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, 3 inch diameter, squarish slightly flattened",
+      "flavor_profile": "Sweet, thick rich mango-flavored flesh",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "drying", "pulp"],
+      "disease_resistance": {
+        "anthracnose": "resistant",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous",
+      "tree_form": "Large, upright, long-lived"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "izu",
+      "canonical_name": "Izu",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The earliest-ripening high-quality non-astringent Asian persimmon, about three weeks before Fuyu. Dwarf tree habit makes it ideal for small permaculture gardens and container growing.",
+      "notes": "PCNA type. Dwarf tree. Very sweet medium-sized fruit. Ripens about 3 weeks before Fuyu. Zones 7-10. Slow to establish but reliable once growing."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, roundish",
+      "flavor_profile": "Very sweet, non-astringent, good quality",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Dwarf",
+      "tree_form": "Dwarf, compact habit"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "tam-kam",
+      "canonical_name": "Tam Kam",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Sunchow, Korea",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Cold-hardy non-astringent Asian persimmon from Korea, hardy to -10F (zone 6a). Produces crisp, sweet, seedless fruit on a medium-sized tree. Excellent candidate for east coast commercial production.",
+      "notes": "PCNA type. Flat-lobed, deep orange fruit. Hardy to -10F, zones 6a-9b. High fruit set, seedless. Harvest late October through December. Cousin to Fuyu with crisp, sweet, slightly tangy flavor."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Large, flat-lobed, deep orange",
+      "flavor_profile": "Crisp, sweet, slightly tangy, non-astringent",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "drying"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized tree"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "tsurunoko",
+      "canonical_name": "Tsurunoko (Chocolate)",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A pollination-variant non-astringent (PVNA) persimmon that develops uniquely rich brown flesh and sweet flavor when pollinated. The 'chocolate' flesh is caused by seed-produced alcohol binding tannins.",
+      "notes": "Name means 'child of the crane'. When pollinated, flesh turns brown ('chocolate'), becomes non-astringent and very sweet. Unpollinated fruit remains astringent. Conical to oval shape. Introduced to California in 19th century."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Small to medium, conical to oval, 2-3 inches",
+      "flavor_profile": "Rich, distinctive chocolate-sweet flavor when pollinated; astringent if unpollinated",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Medium-sized, upright"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "giombo",
+      "canonical_name": "Giombo",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of the most highly regarded astringent Asian persimmons, with very large fruit up to 5 inches, exceptional appearance, and sweet jelly-type flesh. A premium quality selection for warmer zones.",
+      "notes": "Astringent type (PCA). Large fruit to 5 inches, smooth texture, light translucent orange skin, jelly-type flesh. Zones 7-9. One of the highest rated for both appearance and fruit quality."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Very large, up to 5 inches, smooth and attractive",
+      "flavor_profile": "Very sweet, jelly-type flesh, smooth texture",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying", "baking", "pulp"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized, attractive"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "tamopan",
+      "canonical_name": "Tamopan",
+      "species_slug": "diospyros-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "China",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "One of the largest persimmon varieties with uniquely shaped fruit featuring a circular depression around the top third. Self-fertile and hardy to 0F, a distinctive addition to food forest plantings.",
+      "notes": "Astringent type. Very large, uniquely acorn/turban-shaped fruit. Tree can reach 30 ft, tall for an Asian persimmon. Self-fertile. Hardy to 0F. Juicy, watery flesh. Matures to 12 ft with pruning."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Very large, unique turban shape with circular depression",
+      "flavor_profile": "Sweet when fully ripe, juicy and watery",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying", "pulp"],
+      "disease_resistance": {
+        "anthracnose": "moderate",
+        "leaf_spot": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Very vigorous, can reach 30 ft",
+      "tree_form": "Large, upright"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "nikitas-gift",
+      "canonical_name": "Nikita's Gift",
+      "species_slug": "diospyros-virginiana-x-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": "Nikita Botanic Garden",
+      "origin_location": "Yalta, Ukraine",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A 75% kaki / 25% virginiana hybrid bearing bountiful crops of sweet, flavorful reddish-orange fruit. Self-fertile and hardy to -10F, combining Asian fruit quality with American cold hardiness for zone 6-9 food forests.",
+      "notes": "Seed parent is Rosseyanka (50/50 hybrid) crossed back to kaki. Grows 10-12 ft. Self-fertile. Hardy to -10F. Striking orange-yellow fall foliage. Available from One Green World, Edible Landscaping, Raintree, Logee's."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, reddish-orange, 2-3 inch",
+      "flavor_profile": "Sweet and flavorful, Asian-type quality with some American character",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating", "drying", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "resistant",
+        "anthracnose": "resistant",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate, 10-12 ft",
+      "tree_form": "Compact, semi-dwarf"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "rosseyanka",
+      "canonical_name": "Rosseyanka",
+      "species_slug": "diospyros-virginiana-x-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": "Nikita Botanic Garden",
+      "origin_location": "Yalta, Ukraine",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A true 50/50 American x Asian persimmon hybrid from Ukraine, combining cold hardiness with good fruit quality. Parent of Nikita's Gift and an important bridge cultivar in hybrid persimmon breeding.",
+      "notes": "D. kaki x D. virginiana F1 hybrid. Astringent type. Hardy and productive. Available from Edible Landscaping and specialty nurseries. Important as a parent for further hybrid breeding."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, 2-3 inch diameter",
+      "flavor_profile": "Sweet when fully ripe, intermediate between American and Asian character",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "drying", "pulp"],
+      "disease_resistance": {
+        "persimmon_wilt": "resistant",
+        "anthracnose": "resistant",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Medium-sized, spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "kassandra",
+      "canonical_name": "Kassandra",
+      "species_slug": "diospyros-virginiana-x-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "USA",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "A backcross hybrid (approximately 75% kaki, 25% virginiana) that is non-astringent, very early ripening, and cold-hardy to -16F. Notable for having no detectable astringency even when firm.",
+      "notes": "Rosseyanka backcrossed to 'Great Wall' Asian persimmon. Non-astringent with sweet honey-like flavor, no American persimmon character. Very early, ripening at same time as American persimmons, much earlier than kakis. Fruit is nice red color, American persimmon-sized."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium, similar to larger American persimmons, nice red color",
+      "flavor_profile": "Sweet honey-like, no astringency, no American persimmon character",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["fresh_eating"],
+      "disease_resistance": {
+        "persimmon_wilt": "resistant",
+        "anthracnose": "resistant",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early",
+      "vigor": "Moderate",
+      "tree_form": "Medium-sized"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "jt-02-mikkusu",
+      "canonical_name": "JT-02 (Mikkusu)",
+      "species_slug": "diospyros-virginiana-x-kaki",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Japan",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The most cold-hardy hybrid persimmon available, a 50:50 cross of American 'Josephine' x Asian 'Taishu' hardy to -22F. Thrives in zone 6a without winter dieback, producing large sweet fruit.",
+      "notes": "Bred in Japan, imported to US by Jerry Lehman. Astringent until soft, then becomes sweet with rich butterscotch notes. Medium-large, square-ish fruit 2.5-3 inches. Seedless without a pollinator. Hardy to -22F, the most cold-hardy hybrid."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Medium-large, 2.5-3 inch, square-ish shape",
+      "flavor_profile": "Sweet like Asian persimmon with rich butterscotch hint, astringent until soft",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["fresh_eating", "pulp", "baking"],
+      "disease_resistance": {
+        "persimmon_wilt": "resistant",
+        "anthracnose": "resistant",
+        "leaf_spot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Medium-sized, upright"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "diospyros-lotus-rootstock",
+      "canonical_name": "Diospyros lotus (Rootstock Seedling)",
+      "species_slug": "diospyros-lotus",
+      "material_type": "rootstock",
+      "breeder": null,
+      "origin_location": "Western Asia / Caucasus region",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The most commonly used and adaptable rootstock for persimmons in the United States. Disease-resistant and compatible with both Asian and American persimmon scions. Essential infrastructure for grafted persimmon production.",
+      "notes": "Used as rootstock for both D. kaki and D. virginiana varieties. Very easy to topwork at 2+ inch caliper. Hardy, disease-resistant. Available from Fire Ag Nursery, Fruitwood Nursery, and others. Also produces small edible date-plum fruit on its own."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "fair",
+      "nut_weight_g": null,
+      "fruit_size_notes": "Small, 0.5-0.75 inch, cherry-sized (as fruiting tree)",
+      "flavor_profile": "Sweet, date-like flavor when ripe (own fruit)",
+      "flavor_rating": "fair",
+      "storage_quality": "poor",
+      "culinary_uses": ["fresh_eating"],
+      "disease_resistance": {
+        "persimmon_wilt": "resistant",
+        "leaf_spot": "resistant",
+        "root_rot": "resistant"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous",
+      "tree_form": "Medium to large tree, used primarily as rootstock"
+    }
+  }
+]

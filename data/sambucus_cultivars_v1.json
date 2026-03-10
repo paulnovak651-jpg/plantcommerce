@@ -1,0 +1,396 @@
+[
+  {
+    "cultivar": {
+      "slug": "bob-gordon",
+      "canonical_name": "Bob Gordon",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Missouri / Missouri State University (A.L. Thomas, P.L. Byers)",
+      "origin_location": "Osceola, Missouri, USA",
+      "year_released": 2011,
+      "patent_status": "none",
+      "description": "Wild selection from Osceola, Missouri, introduced by the University of Missouri elderberry program. Widely considered the top commercial American elderberry cultivar with yields approaching triple those of older varieties.",
+      "notes": "Selected from the wild by Bob Gordon in 1999. Determinate flowering habit from late May through mid-June. Pendulous (down-hanging) clusters help deter bird predation. Primary shoots ripen fruit over a 3-week period beginning mid-late July in Missouri. Industry standard for Midwest production."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium berries on large, pendulous clusters",
+      "flavor_profile": "Rich, full elderberry flavor with good sugar-acid balance",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "dried", "tincture"],
+      "disease_resistance": {
+        "general": "good",
+        "eriophyid_mite": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Vigorous, upright to spreading",
+      "tree_form": "Multi-stemmed shrub, 8-10 feet tall and wide"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "wyldewood",
+      "canonical_name": "Wyldewood",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Missouri / Missouri State University (P.L. Byers, A.L. Thomas)",
+      "origin_location": "Eufaula, Oklahoma, USA",
+      "year_released": 2010,
+      "patent_status": "none",
+      "description": "First cultivar released by the University of Missouri elderberry program. Wild selection from eastern Oklahoma, highly productive with large berry clusters up to nearly a foot across.",
+      "notes": "Selected from the wild by Jack Millican in 1995 near Eufaula, Oklahoma, in association with Wyldewood Cellars Winery. Unpruned plants ripen fruit over a 4-week period. Extremely vigorous; in warm climates can be mown to ground after dormancy and produce fruit on primocane stems the following year."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large berries on very large clusters, nearly a foot across",
+      "flavor_profile": "Rich, full elderberry flavor, good for processing",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "dried", "tincture"],
+      "disease_resistance": {
+        "general": "good"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid_late",
+      "vigor": "Extremely vigorous",
+      "tree_form": "Multi-stemmed shrub, 8-12 feet tall, spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "ranch",
+      "canonical_name": "Ranch",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Missouri / Missouri State University",
+      "origin_location": "Missouri, USA",
+      "year_released": 2011,
+      "patent_status": "none",
+      "description": "Found growing at an abandoned homestead, believed planted in the late 1800s. Exceptionally drought tolerant and adapted to poor soils, making it ideal for low-input permaculture systems.",
+      "notes": "Released through the Missouri Elderberry Improvement Program. Quickest of the Missouri cultivars to root from cuttings. Determinate flowering habit. Shorter stature than other cultivars. Strong, upright stems. High tolerance to pests and diseases. Ripens earlier than most other varieties."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "excellent",
+      "fruit_size_notes": "Small, glossy black berries in medium clusters; clusters found mid-stem to top",
+      "flavor_profile": "Sweet, good flavor for a small-berried type",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "tincture"],
+      "disease_resistance": {
+        "general": "excellent",
+        "pest_tolerance": "high"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "early_mid",
+      "vigor": "Vigorous, compact",
+      "tree_form": "Multi-stemmed shrub, 5-6 feet tall, upright and compact"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "pocahontas",
+      "canonical_name": "Pocahontas",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Missouri (A.L. Thomas)",
+      "origin_location": "Pocahontas, Arkansas, USA",
+      "year_released": 2019,
+      "patent_status": "none",
+      "description": "Wild selection from Arkansas that out-yielded Bob Gordon in University of Missouri multi-year replicated trials. One of the most productive American elderberry cultivars tested to date.",
+      "notes": "Provided to the University of Missouri by Rockey Starnes in 2014. In trials from 2015-2021, Pocahontas yielded roughly double that of Bob Gordon at some site-years (e.g., 11.61 vs 5.16 kg/plot). Vigorous grower well-suited to warm, southern climates."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large berries on large clusters",
+      "flavor_profile": "Good processing flavor, suitable for commercial syrup and juice",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "tincture"],
+      "disease_resistance": {
+        "general": "good"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Very vigorous",
+      "tree_form": "Multi-stemmed shrub, vigorous and spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "adams",
+      "canonical_name": "Adams",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "NY Agricultural Experiment Station (William Adams, selector)",
+      "origin_location": "Union Springs, New York, USA",
+      "year_released": 1926,
+      "patent_status": "none",
+      "description": "The original named American elderberry cultivar, selected from the wild in New York in 1915 and released in 1926. Still widely grown and available nearly a century later. Adams No. 1 and No. 2 have largely merged in the trade into a single 'Adams' designation.",
+      "notes": "Selected by William Adams in Union Springs, NY, sent to Geneva, NY experiment station, and released 11 years later. Adams No. 2 reportedly has the largest fruit of all elderberry cultivars. Large flowerheads and berry clusters. Vigorous, upright habit reaching 8-10 feet. Early ripening in mid- to late August. Very cold hardy."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large berries (especially Adams No. 2) on large clusters; easy picking",
+      "flavor_profile": "Sweet, classic elderberry flavor",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "pie", "dried"],
+      "disease_resistance": {
+        "general": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous, strong upright growth",
+      "tree_form": "Multi-stemmed shrub, 8-10 feet tall and wide"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "york",
+      "canonical_name": "York",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "NY Agricultural Experiment Station",
+      "origin_location": "New York, USA",
+      "year_released": 1964,
+      "patent_status": "none",
+      "description": "One of the most widely planted American elderberry cultivars, valued for having the largest berries of any cultivated elderberry. Excellent pollinator for other S. canadensis varieties and self-fruitful.",
+      "notes": "Released in 1964 from New York. Fruit sometimes larger than Adams. Ripens after Adams, extending the harvest window. Self-fruitful but sets significantly larger crops with cross-pollination. Considered one of the best all-around pollinators. Hardy zones 4-9. Large bush, 10-12 feet."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Largest berries of any cultivated elderberry; large, juicy clusters",
+      "flavor_profile": "Mildly tart, juicy, excellent for processing",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "pie"],
+      "disease_resistance": {
+        "general": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Very vigorous",
+      "tree_form": "Large multi-stemmed shrub, 10-12 feet tall and wide"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "nova",
+      "canonical_name": "Nova",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Agriculture Canada, Kentville Research Station",
+      "origin_location": "Kentville, Nova Scotia, Canada",
+      "year_released": 1959,
+      "patent_status": "none",
+      "description": "Canadian cultivar released from Kentville, an open-pollinated seedling of Adams No. 2. Early ripening with sweet, juicy fruit, well-suited to northern climates. Classic pairing with York for cross-pollination and extended harvest.",
+      "notes": "Released in 1959 alongside Scotia. Fruit ripens early in August, earlier than York or Bob Gordon, making it valuable for extending the harvest window. Large, purple-black, soft, sweet and juicy fruit. Matures to about 6 feet tall and wide. Excellent cold hardiness."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Large, purple-black berries on medium-large clusters",
+      "flavor_profile": "Sweet, juicy, mild elderberry flavor",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "fresh_eating"],
+      "disease_resistance": {
+        "general": "moderate"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "early",
+      "vigor": "Moderate",
+      "tree_form": "Multi-stemmed shrub, 6 feet tall and wide, compact"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "scotia",
+      "canonical_name": "Scotia",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Agriculture Canada, Kentville Research Station",
+      "origin_location": "Kentville, Nova Scotia, Canada",
+      "year_released": 1960,
+      "patent_status": "none",
+      "description": "Canadian cultivar with the highest sugar content of any named elderberry cultivar. Seedling of Adams No. 2, well-adapted to northern and cold climates with excellent cold hardiness to zone 3.",
+      "notes": "Released in 1960 from Kentville alongside Nova. Berries are on the smaller side but have the richest sugar levels of named cultivars. Early ripening. Popular with market growers in Canada. Vigorous but somewhat smaller than some other cultivars."
+    },
+    "traits": {
+      "yield_potential": "good",
+      "precocity": "good",
+      "fruit_size_notes": "Small-medium berries, smaller than other cultivars but very sweet",
+      "flavor_profile": "Sweetest of named elderberry cultivars; high sugar content",
+      "flavor_rating": "excellent",
+      "storage_quality": "fair",
+      "culinary_uses": ["syrup", "wine", "jam", "juice", "fresh_eating"],
+      "disease_resistance": {
+        "general": "moderate"
+      },
+      "bloom_period": "early_mid",
+      "harvest_season": "early",
+      "vigor": "Moderate to vigorous",
+      "tree_form": "Multi-stemmed shrub, 6-8 feet tall"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "johns",
+      "canonical_name": "Johns",
+      "species_slug": "sambucus-canadensis",
+      "material_type": "cultivar_clone",
+      "breeder": "Agriculture Canada, Kentville Research Station",
+      "origin_location": "Kentville, Nova Scotia, Canada",
+      "year_released": 1954,
+      "patent_status": "none",
+      "description": "Canadian cultivar known for exceptionally large fruit clusters, a minimum of 5 inches in diameter. Open-pollinated seedling of Adams, vigorous and tall, well-suited to northern food forests.",
+      "notes": "Released in 1954 from Kentville. Requires cross-pollination from another variety for best production. Large, vigorous plant reaching 10-12 feet. Clusters are the largest of any named cultivar. Overall yield per plant may be less than Adams, but fruit quality and cluster size are outstanding."
+    },
+    "traits": {
+      "yield_potential": "fair",
+      "precocity": "fair",
+      "fruit_size_notes": "Large berries in exceptionally large clusters, minimum 5 inches (14 cm) diameter",
+      "flavor_profile": "Sweet, good elderberry flavor",
+      "flavor_rating": "good",
+      "storage_quality": "fair",
+      "culinary_uses": ["syrup", "wine", "jam", "juice"],
+      "disease_resistance": {
+        "general": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Very vigorous, tall",
+      "tree_form": "Large multi-stemmed shrub, 10-12 feet tall and wide"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "marge",
+      "canonical_name": "Marge",
+      "species_slug": "sambucus-nigra",
+      "material_type": "cultivar_clone",
+      "breeder": "University of Missouri / Missouri State University (A.L. Thomas, P.L. Byers)",
+      "origin_location": "Mulvane, Kansas, USA (open-pollinated seedling of Haschberg)",
+      "year_released": 2015,
+      "patent_status": "none",
+      "description": "European elderberry (S. nigra) selected for exceptional performance in the Midwestern USA. Open-pollinated seedling of Haschberg that produced three times the yield of the best American elderberry genotypes in Missouri trials. Extremely robust and drought-resistant.",
+      "notes": "Named after Marge Millican of Wyldewood Cellars Winery in Kansas. DNA markers confirm it as S. nigra subsp. nigra. In field trials (2008-2011) at three Missouri locations, Marge yielded 1.89 kg/plant vs 0.65 kg/plant for the next best American genotype. The first European elderberry cultivar specifically recommended for North American producers. Available from Raintree Nursery, Logee's, and others."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Medium-large berries on large European-type clusters",
+      "flavor_profile": "Rich European elderberry flavor; excellent for wine, syrup, and cordial",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "cordial", "jam", "juice", "elderflower_products"],
+      "disease_resistance": {
+        "general": "good",
+        "drought_tolerance": "excellent"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Extremely vigorous, fast-growing",
+      "tree_form": "Multi-stemmed shrub, 8-12 feet tall, upright and spreading"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "haschberg",
+      "canonical_name": "Haschberg",
+      "species_slug": "sambucus-nigra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Austria/Germany",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "The leading European elderberry cultivar for commercial production in Germany and Austria. Available from multiple North American nurseries including Raintree, One Green World, and Planting Justice. Parent of the Marge cultivar.",
+      "notes": "Most widely planted commercial elderberry in Europe. Partly self-fertile but yields improve with cross-pollination. Large, juicy, flavorful bluish-black berries. May not perform as well in hot, humid Midwest summers as Marge, but does well in Pacific Northwest and northern climates. Valued for both berry and elderflower harvest."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Large berries on abundant clusters; one of the largest-fruited European types",
+      "flavor_profile": "Rich, flavorful European elderberry; excellent for cordials and wine",
+      "flavor_rating": "excellent",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "cordial", "jam", "juice", "elderflower_products"],
+      "disease_resistance": {
+        "general": "moderate",
+        "note": "May struggle in hot, humid Midwest summers"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous",
+      "tree_form": "Multi-stemmed shrub, 8-12 feet tall"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "samdal",
+      "canonical_name": "Samdal",
+      "species_slug": "sambucus-nigra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Denmark",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Danish commercial elderberry cultivar with berries particularly high in anthocyanins. Compact, columnar growth habit makes it well-suited to hedgerow and food forest edge plantings in North America.",
+      "notes": "Available from One Green World, Raintree Nursery, Planting Justice, and others. Narrow growth habit (2-5 feet wide) compared to most elderberries. Hardy zones 3-8. High anthocyanin content makes it especially valuable for medicinal syrup production. Plant with Samyl for cross-pollination."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Large clusters of black fruit high in anthocyanins",
+      "flavor_profile": "Rich, dark, high in anthocyanins; excellent for medicinal syrup",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "cordial", "jam", "juice", "tincture", "elderflower_products"],
+      "disease_resistance": {
+        "general": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous, columnar",
+      "tree_form": "Compact shrub, 6-8 feet tall, 2-5 feet wide; columnar habit"
+    }
+  },
+  {
+    "cultivar": {
+      "slug": "samyl",
+      "canonical_name": "Samyl",
+      "species_slug": "sambucus-nigra",
+      "material_type": "cultivar_clone",
+      "breeder": null,
+      "origin_location": "Denmark",
+      "year_released": null,
+      "patent_status": "none",
+      "description": "Danish commercial elderberry cultivar, companion to Samdal with slightly better yields. Compact growth habit ideal for small-space permaculture plantings and hedgerows. Hardy to zone 3.",
+      "notes": "Available from Raintree Nursery, Planting Justice, and others. Similar compact, columnar habit to Samdal. Reported to have slightly better yields than Samdal. Best planted with Samdal for cross-pollination. Bushy, vigorous growth."
+    },
+    "traits": {
+      "yield_potential": "excellent",
+      "precocity": "good",
+      "fruit_size_notes": "Large clusters of dark berries; slightly higher yielding than Samdal",
+      "flavor_profile": "Good European elderberry flavor for processing",
+      "flavor_rating": "good",
+      "storage_quality": "good",
+      "culinary_uses": ["syrup", "wine", "cordial", "jam", "juice", "elderflower_products"],
+      "disease_resistance": {
+        "general": "moderate"
+      },
+      "bloom_period": "mid",
+      "harvest_season": "mid",
+      "vigor": "Vigorous, bushy",
+      "tree_form": "Compact shrub, 6-8 feet tall, 2-5 feet wide; bushy columnar habit"
+    }
+  }
+]
