@@ -47,9 +47,9 @@ function DealCard({ plant }: { plant: HomepagePlant }) {
         {plant.speciesName}
       </Text>
       {plant.lowestPriceCents != null && (
-        <p className="mt-2 text-sm font-semibold text-accent">
+        <Text variant="price" color="accent" as="p" className="mt-2">
           ${(plant.lowestPriceCents / 100).toFixed(2)}
-        </p>
+        </Text>
       )}
       {plant.nurseryName && (
         <Text variant="caption" color="tertiary" className="mt-0.5">
@@ -117,12 +117,12 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="relative bg-accent px-4 py-20 text-center hero-grain">
         <div className="mx-auto max-w-3xl">
-          <h1 className="font-serif text-4xl font-semibold text-text-inverse md:text-5xl">
+          <Text variant="display" as="h1" color="inverse" className="text-4xl md:text-5xl">
             Find Plants, Compare Nurseries
-          </h1>
-          <p className="mt-4 text-lg text-text-inverse/80">
+          </Text>
+          <Text variant="body" color="inverse" className="mt-4 text-lg opacity-80">
             Search once, compare nursery stock across North America.
-          </p>
+          </Text>
           <div className="mt-8">
             <SearchBar />
           </div>
@@ -136,8 +136,8 @@ export default async function HomePage() {
                 key={stat.label}
                 className="rounded-[var(--radius-lg)] bg-white/10 px-5 py-3 text-center backdrop-blur-sm"
               >
-                <p className="font-serif text-2xl font-semibold text-text-inverse">{stat.value}</p>
-                <p className="text-xs uppercase tracking-wide text-text-inverse/60">{stat.label}</p>
+                <Text variant="h2" color="inverse" as="p">{stat.value}</Text>
+                <Text variant="caption" color="inverse" as="p" className="uppercase tracking-wide opacity-60">{stat.label}</Text>
               </div>
             ))}
           </div>
@@ -239,11 +239,11 @@ export default async function HomePage() {
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/10 text-accent">
                 {step.icon}
               </div>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
+              <Text variant="caption" color="tertiary" as="p" className="mt-1 font-medium uppercase tracking-wide">
                 Step {i + 1}
-              </p>
+              </Text>
               <Text variant="h3" className="mt-3">{step.title}</Text>
-              <p className="mt-2 text-sm text-text-secondary">{step.description}</p>
+              <Text variant="sm" color="secondary" as="p" className="mt-2">{step.description}</Text>
             </div>
           ))}
         </div>

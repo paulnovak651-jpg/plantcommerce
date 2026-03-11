@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { getAllBrowsePlants } from '@/lib/queries/browse';
+import { Text } from '@/components/ui/Text';
 import { BrowseContent } from '@/components/BrowseContent';
 import { BrowseGridSkeleton } from '@/components/PlantCardSkeleton';
 
@@ -17,17 +18,12 @@ export default async function BrowsePage() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-accent px-4 py-16 text-center">
+      {/* Compact page header — SEO h1 without wasting vertical space */}
+      <div className="border-b border-border-subtle bg-surface-primary px-4 py-4">
         <div className="mx-auto max-w-7xl">
-          <h1 className="font-serif text-4xl font-semibold text-text-inverse md:text-5xl">
-            Browse All Plants
-          </h1>
-          <p className="mt-3 text-lg text-text-inverse/80">
-            Filter, sort, and compare availability across nurseries.
-          </p>
+          <Text variant="h2" as="h1">Browse All Plants</Text>
         </div>
-      </section>
+      </div>
 
       {/* Main content */}
       <div className="mx-auto max-w-7xl px-4 py-8">

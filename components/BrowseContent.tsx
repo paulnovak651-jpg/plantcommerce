@@ -15,6 +15,7 @@ import { getUserZone } from '@/lib/zone-persistence';
 import { BrowseShell } from '@/components/browse/BrowseShell';
 import { BrowseHeader } from '@/components/browse/BrowseHeader';
 import { BrowseGrid } from '@/components/browse/BrowseGrid';
+import { CategoryContext } from '@/components/browse/CategoryContext';
 import type { FilterPill } from '@/components/browse/ActiveFilterPills';
 import { FACET_REGISTRY } from '@/lib/facets/registry';
 
@@ -431,6 +432,16 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
         />
       }
     >
+      {selectedCategories.length === 1 && (
+        <CategoryContext
+          category={selectedCategories[0]}
+          total={headerTotal}
+          onClear={() =>
+            updateState({ multiSelect: { ...facetState.multiSelect, category: [] } })
+          }
+        />
+      )}
+
       <BrowseHeader
         query={facetState.q}
         sort={facetState.sort}
@@ -438,9 +449,13 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
         total={headerTotal}
         page={headerPage}
         perPage={headerPerPage}
+        selectedCategories={selectedCategories}
         onQueryChange={(value) => updateState({ q: value })}
         onSortChange={(v) => updateState({ sort: v, page: 1 })}
         onGroupByChange={(v) => updateState({ groupBy: v, page: 1 })}
+        onCategorySelect={(cat) =>
+          updateState({ multiSelect: { ...facetState.multiSelect, category: [cat] } })
+        }
       />
 
       {loading && (

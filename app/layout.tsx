@@ -57,7 +57,7 @@ export default async function RootLayout({
           {/* Tier 1: Logo bar */}
           <div className="bg-surface-raised">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-              <form action="/search" method="GET" role="search" className="hidden md:block">
+              <form action="/browse" method="GET" role="search" className="hidden md:block">
                 <div className="flex items-center gap-2 rounded-full border border-border bg-surface-primary px-3 py-1.5">
                   <svg className="h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <circle cx="11" cy="11" r="8" />
@@ -124,7 +124,6 @@ export default async function RootLayout({
                 <h3 className="text-sm font-semibold uppercase tracking-wide text-text-inverse">Browse</h3>
                 <ul className="mt-3 space-y-2 text-sm">
                   <li><Link href="/browse" className="text-text-inverse/70 hover:text-text-inverse">Browse Plants</Link></li>
-                  <li><Link href="/search" className="text-text-inverse/70 hover:text-text-inverse">Search</Link></li>
                   <li><Link href="/marketplace" className="text-text-inverse/70 hover:text-text-inverse">Marketplace</Link></li>
                 </ul>
               </div>

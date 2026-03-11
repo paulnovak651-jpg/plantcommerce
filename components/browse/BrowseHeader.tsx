@@ -2,6 +2,8 @@
 
 import { SearchBar } from '@/components/ui/SearchBar';
 import { SortBar } from '@/components/SortBar';
+import { CATEGORY_OPTIONS } from '@/lib/facets/registry';
+import { categoryColors, defaultColor } from '@/lib/category-colors';
 
 interface BrowseHeaderProps {
   query: string;
@@ -10,9 +12,11 @@ interface BrowseHeaderProps {
   total: number;
   page: number;
   perPage: number;
+  selectedCategories: string[];
   onQueryChange: (value: string) => void;
   onSortChange: (value: string) => void;
   onGroupByChange: (value: 'species' | 'genus') => void;
+  onCategorySelect: (category: string) => void;
 }
 
 export function BrowseHeader({
@@ -22,12 +26,30 @@ export function BrowseHeader({
   total,
   page,
   perPage,
+  selectedCategories,
   onQueryChange,
   onSortChange,
   onGroupByChange,
+  onCategorySelect,
 }: BrowseHeaderProps) {
   return (
     <>
+      {selectedCategories.length === 0 && (
+        <div className="mb-3 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          {CATEGORY_OPTIONS.map((cat) => (
+            <button
+              key={cat.value}
+              onClick={() => onCategorySelect(cat.value)}
+              className="shrink-0 rounded-full px-3 py-1 text-xs font-medium text-white transition-opacity hover:opacity-80"
+              style={{
+                background: categoryColors[cat.value]?.from ?? defaultColor.from,
+              }}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="mb-4">
         <SearchBar
           value={query}
