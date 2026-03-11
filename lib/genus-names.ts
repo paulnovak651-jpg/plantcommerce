@@ -1,14 +1,27 @@
 /** Human-friendly common names for genus-level pages, keyed by botanical name (lowercase). */
 export const GENUS_COMMON_NAMES: Record<string, string> = {
-  corylus: 'Hazelnuts',
-  castanea: 'Chestnuts',
-  juglans: 'Walnuts',
+  actinidia: 'Kiwifruit',
+  alnus: 'Alders',
+  asimina: 'Pawpaws',
   carya: 'Hickories & Pecans',
+  castanea: 'Chestnuts',
+  celtis: 'Hackberries',
+  corylus: 'Hazelnuts',
   diospyros: 'Persimmons',
-  sambucus: 'Elderberries',
-  malus: 'Apples',
-  prunus: 'Stone Fruits',
+  elaeagnus: 'Silverberries',
+  ficus: 'Figs',
   gevuina: 'Chilean Hazelnut',
+  hippophae: 'Sea Buckthorns',
+  juglans: 'Walnuts',
+  malus: 'Apples',
+  morus: 'Mulberries',
+  prunus: 'Stone Fruits',
+  pyrus: 'Pears',
+  quercus: 'Oaks',
+  rubus: 'Brambles',
+  sambucus: 'Elderberries',
+  vaccinium: 'Blueberries',
+  vitis: 'Grapes',
 };
 
 /**

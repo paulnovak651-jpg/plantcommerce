@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { getAllBrowsePlants } from '@/lib/queries/browse';
+import { getTaxonomyTree } from '@/lib/queries/taxonomy-tree';
 import { Text } from '@/components/ui/Text';
-import { BrowseContent } from '@/components/BrowseContent';
+import { BrowsePageClient } from '@/components/browse/BrowsePageClient';
 import { BrowseGridSkeleton } from '@/components/PlantCardSkeleton';
 
 export const metadata: Metadata = {
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 
 export default async function BrowsePage() {
   const supabase = await createClient();
-  const allPlants = await getAllBrowsePlants(supabase);
+  const [allPlants, taxonomyTree] = await Promise.all([
+    getAllBrowsePlants(supabase),
+    getTaxonomyTree(supabase),
+  ]);
 
   return (
     <div>
@@ -32,7 +36,7 @@ export default async function BrowsePage() {
             <BrowseGridSkeleton />
           </div>
         }>
-          <BrowseContent allPlants={allPlants} />
+          <BrowsePageClient allPlants={allPlants} taxonomyTree={taxonomyTree} />
         </Suspense>
       </div>
     </div>
