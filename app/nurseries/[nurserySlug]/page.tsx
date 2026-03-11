@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Text } from '@/components/ui/Text';
 import { Surface } from '@/components/ui/Surface';
+import { Tag } from '@/components/ui/Tag';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 
@@ -96,6 +97,16 @@ export default async function NurseryPage({ params }: Props) {
     (nursery as any).last_scraped_at ?? null
   );
 
+  const trustLabel = (() => {
+    const lastScraped = (nursery as any).last_scraped_at;
+    if (!lastScraped) return null;
+    const daysSince = Math.floor((Date.now() - new Date(lastScraped).getTime()) / (1000 * 60 * 60 * 24));
+    if ((nursery as any).consent_status === 'approved' && daysSince <= 14)
+      return { text: 'Live Inventory', type: 'availability' as const };
+    if (daysSince <= 14) return { text: 'Tracked', type: 'info' as const };
+    return null;
+  })();
+
   const localBusinessJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -131,7 +142,10 @@ export default async function NurseryPage({ params }: Props) {
 
       {/* Nursery header */}
       <section>
-        <Text variant="h1">{displayName}</Text>
+        <div className="flex flex-wrap items-center gap-3">
+          <Text variant="h1">{displayName}</Text>
+          {trustLabel && <Tag type={trustLabel.type}>{trustLabel.text}</Tag>}
+        </div>
         <Text variant="body" color="secondary" className="mt-1">{location}</Text>
         {nursery.website_url && (
           <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -159,7 +173,7 @@ export default async function NurseryPage({ params }: Props) {
           </Surface>
           {lastUpdatedLabel && (
             <Surface elevation="raised" padding="compact">
-              <Text variant="caption" color="tertiary">Prices last checked</Text>
+              <Text variant="caption" color="tertiary">Inventory last updated</Text>
               <Text variant="body" className="font-medium">{lastUpdatedLabel}</Text>
             </Surface>
           )}

@@ -8,6 +8,8 @@ interface PriceChangeInfo {
   priceCentsNew: number;
 }
 
+export type TrustLevel = 'live' | 'tracked' | 'community';
+
 interface OfferItem {
   nurseryName: string;
   nurserySlug: string;
@@ -21,15 +23,32 @@ interface OfferItem {
   offerStatus?: string;
   lastSeenAt?: string | null;
   priceChange?: PriceChangeInfo | null;
+  trustLevel?: TrustLevel;
 }
 
 interface PriceComparisonTableProps {
   offers: OfferItem[];
+  lastCheckedAt?: string | null;
 }
 
 function formatLastSeen(lastSeenAt: string | null | undefined): string | null {
   if (!lastSeenAt) return null;
   return `Last seen ${daysAgo(lastSeenAt).toLowerCase()}`;
+}
+
+const trustConfig: Record<TrustLevel, { label: string; className: string }> = {
+  live: { label: 'Live Inventory', className: 'bg-accent-light text-status-active' },
+  tracked: { label: 'Tracked', className: 'bg-yellow-50 text-yellow-700' },
+  community: { label: 'Community Data', className: 'bg-surface-inset text-text-secondary' },
+};
+
+function TrustBadge({ level }: { level: TrustLevel }) {
+  const config = trustConfig[level];
+  return (
+    <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${config.className}`}>
+      {config.label}
+    </span>
+  );
 }
 
 function PriceChangeIndicator({ change }: { change: PriceChangeInfo }) {
@@ -55,7 +74,7 @@ function PriceChangeIndicator({ change }: { change: PriceChangeInfo }) {
   );
 }
 
-export function PriceComparisonTable({ offers }: PriceComparisonTableProps) {
+export function PriceComparisonTable({ offers, lastCheckedAt }: PriceComparisonTableProps) {
   const sortedOffers = [...offers].sort((a, b) => {
     // Stale offers sort to the bottom
     const aStale = a.offerStatus === 'stale' ? 1 : 0;
@@ -111,9 +130,12 @@ export function PriceComparisonTable({ offers }: PriceComparisonTableProps) {
                     {offer.nurseryName}
                   </Link>
                   {offer.location && <p className="text-xs text-text-tertiary">{offer.location}</p>}
+                  {offer.trustLevel && (
+                    <div className="mt-1"><TrustBadge level={offer.trustLevel} /></div>
+                  )}
                 </div>
                 <div className="text-right">
-                  <p className={`font-serif text-lg font-semibold ${isStale ? 'text-text-tertiary line-through' : 'text-text-primary'}`}>
+                  <p className={`font-serif text-lg font-semibold tabular-nums ${isStale ? 'text-text-tertiary line-through' : 'text-text-primary'}`}>
                     {formatPrice(offer.price, offer.priceCents)}
                   </p>
                   {!isStale && offer.priceChange && (
@@ -213,10 +235,13 @@ export function PriceComparisonTable({ offers }: PriceComparisonTableProps) {
                       {offer.location && (
                         <span className="text-xs text-text-tertiary">{offer.location}</span>
                       )}
+                      {offer.trustLevel && (
+                        <div className="mt-0.5"><TrustBadge level={offer.trustLevel} /></div>
+                      )}
                     </div>
                   </td>
                   <td className="py-3 pr-4">
-                    <span className={`font-semibold ${isStale ? 'text-text-tertiary line-through' : 'text-text-primary'}`}>
+                    <span className={`font-semibold tabular-nums ${isStale ? 'text-text-tertiary line-through' : 'text-text-primary'}`}>
                       {formatPrice(offer.price, offer.priceCents)}
                     </span>
                     {!isStale && offer.priceChange && (
@@ -257,6 +282,11 @@ export function PriceComparisonTable({ offers }: PriceComparisonTableProps) {
         <Text variant="sm" color="secondary" className="mt-3">
           Lowest price: {formatPrice(lowestPriced.price, lowestPriced.priceCents)} at{' '}
           {lowestPriced.nurseryName}
+        </Text>
+      )}
+      {lastCheckedAt && (
+        <Text variant="sm" color="tertiary" className="mt-2">
+          Prices last checked: {lastCheckedAt}
         </Text>
       )}
     </Surface>

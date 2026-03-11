@@ -1,6 +1,6 @@
 # PlantCommerce — Project Context
 
-> **Last updated:** 2026-03-10
+> **Last updated:** 2026-03-11
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder
@@ -19,21 +19,22 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 
 ## Current State (as of 2026-03-10)
 
-- **Foundation:** Solid. 99+ tests passing, TypeScript strict, CI green. 48 SQL migrations applied.
+- **Foundation:** Solid. 166+ tests passing, TypeScript strict, CI green. 48 SQL migrations applied.
 - **Multi-genus:** 15+ genera seeded — hazelnuts, chestnuts, walnuts, hickories, apples, stone fruit, persimmons, mulberries, elderberries, grapes, blueberries, figs, pears, gooseberries/currants, raspberries/blackberries, kiwi, goumi, sea buckthorn, hackberry.
 - **Live data:** 3 nurseries live (Burnt Ridge, Grimo, Raintree). Pipeline consent-gated. Cron: Monday 6am UTC.
 - **Deployment:** Live at https://plantfinder-cyan.vercel.app.
 - **Scrapers:** Data-driven registry with generic Shopify + WooCommerce scrapers. Config-driven — adding a nursery is a registry entry.
 - **Knowledge graph:** Taxonomy tree (37+ nodes, Kingdom→Genus) + growing profiles + pollination profiles.
-- **Browse/Search:** Full filtering (zone, category, availability, genus grouping), active filter chips, skeleton loaders, sort options, pagination.
+- **Browse/Search:** Full filtering (zone, category, availability, chill hours, bearing age, height, genus grouping), active filter chips, skeleton loaders, sort options, pagination, search autocomplete.
 - **Genus hubs:** `/plants/genus/[slug]` pages with species cards, growing profiles, breadcrumbs (Category → Genus → Species → Cultivar).
-- **Price comparison:** Side-by-side nursery comparison tables with best-price tags and mobile card layout.
+- **Price comparison:** Side-by-side nursery comparison tables with best-price tags, trust badges (Live/Tracked/Community), price sparklines, mobile card layout.
 - **Nursery maps:** Leaflet + OpenStreetMap on nursery index + cultivar pages.
 - **Community marketplace:** Anonymous WTS/WTB listings, admin moderation, 90-day expiry.
-- **Stock alerts:** Email signup for availability/price notifications.
+- **Stock alerts:** Email signup for availability/price notifications, toast confirmations.
 - **Pollination checker:** Species-level pollination compatibility tool.
 - **Admin tools:** `/admin/unmatched` + `/admin/listings` (token-protected).
-- **UI polish:** 20+ visual refinements — nav highlighting, custom checkboxes, filter chips, animations, skeleton loaders, grain textures, per-category card colors, botanical sketch placeholders, typography refinements.
+- **Homepage:** Dynamic sections (Recently Restocked, Best Deals, New to Database), seasonal banner, zone recommendations, scroll reveal animations.
+- **UI polish:** 30+ visual refinements — nav highlighting, custom checkboxes, filter chips, animations, skeleton loaders, grain textures, per-category card colors, botanical sketch placeholders, typography refinements, tabular-nums pricing, hover micro-interactions, toast notifications, progressive disclosure.
 
 ---
 
@@ -135,8 +136,6 @@ Generic Shopify and WooCommerce scrapers available — new nurseries can be onbo
 1. **No user accounts yet** — community listings work without auth; next step is Supabase Auth for trust tiers, saved searches, price alerts
 2. **Nursery consent outreach** — 3 nurseries being scraped but none formally consented yet
 3. **More nursery coverage** — only 3 of 10 nurseries have live scrapers; consent needed before expanding
-4. **Price history UI** — price_history table exists but no frontend surface yet
-
 ### Strategic questions
 5. What's the user retention story beyond v1?
 6. What is the first concrete growth loop to reach 50 recurring users?
@@ -158,13 +157,19 @@ Generic Shopify and WooCommerce scrapers available — new nurseries can be onbo
 - ✅ Genus hub pages + genus-level browsing (Sprint 5)
 - ✅ Multi-genus data seeding (15+ genera, 48 migrations)
 - ✅ Price comparison tables, API rate limiting, pagination
+- ✅ UX Sprint (SPRINT_UX.md) — 23 tasks across 6 groups:
+  - A: Contextual Filters (smart filter sidebar, active chips, genus grouping, skeleton loaders, autocomplete)
+  - B: Trust & Pricing Signals (price on cards, freshness labels, quick facts ribbon, price sparklines, trust badges, growing info badge)
+  - C: Empty States & Cross-Links (cultivar empty state CTAs, related species cross-links)
+  - D: Page Restructuring (progressive disclosure on species pages, homepage dynamic sections)
+  - E: Visual Density & Design Refinement (card border treatment, tabular-nums, hover micro-interactions, toast notifications, scroll reveal, seasonal banner)
+  - F: Zone-Aware Features (zone recommendations, search autocomplete)
 
 ### Current priorities
 1. **Nursery consent & outreach** ← NEXT — draft outreach template, contact existing 3 nurseries
 2. **Build remaining scrapers** — One Green World + others, only after consent obtained
 3. **Auth + engagement** — Supabase Auth, tie listings to accounts, trust tier progression
-4. **Price history UI** — surface trends from price_history table
-5. **Expand genus data** — more cultivar coverage for seeded genera
+4. **Expand genus data** — more cultivar coverage for seeded genera
 
 ---
 

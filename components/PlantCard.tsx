@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PlantImage } from '@/components/ui/PlantImage';
+import { Tag } from '@/components/ui/Tag';
 
 export interface PlantCardProps {
   slug: string;
@@ -10,13 +11,16 @@ export interface PlantCardProps {
   cultivarCount: number;
   zoneMin?: number | null;
   zoneMax?: number | null;
+  lowestPrice?: number | null;
+  bestNursery?: string | null;
+  hasGrowingProfile?: boolean;
 }
 
 export function PlantCard(props: PlantCardProps) {
   return (
     <Link
       href={`/plants/${props.slug}`}
-      className="group block plant-card-hover rounded-[var(--radius-lg)] bg-surface-raised"
+      className="group block plant-card-hover rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary"
     >
       <div className="relative">
         <PlantImage src={props.imageUrl ?? null} alt={props.canonicalName} aspectRatio="3/4" />
@@ -37,9 +41,19 @@ export function PlantCard(props: PlantCardProps) {
         {props.botanicalName && (
           <p className="mt-0.5 font-serif text-sm italic text-text-secondary">{props.botanicalName}</p>
         )}
-        {props.zoneMin != null && props.zoneMax != null && (
-          <p className="mt-1 text-xs text-text-tertiary">Zone {props.zoneMin}{'\u2013'}{props.zoneMax}</p>
+        {props.lowestPrice != null && (
+          <p className="mt-1 text-sm font-semibold text-accent">
+            from ${(props.lowestPrice / 100).toFixed(2)}
+          </p>
         )}
+        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          {props.zoneMin != null && props.zoneMax != null && (
+            <Tag type="zone">Z{props.zoneMin}{'\u2013'}{props.zoneMax}</Tag>
+          )}
+          {props.nurseryCount === 0 && props.hasGrowingProfile && (
+            <Tag type="info">Growing info</Tag>
+          )}
+        </div>
         {props.cultivarCount > 0 && (
           <p className="mt-1 text-xs font-medium text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             {props.cultivarCount} cultivar{props.cultivarCount !== 1 ? 's' : ''}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useToast } from '@/components/ui/ToastProvider';
 
 interface AlertSignupFormProps {
   cultivarId: string;
@@ -29,6 +30,7 @@ export function AlertSignupForm({
   cultivarName,
   compact = false,
 }: AlertSignupFormProps) {
+  const { addToast } = useToast();
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -57,11 +59,11 @@ export function AlertSignupForm({
         return;
       }
 
-      setSuccessMessage(
-        payload.data?.duplicate
-          ? 'You already have an active alert for this cultivar.'
-          : "You're on the list. We'll email you when stock appears."
-      );
+      const msg = payload.data?.duplicate
+        ? 'You already have an active alert for this cultivar.'
+        : "You're on the list. We'll email you when stock appears.";
+      setSuccessMessage(msg);
+      addToast('Stock alert created!', 'success');
       setEmail('');
     } catch {
       setErrorMessage('Network error. Please try again.');

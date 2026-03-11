@@ -1,9 +1,20 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface BrowseFilters {
+  q?: string;
   categories?: string[];
   zoneMin?: number | null;
   zoneMax?: number | null;
+  chillHoursMin?: number | null;
+  chillHoursMax?: number | null;
+  bearingAgeMin?: number | null;
+  bearingAgeMax?: number | null;
+  heightMin?: number | null;
+  heightMax?: number | null;
+  spreadMin?: number | null;
+  spreadMax?: number | null;
+  soilPhMin?: number | null;
+  soilPhMax?: number | null;
   availableOnly?: boolean;
   sun?: string[];
   growthRate?: string[];
@@ -22,10 +33,23 @@ export interface BrowsePlant {
   cultivar_count: number;
   zone_min: number | null;
   zone_max: number | null;
+  chill_hours_min: number | null;
+  chill_hours_max: number | null;
+  years_to_bearing_min: number | null;
+  years_to_bearing_max: number | null;
+  mature_height_min_ft: number | null;
+  mature_height_max_ft: number | null;
+  mature_spread_min_ft: number | null;
+  mature_spread_max_ft: number | null;
+  soil_ph_min: number | null;
+  soil_ph_max: number | null;
   sun_requirement: string | null;
   growth_rate: string | null;
   genus_slug: string | null;
   genus_name: string | null;
+  lowest_price_cents: number | null;
+  best_nursery_name: string | null;
+  has_growing_profile: boolean;
 }
 
 interface PlantRow {
@@ -45,14 +69,50 @@ interface CultivarRow {
 interface OfferRow {
   cultivar_id: string | null;
   nursery_id: string;
+  price_cents: number | null;
+}
+
+interface NurseryRow {
+  id: string;
+  name: string;
 }
 
 interface ProfileRow {
   plant_entity_id: string;
   usda_zone_min: number | null;
   usda_zone_max: number | null;
+  chill_hours_min: number | null;
+  chill_hours_max: number | null;
+  years_to_bearing_min: number | null;
+  years_to_bearing_max: number | null;
+  mature_height_min_ft: number | null;
+  mature_height_max_ft: number | null;
+  mature_spread_min_ft: number | null;
+  mature_spread_max_ft: number | null;
+  soil_ph_min: number | null;
+  soil_ph_max: number | null;
   sun_requirement: string | null;
   growth_rate: string | null;
+}
+
+function matchesBrowseKeyword(plant: BrowsePlant, rawQuery: string): boolean {
+  const q = rawQuery.trim().toLowerCase();
+  if (!q) return true;
+
+  const haystack = [
+    plant.canonical_name,
+    plant.botanical_name,
+    plant.display_category,
+    plant.genus_name,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  if (haystack.includes(q)) return true;
+
+  const terms = q.split(/\s+/).filter(Boolean);
+  return terms.every((term) => haystack.includes(term));
 }
 
 /** Fetch and assemble all browse plants (no filtering/sorting/pagination). */
@@ -65,6 +125,7 @@ export async function getAllBrowsePlants(
     { data: offerRows, error: offerError },
     { data: profileRows, error: profileError },
     { data: genusRows, error: genusError },
+    { data: nurseryRows, error: nurseryError },
   ] = await Promise.all([
     supabase
       .from('plant_entities')
@@ -77,19 +138,23 @@ export async function getAllBrowsePlants(
       .eq('curation_status', 'published'),
     supabase
       .from('inventory_offers')
-      .select('cultivar_id, nursery_id')
+      .select('cultivar_id, nursery_id, price_cents')
       .eq('offer_status', 'active'),
     supabase
       .from('species_growing_profiles')
-      .select('plant_entity_id, usda_zone_min, usda_zone_max, sun_requirement, growth_rate'),
+      .select('plant_entity_id, usda_zone_min, usda_zone_max, chill_hours_min, chill_hours_max, years_to_bearing_min, years_to_bearing_max, mature_height_min_ft, mature_height_max_ft, mature_spread_min_ft, mature_spread_max_ft, soil_ph_min, soil_ph_max, sun_requirement, growth_rate'),
     supabase
       .from('taxonomy_nodes')
       .select('id, slug, name, taxonomy_ranks!inner(rank_name)')
       .eq('taxonomy_ranks.rank_name', 'genus'),
+    supabase
+      .from('nurseries')
+      .select('id, name')
+      .eq('curation_status', 'published'),
   ]);
 
-  if (plantError || cultivarError || offerError || profileError || genusError) {
-    console.error('getAllBrowsePlants error:', plantError ?? cultivarError ?? offerError ?? profileError ?? genusError);
+  if (plantError || cultivarError || offerError || profileError || genusError || nurseryError) {
+    console.error('getAllBrowsePlants error:', plantError ?? cultivarError ?? offerError ?? profileError ?? genusError ?? nurseryError);
     return [];
   }
 
@@ -97,6 +162,12 @@ export async function getAllBrowsePlants(
   const cultivars = (cultivarRows ?? []) as CultivarRow[];
   const offers = (offerRows ?? []) as OfferRow[];
   const profiles = (profileRows ?? []) as ProfileRow[];
+
+  // Build nursery name lookup
+  const nurseryNameMap = new Map<string, string>();
+  for (const n of (nurseryRows ?? []) as NurseryRow[]) {
+    nurseryNameMap.set(n.id, n.name);
+  }
 
   // Build genus lookup: taxonomy_node_id → { slug, name }
   const genusMap = new Map<string, { slug: string; name: string }>();
@@ -107,7 +178,26 @@ export async function getAllBrowsePlants(
   const cultivarToPlant = new Map<string, string>();
   const plantCultivarCount = new Map<string, number>();
   const plantNurseries = new Map<string, Set<string>>();
-  const profileMap = new Map<string, { zone_min: number | null; zone_max: number | null; sun_requirement: string | null; growth_rate: string | null }>();
+  const plantBestOffer = new Map<string, { priceCents: number; nurseryId: string }>();
+  const profileMap = new Map<
+    string,
+    {
+      zone_min: number | null;
+      zone_max: number | null;
+      chill_hours_min: number | null;
+      chill_hours_max: number | null;
+      years_to_bearing_min: number | null;
+      years_to_bearing_max: number | null;
+      mature_height_min_ft: number | null;
+      mature_height_max_ft: number | null;
+      mature_spread_min_ft: number | null;
+      mature_spread_max_ft: number | null;
+      soil_ph_min: number | null;
+      soil_ph_max: number | null;
+      sun_requirement: string | null;
+      growth_rate: string | null;
+    }
+  >();
 
   for (const cultivar of cultivars) {
     if (!cultivar.plant_entity_id) continue;
@@ -121,12 +211,29 @@ export async function getAllBrowsePlants(
     if (!plantId) continue;
     if (!plantNurseries.has(plantId)) plantNurseries.set(plantId, new Set());
     plantNurseries.get(plantId)?.add(offer.nursery_id);
+
+    if (offer.price_cents != null) {
+      const current = plantBestOffer.get(plantId);
+      if (!current || offer.price_cents < current.priceCents) {
+        plantBestOffer.set(plantId, { priceCents: offer.price_cents, nurseryId: offer.nursery_id });
+      }
+    }
   }
 
   for (const profile of profiles) {
     profileMap.set(profile.plant_entity_id, {
       zone_min: profile.usda_zone_min,
       zone_max: profile.usda_zone_max,
+      chill_hours_min: profile.chill_hours_min,
+      chill_hours_max: profile.chill_hours_max,
+      years_to_bearing_min: profile.years_to_bearing_min,
+      years_to_bearing_max: profile.years_to_bearing_max,
+      mature_height_min_ft: profile.mature_height_min_ft,
+      mature_height_max_ft: profile.mature_height_max_ft,
+      mature_spread_min_ft: profile.mature_spread_min_ft,
+      mature_spread_max_ft: profile.mature_spread_max_ft,
+      soil_ph_min: profile.soil_ph_min,
+      soil_ph_max: profile.soil_ph_max,
       sun_requirement: profile.sun_requirement,
       growth_rate: profile.growth_rate,
     });
@@ -135,6 +242,7 @@ export async function getAllBrowsePlants(
   return plants.map((plant) => {
     const profile = profileMap.get(plant.id);
     const genus = plant.taxonomy_node_id ? genusMap.get(plant.taxonomy_node_id) : null;
+    const bestOffer = plantBestOffer.get(plant.id);
     return {
       id: plant.id,
       slug: plant.slug,
@@ -145,10 +253,23 @@ export async function getAllBrowsePlants(
       cultivar_count: plantCultivarCount.get(plant.id) ?? 0,
       zone_min: profile?.zone_min ?? null,
       zone_max: profile?.zone_max ?? null,
+      chill_hours_min: profile?.chill_hours_min ?? null,
+      chill_hours_max: profile?.chill_hours_max ?? null,
+      years_to_bearing_min: profile?.years_to_bearing_min ?? null,
+      years_to_bearing_max: profile?.years_to_bearing_max ?? null,
+      mature_height_min_ft: profile?.mature_height_min_ft ?? null,
+      mature_height_max_ft: profile?.mature_height_max_ft ?? null,
+      mature_spread_min_ft: profile?.mature_spread_min_ft ?? null,
+      mature_spread_max_ft: profile?.mature_spread_max_ft ?? null,
+      soil_ph_min: profile?.soil_ph_min ?? null,
+      soil_ph_max: profile?.soil_ph_max ?? null,
       sun_requirement: profile?.sun_requirement ?? null,
       growth_rate: profile?.growth_rate ?? null,
       genus_slug: genus?.slug ?? null,
       genus_name: genus?.name ?? null,
+      lowest_price_cents: bestOffer?.priceCents ?? null,
+      best_nursery_name: bestOffer ? (nurseryNameMap.get(bestOffer.nurseryId) ?? null) : null,
+      has_growing_profile: profileMap.has(plant.id),
     };
   });
 }
@@ -160,6 +281,10 @@ export function filterBrowsePlants(
 ): { plants: BrowsePlant[]; total: number } {
   let filtered = [...allPlants];
 
+  if (filters.q && filters.q.trim()) {
+    filtered = filtered.filter((plant) => matchesBrowseKeyword(plant, filters.q!));
+  }
+
   if (filters.categories && filters.categories.length > 0) {
     filtered = filtered.filter(
       (plant) => plant.display_category != null && filters.categories!.includes(plant.display_category)
@@ -170,6 +295,56 @@ export function filterBrowsePlants(
   }
   if (filters.zoneMax != null) {
     filtered = filtered.filter((plant) => plant.zone_min == null || plant.zone_min <= filters.zoneMax!);
+  }
+  if (filters.chillHoursMin != null) {
+    filtered = filtered.filter(
+      (plant) => plant.chill_hours_max == null || plant.chill_hours_max >= filters.chillHoursMin!
+    );
+  }
+  if (filters.chillHoursMax != null) {
+    filtered = filtered.filter(
+      (plant) => plant.chill_hours_min == null || plant.chill_hours_min <= filters.chillHoursMax!
+    );
+  }
+  if (filters.bearingAgeMin != null) {
+    filtered = filtered.filter(
+      (plant) => plant.years_to_bearing_max == null || plant.years_to_bearing_max >= filters.bearingAgeMin!
+    );
+  }
+  if (filters.bearingAgeMax != null) {
+    filtered = filtered.filter(
+      (plant) => plant.years_to_bearing_min == null || plant.years_to_bearing_min <= filters.bearingAgeMax!
+    );
+  }
+  if (filters.heightMin != null) {
+    filtered = filtered.filter(
+      (plant) => plant.mature_height_max_ft == null || plant.mature_height_max_ft >= filters.heightMin!
+    );
+  }
+  if (filters.heightMax != null) {
+    filtered = filtered.filter(
+      (plant) => plant.mature_height_min_ft == null || plant.mature_height_min_ft <= filters.heightMax!
+    );
+  }
+  if (filters.spreadMin != null) {
+    filtered = filtered.filter(
+      (plant) => plant.mature_spread_max_ft == null || plant.mature_spread_max_ft >= filters.spreadMin!
+    );
+  }
+  if (filters.spreadMax != null) {
+    filtered = filtered.filter(
+      (plant) => plant.mature_spread_min_ft == null || plant.mature_spread_min_ft <= filters.spreadMax!
+    );
+  }
+  if (filters.soilPhMin != null) {
+    filtered = filtered.filter(
+      (plant) => plant.soil_ph_max == null || plant.soil_ph_max >= filters.soilPhMin!
+    );
+  }
+  if (filters.soilPhMax != null) {
+    filtered = filtered.filter(
+      (plant) => plant.soil_ph_min == null || plant.soil_ph_min <= filters.soilPhMax!
+    );
   }
   if (filters.availableOnly) {
     filtered = filtered.filter((plant) => plant.nursery_count > 0);
@@ -208,6 +383,7 @@ export async function getBrowsePlants(
     { data: offerRows, error: offerError },
     { data: profileRows, error: profileError },
     { data: genusRows, error: genusError },
+    { data: nurseryRows, error: nurseryError },
   ] = await Promise.all([
     supabase
       .from('plant_entities')
@@ -220,21 +396,25 @@ export async function getBrowsePlants(
       .eq('curation_status', 'published'),
     supabase
       .from('inventory_offers')
-      .select('cultivar_id, nursery_id')
+      .select('cultivar_id, nursery_id, price_cents')
       .eq('offer_status', 'active'),
     supabase
       .from('species_growing_profiles')
-      .select('plant_entity_id, usda_zone_min, usda_zone_max, sun_requirement, growth_rate'),
+      .select('plant_entity_id, usda_zone_min, usda_zone_max, chill_hours_min, chill_hours_max, years_to_bearing_min, years_to_bearing_max, mature_height_min_ft, mature_height_max_ft, mature_spread_min_ft, mature_spread_max_ft, soil_ph_min, soil_ph_max, sun_requirement, growth_rate'),
     supabase
       .from('taxonomy_nodes')
       .select('id, slug, name, taxonomy_ranks!inner(rank_name)')
       .eq('taxonomy_ranks.rank_name', 'genus'),
+    supabase
+      .from('nurseries')
+      .select('id, name')
+      .eq('curation_status', 'published'),
   ]);
 
-  if (plantError || cultivarError || offerError || profileError || genusError) {
+  if (plantError || cultivarError || offerError || profileError || genusError || nurseryError) {
     console.error(
       'getBrowsePlants error:',
-      plantError ?? cultivarError ?? offerError ?? profileError ?? genusError
+      plantError ?? cultivarError ?? offerError ?? profileError ?? genusError ?? nurseryError
     );
     return { plants: [], total: 0 };
   }
@@ -245,6 +425,12 @@ export async function getBrowsePlants(
     const offers = (offerRows ?? []) as OfferRow[];
     const profiles = (profileRows ?? []) as ProfileRow[];
 
+    // Build nursery name lookup
+    const nurseryNameLookup = new Map<string, string>();
+    for (const n of (nurseryRows ?? []) as NurseryRow[]) {
+      nurseryNameLookup.set(n.id, n.name);
+    }
+
     // Build genus lookup
     const genusLookup = new Map<string, { slug: string; name: string }>();
     for (const g of (genusRows ?? []) as Array<{ id: string; slug: string; name: string }>) {
@@ -254,11 +440,22 @@ export async function getBrowsePlants(
     const cultivarToPlant = new Map<string, string>();
     const plantCultivarCount = new Map<string, number>();
     const plantNurseries = new Map<string, Set<string>>();
+    const plantBestOffer2 = new Map<string, { priceCents: number; nurseryId: string }>();
     const profileMap = new Map<
       string,
       {
         zone_min: number | null;
         zone_max: number | null;
+        chill_hours_min: number | null;
+        chill_hours_max: number | null;
+        years_to_bearing_min: number | null;
+        years_to_bearing_max: number | null;
+        mature_height_min_ft: number | null;
+        mature_height_max_ft: number | null;
+        mature_spread_min_ft: number | null;
+        mature_spread_max_ft: number | null;
+        soil_ph_min: number | null;
+        soil_ph_max: number | null;
         sun_requirement: string | null;
         growth_rate: string | null;
       }
@@ -279,12 +476,29 @@ export async function getBrowsePlants(
       if (!plantId) continue;
       if (!plantNurseries.has(plantId)) plantNurseries.set(plantId, new Set());
       plantNurseries.get(plantId)?.add(offer.nursery_id);
+
+      if (offer.price_cents != null) {
+        const current = plantBestOffer2.get(plantId);
+        if (!current || offer.price_cents < current.priceCents) {
+          plantBestOffer2.set(plantId, { priceCents: offer.price_cents, nurseryId: offer.nursery_id });
+        }
+      }
     }
 
     for (const profile of profiles) {
       profileMap.set(profile.plant_entity_id, {
         zone_min: profile.usda_zone_min,
         zone_max: profile.usda_zone_max,
+        chill_hours_min: profile.chill_hours_min,
+        chill_hours_max: profile.chill_hours_max,
+        years_to_bearing_min: profile.years_to_bearing_min,
+        years_to_bearing_max: profile.years_to_bearing_max,
+        mature_height_min_ft: profile.mature_height_min_ft,
+        mature_height_max_ft: profile.mature_height_max_ft,
+        mature_spread_min_ft: profile.mature_spread_min_ft,
+        mature_spread_max_ft: profile.mature_spread_max_ft,
+        soil_ph_min: profile.soil_ph_min,
+        soil_ph_max: profile.soil_ph_max,
         sun_requirement: profile.sun_requirement,
         growth_rate: profile.growth_rate,
       });
@@ -293,6 +507,7 @@ export async function getBrowsePlants(
     let filtered: BrowsePlant[] = plants.map((plant) => {
       const profile = profileMap.get(plant.id);
       const genus = plant.taxonomy_node_id ? genusLookup.get(plant.taxonomy_node_id) : null;
+      const bestOffer = plantBestOffer2.get(plant.id);
       return {
         id: plant.id,
         slug: plant.slug,
@@ -303,12 +518,29 @@ export async function getBrowsePlants(
         cultivar_count: plantCultivarCount.get(plant.id) ?? 0,
         zone_min: profile?.zone_min ?? null,
         zone_max: profile?.zone_max ?? null,
+        chill_hours_min: profile?.chill_hours_min ?? null,
+        chill_hours_max: profile?.chill_hours_max ?? null,
+        years_to_bearing_min: profile?.years_to_bearing_min ?? null,
+        years_to_bearing_max: profile?.years_to_bearing_max ?? null,
+        mature_height_min_ft: profile?.mature_height_min_ft ?? null,
+        mature_height_max_ft: profile?.mature_height_max_ft ?? null,
+        mature_spread_min_ft: profile?.mature_spread_min_ft ?? null,
+        mature_spread_max_ft: profile?.mature_spread_max_ft ?? null,
+        soil_ph_min: profile?.soil_ph_min ?? null,
+        soil_ph_max: profile?.soil_ph_max ?? null,
         sun_requirement: profile?.sun_requirement ?? null,
         growth_rate: profile?.growth_rate ?? null,
         genus_slug: genus?.slug ?? null,
         genus_name: genus?.name ?? null,
+        lowest_price_cents: bestOffer?.priceCents ?? null,
+        best_nursery_name: bestOffer ? (nurseryNameLookup.get(bestOffer.nurseryId) ?? null) : null,
+        has_growing_profile: profileMap.has(plant.id),
       };
     });
+
+    if (filters.q && filters.q.trim()) {
+      filtered = filtered.filter((plant) => matchesBrowseKeyword(plant, filters.q!));
+    }
 
     if (filters.categories && filters.categories.length > 0) {
       filtered = filtered.filter(
@@ -327,6 +559,57 @@ export async function getBrowsePlants(
     if (filters.zoneMax != null) {
       filtered = filtered.filter(
         (plant) => plant.zone_min == null || plant.zone_min <= filters.zoneMax!
+      );
+    }
+
+    if (filters.chillHoursMin != null) {
+      filtered = filtered.filter(
+        (plant) => plant.chill_hours_max == null || plant.chill_hours_max >= filters.chillHoursMin!
+      );
+    }
+    if (filters.chillHoursMax != null) {
+      filtered = filtered.filter(
+        (plant) => plant.chill_hours_min == null || plant.chill_hours_min <= filters.chillHoursMax!
+      );
+    }
+    if (filters.bearingAgeMin != null) {
+      filtered = filtered.filter(
+        (plant) => plant.years_to_bearing_max == null || plant.years_to_bearing_max >= filters.bearingAgeMin!
+      );
+    }
+    if (filters.bearingAgeMax != null) {
+      filtered = filtered.filter(
+        (plant) => plant.years_to_bearing_min == null || plant.years_to_bearing_min <= filters.bearingAgeMax!
+      );
+    }
+    if (filters.heightMin != null) {
+      filtered = filtered.filter(
+        (plant) => plant.mature_height_max_ft == null || plant.mature_height_max_ft >= filters.heightMin!
+      );
+    }
+    if (filters.heightMax != null) {
+      filtered = filtered.filter(
+        (plant) => plant.mature_height_min_ft == null || plant.mature_height_min_ft <= filters.heightMax!
+      );
+    }
+    if (filters.spreadMin != null) {
+      filtered = filtered.filter(
+        (plant) => plant.mature_spread_max_ft == null || plant.mature_spread_max_ft >= filters.spreadMin!
+      );
+    }
+    if (filters.spreadMax != null) {
+      filtered = filtered.filter(
+        (plant) => plant.mature_spread_min_ft == null || plant.mature_spread_min_ft <= filters.spreadMax!
+      );
+    }
+    if (filters.soilPhMin != null) {
+      filtered = filtered.filter(
+        (plant) => plant.soil_ph_max == null || plant.soil_ph_max >= filters.soilPhMin!
+      );
+    }
+    if (filters.soilPhMax != null) {
+      filtered = filtered.filter(
+        (plant) => plant.soil_ph_min == null || plant.soil_ph_min <= filters.soilPhMax!
       );
     }
 

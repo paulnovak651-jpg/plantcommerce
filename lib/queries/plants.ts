@@ -35,6 +35,11 @@ export interface RelatedSpecies {
   botanical_name: string | null;
 }
 
+export interface RelatedSpeciesWithOffers extends RelatedSpecies {
+  nursery_count: number;
+  cultivar_count: number;
+}
+
 export async function getPlantEntityBySlug(
   supabase: SupabaseClient,
   slug: string
@@ -312,6 +317,228 @@ export async function getHomepageCategories(
     });
 }
 
+export interface HomepagePlant {
+  cultivarSlug: string;
+  cultivarName: string;
+  speciesSlug: string;
+  speciesName: string;
+  lowestPriceCents: number | null;
+  nurseryName: string | null;
+}
+
+export interface ZoneRecommendationSpecies {
+  slug: string;
+  canonical_name: string;
+  botanical_name: string | null;
+  zone_min: number | null;
+  zone_max: number | null;
+  nursery_count: number;
+}
+
+export async function getZoneRecommendationSpecies(
+  supabase: SupabaseClient,
+  limit = 120
+): Promise<ZoneRecommendationSpecies[]> {
+  const [
+    { data: speciesRows, error: speciesError },
+    { data: cultivarRows, error: cultivarError },
+    { data: offerRows, error: offerError },
+    { data: profileRows, error: profileError },
+  ] = await Promise.all([
+    supabase
+      .from('plant_entities')
+      .select('id, slug, canonical_name, botanical_name')
+      .eq('curation_status', 'published')
+      .order('canonical_name')
+      .limit(limit),
+    supabase
+      .from('cultivars')
+      .select('id, plant_entity_id')
+      .eq('curation_status', 'published'),
+    supabase
+      .from('inventory_offers')
+      .select('cultivar_id, nursery_id')
+      .eq('offer_status', 'active'),
+    supabase
+      .from('species_growing_profiles')
+      .select('plant_entity_id, usda_zone_min, usda_zone_max'),
+  ]);
+
+  if (speciesError || cultivarError || offerError || profileError) {
+    console.error(
+      'getZoneRecommendationSpecies error:',
+      speciesError ?? cultivarError ?? offerError ?? profileError
+    );
+    return [];
+  }
+
+  const species = (speciesRows ?? []) as Array<{
+    id: string;
+    slug: string;
+    canonical_name: string;
+    botanical_name: string | null;
+  }>;
+  const speciesIds = new Set(species.map((row) => row.id));
+
+  const cultivarToSpecies = new Map<string, string>();
+  for (const row of (cultivarRows ?? []) as Array<{ id: string; plant_entity_id: string | null }>) {
+    if (row.plant_entity_id && speciesIds.has(row.plant_entity_id)) {
+      cultivarToSpecies.set(row.id, row.plant_entity_id);
+    }
+  }
+
+  const nurserySetsBySpecies = new Map<string, Set<string>>();
+  for (const row of (offerRows ?? []) as Array<{ cultivar_id: string | null; nursery_id: string }>) {
+    if (!row.cultivar_id) continue;
+    const speciesId = cultivarToSpecies.get(row.cultivar_id);
+    if (!speciesId) continue;
+    if (!nurserySetsBySpecies.has(speciesId)) {
+      nurserySetsBySpecies.set(speciesId, new Set<string>());
+    }
+    nurserySetsBySpecies.get(speciesId)?.add(row.nursery_id);
+  }
+
+  const profileBySpecies = new Map<
+    string,
+    { zone_min: number | null; zone_max: number | null }
+  >();
+  for (const row of (profileRows ?? []) as Array<{
+    plant_entity_id: string;
+    usda_zone_min: number | null;
+    usda_zone_max: number | null;
+  }>) {
+    if (!speciesIds.has(row.plant_entity_id)) continue;
+    profileBySpecies.set(row.plant_entity_id, {
+      zone_min: row.usda_zone_min,
+      zone_max: row.usda_zone_max,
+    });
+  }
+
+  return species.map((row) => {
+    const profile = profileBySpecies.get(row.id);
+    return {
+      slug: row.slug,
+      canonical_name: row.canonical_name,
+      botanical_name: row.botanical_name,
+      zone_min: profile?.zone_min ?? null,
+      zone_max: profile?.zone_max ?? null,
+      nursery_count: nurserySetsBySpecies.get(row.id)?.size ?? 0,
+    };
+  });
+}
+
+export async function getRecentlyRestocked(
+  supabase: SupabaseClient,
+  limit = 8
+): Promise<HomepagePlant[]> {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from('inventory_offers')
+    .select(`
+      price_cents,
+      updated_at,
+      cultivars!inner (
+        slug, canonical_name,
+        plant_entities!inner ( slug, canonical_name )
+      ),
+      nurseries!inner ( name )
+    `)
+    .eq('offer_status', 'active')
+    .gte('updated_at', sevenDaysAgo)
+    .order('updated_at', { ascending: false })
+    .limit(50);
+
+  if (error || !data) return [];
+
+  // Deduplicate by cultivar slug
+  const seen = new Set<string>();
+  const results: HomepagePlant[] = [];
+  for (const row of data as any[]) {
+    const cv = row.cultivars;
+    const pe = cv?.plant_entities;
+    if (!cv?.slug || !pe?.slug || seen.has(cv.slug)) continue;
+    seen.add(cv.slug);
+    results.push({
+      cultivarSlug: cv.slug,
+      cultivarName: cv.canonical_name,
+      speciesSlug: pe.slug,
+      speciesName: pe.canonical_name,
+      lowestPriceCents: row.price_cents,
+      nurseryName: row.nurseries?.name ?? null,
+    });
+    if (results.length >= limit) break;
+  }
+  return results;
+}
+
+export async function getBestDeals(
+  supabase: SupabaseClient,
+  limit = 8
+): Promise<HomepagePlant[]> {
+  const { data, error } = await supabase
+    .from('inventory_offers')
+    .select(`
+      price_cents,
+      cultivars!inner (
+        slug, canonical_name,
+        plant_entities!inner ( slug, canonical_name )
+      ),
+      nurseries!inner ( name )
+    `)
+    .eq('offer_status', 'active')
+    .not('price_cents', 'is', null)
+    .order('price_cents', { ascending: true })
+    .limit(50);
+
+  if (error || !data) return [];
+
+  const seen = new Set<string>();
+  const results: HomepagePlant[] = [];
+  for (const row of data as any[]) {
+    const cv = row.cultivars;
+    const pe = cv?.plant_entities;
+    if (!cv?.slug || !pe?.slug || seen.has(cv.slug)) continue;
+    seen.add(cv.slug);
+    results.push({
+      cultivarSlug: cv.slug,
+      cultivarName: cv.canonical_name,
+      speciesSlug: pe.slug,
+      speciesName: pe.canonical_name,
+      lowestPriceCents: row.price_cents,
+      nurseryName: row.nurseries?.name ?? null,
+    });
+    if (results.length >= limit) break;
+  }
+  return results;
+}
+
+export async function getNewAdditions(
+  supabase: SupabaseClient,
+  limit = 8
+): Promise<HomepagePlant[]> {
+  const { data, error } = await supabase
+    .from('cultivars')
+    .select(`
+      slug, canonical_name, created_at,
+      plant_entities!inner ( slug, canonical_name )
+    `)
+    .eq('curation_status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error || !data) return [];
+
+  return (data as any[]).map((row) => ({
+    cultivarSlug: row.slug,
+    cultivarName: row.canonical_name,
+    speciesSlug: row.plant_entities?.slug ?? '',
+    speciesName: row.plant_entities?.canonical_name ?? '',
+    lowestPriceCents: null,
+    nurseryName: null,
+  }));
+}
+
 export async function getRelatedSpecies(
   supabase: SupabaseClient,
   genus: string,
@@ -332,4 +559,96 @@ export async function getRelatedSpecies(
   }
 
   return (data ?? []) as RelatedSpecies[];
+}
+
+export async function getRelatedSpeciesWithOffers(
+  supabase: SupabaseClient,
+  genus: string,
+  excludeSlug: string,
+  limit = 6
+): Promise<RelatedSpeciesWithOffers[]> {
+  const { data: speciesRows, error: speciesError } = await supabase
+    .from('plant_entities')
+    .select('id, slug, canonical_name, botanical_name')
+    .eq('genus', genus)
+    .eq('curation_status', 'published')
+    .neq('slug', excludeSlug)
+    .order('canonical_name');
+
+  if (speciesError) {
+    console.error('getRelatedSpeciesWithOffers species error:', speciesError);
+    return [];
+  }
+
+  const species = (speciesRows ?? []) as Array<{
+    id: string;
+    slug: string;
+    canonical_name: string;
+    botanical_name: string | null;
+  }>;
+  if (species.length === 0) return [];
+
+  const speciesIds = species.map((row) => row.id);
+  const { data: cultivarRows, error: cultivarError } = await supabase
+    .from('cultivars')
+    .select('id, plant_entity_id')
+    .in('plant_entity_id', speciesIds)
+    .eq('curation_status', 'published');
+
+  if (cultivarError) {
+    console.error('getRelatedSpeciesWithOffers cultivar error:', cultivarError);
+    return [];
+  }
+
+  const cultivarToSpecies = new Map<string, string>();
+  const cultivarCountBySpecies = new Map<string, number>();
+  for (const row of (cultivarRows ?? []) as Array<{ id: string; plant_entity_id: string | null }>) {
+    if (!row.plant_entity_id) continue;
+    cultivarToSpecies.set(row.id, row.plant_entity_id);
+    cultivarCountBySpecies.set(
+      row.plant_entity_id,
+      (cultivarCountBySpecies.get(row.plant_entity_id) ?? 0) + 1
+    );
+  }
+
+  const cultivarIds = Array.from(cultivarToSpecies.keys());
+  if (cultivarIds.length === 0) return [];
+
+  const { data: offerRows, error: offerError } = await supabase
+    .from('inventory_offers')
+    .select('cultivar_id, nursery_id')
+    .in('cultivar_id', cultivarIds)
+    .eq('offer_status', 'active');
+
+  if (offerError) {
+    console.error('getRelatedSpeciesWithOffers offer error:', offerError);
+    return [];
+  }
+
+  const nurserySetsBySpecies = new Map<string, Set<string>>();
+  for (const row of (offerRows ?? []) as Array<{ cultivar_id: string | null; nursery_id: string }>) {
+    if (!row.cultivar_id) continue;
+    const speciesId = cultivarToSpecies.get(row.cultivar_id);
+    if (!speciesId) continue;
+    if (!nurserySetsBySpecies.has(speciesId)) {
+      nurserySetsBySpecies.set(speciesId, new Set<string>());
+    }
+    nurserySetsBySpecies.get(speciesId)?.add(row.nursery_id);
+  }
+
+  return species
+    .map((row) => ({
+      slug: row.slug,
+      canonical_name: row.canonical_name,
+      botanical_name: row.botanical_name,
+      nursery_count: nurserySetsBySpecies.get(row.id)?.size ?? 0,
+      cultivar_count: cultivarCountBySpecies.get(row.id) ?? 0,
+    }))
+    .filter((row) => row.nursery_count > 0)
+    .sort((a, b) => {
+      if (b.nursery_count !== a.nursery_count) return b.nursery_count - a.nursery_count;
+      if (b.cultivar_count !== a.cultivar_count) return b.cultivar_count - a.cultivar_count;
+      return a.canonical_name.localeCompare(b.canonical_name);
+    })
+    .slice(0, limit);
 }

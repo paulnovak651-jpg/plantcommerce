@@ -6,6 +6,7 @@ import { SkipNav } from '@/components/SkipNav';
 import { MobileMenu } from '@/components/MobileMenu';
 import { NavLinks } from '@/components/NavLinks';
 import { ZonePrompt, ZoneBanner } from '@/components/ZonePrompt';
+import { ToastProvider } from '@/components/ui/ToastProvider';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -95,9 +96,11 @@ export default async function RootLayout({
 
         <ZoneBanner />
 
+        <ToastProvider>
         <main id="main-content" className="page-enter">
           {children}
         </main>
+        </ToastProvider>
 
         <footer className="bg-accent">
           <div className="mx-auto max-w-7xl px-4 py-12">

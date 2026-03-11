@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useToast } from '@/components/ui/ToastProvider';
 
 const US_STATES = [
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
@@ -62,6 +63,7 @@ export function ListingForm({ prefillCultivar }: { prefillCultivar?: string }) {
     ...INITIAL,
     raw_cultivar_text: prefillCultivar ?? '',
   });
+  const { addToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,6 +149,7 @@ export function ListingForm({ prefillCultivar }: { prefillCultivar?: string }) {
         setError(json.error?.message ?? 'Submission failed. Please try again.');
       } else {
         setSubmitted(true);
+        addToast('Listing submitted for review', 'success');
       }
     } catch {
       setError('Network error. Please check your connection and try again.');

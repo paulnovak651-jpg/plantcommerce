@@ -37,3 +37,41 @@ export async function getLatestPriceChanges(
 
   return result;
 }
+
+export interface PriceHistoryPoint {
+  offerId: string;
+  priceCents: number;
+  detectedAt: string;
+}
+
+/**
+ * Get all price history points for a set of offer IDs.
+ * Returns points sorted by date ascending, grouped by offer ID.
+ */
+export async function getPriceHistoryForOffers(
+  supabase: SupabaseClient,
+  offerIds: string[]
+): Promise<Map<string, PriceHistoryPoint[]>> {
+  if (offerIds.length === 0) return new Map();
+
+  const { data, error } = await supabase
+    .from('price_history')
+    .select('offer_id, price_cents_new, detected_at')
+    .in('offer_id', offerIds)
+    .order('detected_at', { ascending: true });
+
+  if (error || !data) return new Map();
+
+  const result = new Map<string, PriceHistoryPoint[]>();
+  for (const row of data) {
+    const points = result.get(row.offer_id) ?? [];
+    points.push({
+      offerId: row.offer_id,
+      priceCents: row.price_cents_new,
+      detectedAt: row.detected_at,
+    });
+    result.set(row.offer_id, points);
+  }
+
+  return result;
+}

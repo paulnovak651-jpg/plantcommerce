@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import { getPlantEntityBySlug, getRelatedSpecies } from '@/lib/queries/plants';
+import {
+  getPlantEntityBySlug,
+  getRelatedSpecies,
+  getRelatedSpeciesWithOffers,
+} from '@/lib/queries/plants';
 import { loadSpeciesPage } from '@/lib/queries/loaders';
 import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
 import Link from 'next/link';
@@ -10,13 +14,44 @@ import { Text } from '@/components/ui/Text';
 import { BotanicalName } from '@/components/ui/BotanicalName';
 import { Tag } from '@/components/ui/Tag';
 import { TraitGrid } from '@/components/ui/TraitGrid';
+import { Disclosure } from '@/components/ui/Disclosure';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 import { ListingCard } from '@/components/ListingCard';
+import { QuickFactsRibbon } from '@/components/QuickFactsRibbon';
 import type { Cultivar } from '@/lib/types';
+import type { GrowingProfile } from '@/lib/types';
 
 interface Props {
   params: Promise<{ speciesSlug: string }>;
+}
+
+function buildQuickFacts(profile: GrowingProfile): { label: string; value: string }[] {
+  const facts: { label: string; value: string }[] = [];
+
+  if (profile.usda_zone_min != null && profile.usda_zone_max != null) {
+    facts.push({ label: 'Zone', value: `${profile.usda_zone_min}\u2013${profile.usda_zone_max}` });
+  }
+  if (profile.mature_height_min_ft != null || profile.mature_height_max_ft != null) {
+    const min = profile.mature_height_min_ft;
+    const max = profile.mature_height_max_ft;
+    const value = min != null && max != null ? `${min}\u2013${max} ft` : `${min ?? max} ft`;
+    facts.push({ label: 'Height', value });
+  }
+  if (profile.sun_requirement) {
+    facts.push({ label: 'Sun', value: profile.sun_requirement.replace(/_/g, ' ') });
+  }
+  if (profile.years_to_bearing_min != null || profile.years_to_bearing_max != null) {
+    const min = profile.years_to_bearing_min;
+    const max = profile.years_to_bearing_max;
+    const value = min != null && max != null ? `${min}\u2013${max} yrs` : `${min ?? max} yrs`;
+    facts.push({ label: 'Bearing', value });
+  }
+  if (profile.harvest_season) {
+    facts.push({ label: 'Harvest', value: profile.harvest_season.replace(/_/g, ' ') });
+  }
+
+  return facts;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -52,6 +87,11 @@ export default async function SpeciesPage({ params }: Props) {
   const { species, cultivars, taxonomyPath, growingProfile, offerStats, communityListings } = loaded;
   const supabase = await createClient();
   const relatedSpecies = await getRelatedSpecies(supabase, species.genus, species.slug);
+  const relatedSpeciesWithOffers = offerStats.nurseryCount === 0
+    ? await getRelatedSpeciesWithOffers(supabase, species.genus, species.slug)
+    : [];
+  const genusNode = taxonomyPath.find((n) => n.rank === 'genus');
+  const genusCommonName = genusNode ? (GENUS_COMMON_NAMES[genusNode.slug] ?? genusNode.name) : null;
 
   // Group cultivars by material type
   const clones = cultivars.filter((c) => c.material_type === 'cultivar_clone');
@@ -87,12 +127,9 @@ export default async function SpeciesPage({ params }: Props) {
               href: `/browse?category=${encodeURIComponent(species.display_category)}`,
             });
           }
-          // Genus crumb from taxonomy path
-          const genusNode = taxonomyPath.find((n) => n.rank === 'genus');
           if (genusNode) {
-            const genusCommonName = GENUS_COMMON_NAMES[genusNode.slug] ?? genusNode.name;
             crumbs.push({
-              label: genusCommonName,
+              label: genusCommonName ?? genusNode.name,
               href: `/plants/genus/${genusNode.slug}`,
             });
           }
@@ -150,10 +187,7 @@ export default async function SpeciesPage({ params }: Props) {
 
       {growingProfile && (
         <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
-          <Text variant="h2" className="mb-3">
-            Growing Requirements
-          </Text>
-          <TraitGrid profile={growingProfile} />
+          <QuickFactsRibbon facts={buildQuickFacts(growingProfile)} />
         </section>
       )}
 
@@ -192,14 +226,47 @@ export default async function SpeciesPage({ params }: Props) {
 
       {cultivars.length === 0 && (
         <EmptyState
-          title="No cultivar data yet"
-          description="No cultivar data for this species yet."
+          title={`No cultivar data yet for ${species.canonical_name}.`}
+          description="This species is being catalogued."
+          action={
+            genusNode
+              ? { label: 'Browse related species', href: `/plants/genus/${genusNode.slug}` }
+              : undefined
+          }
         />
       )}
 
+      {offerStats.nurseryCount === 0 && relatedSpeciesWithOffers.length > 0 && (
+        <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
+          <Text variant="h2" className="mb-2">
+            Looking to buy?
+          </Text>
+          <Text variant="sm" color="secondary" className="mb-3">
+            These related species have nursery stock:
+          </Text>
+          <div className="flex flex-wrap gap-2">
+            {relatedSpeciesWithOffers.map((item) => (
+              <Link
+                key={item.slug}
+                href={`/plants/${item.slug}`}
+                className="inline-block rounded-full border border-border-subtle bg-surface-primary px-3 py-1 text-sm text-accent transition-colors hover:border-accent hover:bg-accent-subtle"
+              >
+                {item.canonical_name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {growingProfile && (
+        <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
+          <Disclosure title="Full Growing Guide" defaultOpen={false}>
+            <TraitGrid profile={growingProfile} />
+          </Disclosure>
+        </section>
+      )}
+
       {relatedSpecies.length > 0 && (() => {
-        const genusNode = taxonomyPath.find((n) => n.rank === 'genus');
-        const genusCommonName = genusNode ? (GENUS_COMMON_NAMES[genusNode.slug] ?? genusNode.name) : null;
         const totalSpeciesInGenus = relatedSpecies.length + 1;
         return (
           <section className={communityListings.length > 0 ? 'border-b border-border-subtle pb-[var(--spacing-zone)]' : undefined}>
@@ -277,7 +344,7 @@ function CultivarSection({
           const nurseryCount = nurseryCountById[cv.id] ?? 0;
           return (
             <Link key={cv.id} href={`/plants/${speciesSlug}/${cv.slug}`}>
-              <div className="h-full rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary px-4 py-3 transition-colors hover:bg-surface-raised hover:border-border">
+              <div className="h-full rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary px-4 py-3 cultivar-card-hover hover:bg-surface-raised hover:border-border cursor-pointer">
                 <div className="flex items-start justify-between gap-2">
                   <Text variant="h3" color="accent">{cv.canonical_name}</Text>
                   {nurseryCount > 0 && (

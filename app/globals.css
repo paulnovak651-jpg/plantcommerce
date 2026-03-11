@@ -188,18 +188,24 @@ a, button {
   background-color: var(--color-accent-subtle);
 }
 
-/* Filter sheet slide animation */
+/* Filter sheet full-screen animation */
 .filter-sheet-enter {
-  animation: filter-sheet-slide-in 200ms ease-out forwards;
+  animation: filter-sheet-fade-up-in 220ms ease-out forwards;
 }
 
 .filter-sheet-backdrop-enter {
-  animation: filter-backdrop-fade-in 200ms ease-out forwards;
+  animation: filter-backdrop-fade-in 180ms ease-out forwards;
 }
 
-@keyframes filter-sheet-slide-in {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+@keyframes filter-sheet-fade-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes filter-backdrop-fade-in {
@@ -218,4 +224,37 @@ a, button {
 
 .page-enter {
   animation: page-fade-in 300ms ease-out;
+}
+
+/* Scroll reveal animation (E5) */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 500ms ease-out, transform 500ms ease-out;
+}
+
+.scroll-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Toast slide-in animation (E4) */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Cultivar card hover (E3) */
+.cultivar-card-hover {
+  transition: transform 200ms ease, box-shadow 200ms ease, background-color 150ms ease;
+}
+.cultivar-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }

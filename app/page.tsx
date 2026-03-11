@@ -1,11 +1,22 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { getHomepageCategories } from '@/lib/queries/plants';
+import {
+  getHomepageCategories,
+  getRecentlyRestocked,
+  getBestDeals,
+  getNewAdditions,
+  getZoneRecommendationSpecies,
+} from '@/lib/queries/plants';
+import type { HomepagePlant } from '@/lib/queries/plants';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Text } from '@/components/ui/Text';
 import { JsonLd } from '@/components/JsonLd';
 import { CategoryCard } from '@/components/CategoryCard';
+import { HomepageSection } from '@/components/HomepageSection';
+import { ScrollReveal } from '@/components/ScrollReveal';
+import { SeasonalBanner } from '@/components/SeasonalBanner';
+import { ZoneRecommendations } from '@/components/ZoneRecommendations';
 
 interface NurseryOfferRow {
   nursery_id: string;
@@ -23,20 +34,57 @@ export const metadata: Metadata = {
   },
 };
 
+function DealCard({ plant }: { plant: HomepagePlant }) {
+  return (
+    <Link
+      href={`/plants/${plant.speciesSlug}/${plant.cultivarSlug}`}
+      className="group min-w-[200px] snap-start rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary p-4 transition-colors hover:bg-surface-raised hover:border-border md:min-w-0"
+    >
+      <Text variant="h3" color="accent" className="line-clamp-1">
+        {plant.cultivarName}
+      </Text>
+      <Text variant="caption" color="secondary" className="mt-0.5 line-clamp-1">
+        {plant.speciesName}
+      </Text>
+      {plant.lowestPriceCents != null && (
+        <p className="mt-2 text-sm font-semibold text-accent">
+          ${(plant.lowestPriceCents / 100).toFixed(2)}
+        </p>
+      )}
+      {plant.nurseryName && (
+        <Text variant="caption" color="tertiary" className="mt-0.5">
+          at {plant.nurseryName}
+        </Text>
+      )}
+    </Link>
+  );
+}
+
 export default async function HomePage() {
   const supabase = await createClient();
-  const [categories, { data: nurseryOfferRows }, { count: publishedCultivarCount }] =
-    await Promise.all([
-      getHomepageCategories(supabase),
-      supabase
-        .from('inventory_offers')
-        .select('nursery_id')
-        .eq('offer_status', 'active'),
-      supabase
-        .from('cultivars')
-        .select('id', { count: 'exact', head: true })
-        .eq('curation_status', 'published'),
-    ]);
+  const [
+    categories,
+    { data: nurseryOfferRows },
+    { count: publishedCultivarCount },
+    recentlyRestocked,
+    bestDeals,
+    newAdditions,
+    zoneRecommendationSpecies,
+  ] = await Promise.all([
+    getHomepageCategories(supabase),
+    supabase
+      .from('inventory_offers')
+      .select('nursery_id')
+      .eq('offer_status', 'active'),
+    supabase
+      .from('cultivars')
+      .select('id', { count: 'exact', head: true })
+      .eq('curation_status', 'published'),
+    getRecentlyRestocked(supabase),
+    getBestDeals(supabase),
+    getNewAdditions(supabase),
+    getZoneRecommendationSpecies(supabase),
+  ]);
 
   const trackedNurseryCount = new Set(
     ((nurseryOfferRows ?? []) as NurseryOfferRow[]).map((row) => row.nursery_id)
@@ -96,7 +144,60 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
+      <SeasonalBanner />
+
+      {/* Browse by Category */}
+      <section className="mx-auto max-w-7xl px-4 py-12">
+        <Text variant="h1">Browse by Category</Text>
+        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {categories.map((group) => (
+            <CategoryCard key={group.category} group={group} />
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link
+            href="/browse"
+            className="inline-block rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+          >
+            Browse All Plants
+          </Link>
+        </div>
+      </section>
+
+      {/* Dynamic Sections */}
+      {recentlyRestocked.length > 0 && (
+        <ScrollReveal>
+          <HomepageSection title="Recently Restocked" seeAllHref="/browse?available=true&sort=available">
+            {recentlyRestocked.map((plant) => (
+              <DealCard key={plant.cultivarSlug} plant={plant} />
+            ))}
+          </HomepageSection>
+        </ScrollReveal>
+      )}
+
+      {bestDeals.length > 0 && (
+        <ScrollReveal>
+          <HomepageSection title="Best Deals" seeAllHref="/browse?available=true&sort=available">
+            {bestDeals.map((plant) => (
+              <DealCard key={plant.cultivarSlug} plant={plant} />
+            ))}
+          </HomepageSection>
+        </ScrollReveal>
+      )}
+
+      {newAdditions.length > 0 && (
+        <ScrollReveal>
+          <HomepageSection title="New to the Database" seeAllHref="/browse?sort=name-asc">
+            {newAdditions.map((plant) => (
+              <DealCard key={plant.cultivarSlug} plant={plant} />
+            ))}
+          </HomepageSection>
+        </ScrollReveal>
+      )}
+
+      <ZoneRecommendations species={zoneRecommendationSpecies} />
+
+      {/* How It Works — demoted below dynamic sections */}
       <section className="mx-auto max-w-5xl px-4 py-16">
         <Text variant="h1" className="text-center">How It Works</Text>
         <div className="mt-8 grid gap-6 sm:grid-cols-3">
@@ -145,24 +246,6 @@ export default async function HomePage() {
               <p className="mt-2 text-sm text-text-secondary">{step.description}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Browse by Category */}
-      <section className="mx-auto max-w-7xl px-4 py-12">
-        <Text variant="h1">Browse by Category</Text>
-        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {categories.map((group) => (
-            <CategoryCard key={group.category} group={group} />
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          <Link
-            href="/browse"
-            className="inline-block rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
-          >
-            Browse All Plants 
-          </Link>
         </div>
       </section>
     </div>

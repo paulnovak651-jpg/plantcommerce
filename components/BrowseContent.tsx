@@ -5,16 +5,33 @@ import { useSearchParams } from 'next/navigation';
 import { BrowsePlant, filterBrowsePlants, groupBrowsePlantsByGenus, GenusBrowseGroup } from '@/lib/queries/browse';
 import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
 import { PlantCard } from '@/components/PlantCard';
-import { PlantFilterSidebar } from '@/components/PlantFilterSidebar';
+import {
+  PlantFilterSidebar,
+  CATEGORY_OPTIONS,
+  SUN_OPTIONS,
+  GROWTH_RATE_OPTIONS,
+} from '@/components/PlantFilterSidebar';
 import { SortBar } from '@/components/SortBar';
 import { Pagination } from '@/components/Pagination';
+import { SearchBar } from '@/components/ui/SearchBar';
 import { getUserZone } from '@/lib/zone-persistence';
 import Link from 'next/link';
 
 export interface BrowseFiltersState {
+  q: string;
   categories: string[];
   zoneMin: string;
   zoneMax: string;
+  chillHoursMin: string;
+  chillHoursMax: string;
+  bearingAgeMin: string;
+  bearingAgeMax: string;
+  heightMin: string;
+  heightMax: string;
+  spreadMin: string;
+  spreadMax: string;
+  soilPhMin: string;
+  soilPhMax: string;
   available: boolean;
   sun: string[];
   growthRate: string[];
@@ -26,9 +43,20 @@ export interface BrowseFiltersState {
 function filtersFromParams(sp: URLSearchParams): BrowseFiltersState {
   const groupByParam = sp.get('groupBy');
   return {
+    q: sp.get('q') ?? '',
     categories: sp.get('category')?.split(',').filter(Boolean) ?? [],
     zoneMin: sp.get('zoneMin') ?? '',
     zoneMax: sp.get('zoneMax') ?? '',
+    chillHoursMin: sp.get('chillHoursMin') ?? '',
+    chillHoursMax: sp.get('chillHoursMax') ?? '',
+    bearingAgeMin: sp.get('bearingAgeMin') ?? '',
+    bearingAgeMax: sp.get('bearingAgeMax') ?? '',
+    heightMin: sp.get('heightMin') ?? '',
+    heightMax: sp.get('heightMax') ?? '',
+    spreadMin: sp.get('spreadMin') ?? '',
+    spreadMax: sp.get('spreadMax') ?? '',
+    soilPhMin: sp.get('soilPhMin') ?? '',
+    soilPhMax: sp.get('soilPhMax') ?? '',
     available: sp.get('available') === 'true',
     sun: sp.get('sun')?.split(',').filter(Boolean) ?? [],
     growthRate: sp.get('growthRate')?.split(',').filter(Boolean) ?? [],
@@ -40,9 +68,20 @@ function filtersFromParams(sp: URLSearchParams): BrowseFiltersState {
 
 function filtersToParams(f: BrowseFiltersState): string {
   const params = new URLSearchParams();
+  if (f.q.trim()) params.set('q', f.q.trim());
   if (f.categories.length > 0) params.set('category', f.categories.join(','));
   if (f.zoneMin) params.set('zoneMin', f.zoneMin);
   if (f.zoneMax) params.set('zoneMax', f.zoneMax);
+  if (f.chillHoursMin) params.set('chillHoursMin', f.chillHoursMin);
+  if (f.chillHoursMax) params.set('chillHoursMax', f.chillHoursMax);
+  if (f.bearingAgeMin) params.set('bearingAgeMin', f.bearingAgeMin);
+  if (f.bearingAgeMax) params.set('bearingAgeMax', f.bearingAgeMax);
+  if (f.heightMin) params.set('heightMin', f.heightMin);
+  if (f.heightMax) params.set('heightMax', f.heightMax);
+  if (f.spreadMin) params.set('spreadMin', f.spreadMin);
+  if (f.spreadMax) params.set('spreadMax', f.spreadMax);
+  if (f.soilPhMin) params.set('soilPhMin', f.soilPhMin);
+  if (f.soilPhMax) params.set('soilPhMax', f.soilPhMax);
   if (f.available) params.set('available', 'true');
   if (f.sun.length > 0) params.set('sun', f.sun.join(','));
   if (f.growthRate.length > 0) params.set('growthRate', f.growthRate.join(','));
@@ -103,12 +142,41 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [filters.page]);
 
+  const contextualNumericFilters = useMemo(
+    () => ({
+      chillHoursMin: filters.chillHoursMin ? Number(filters.chillHoursMin) : null,
+      chillHoursMax: filters.chillHoursMax ? Number(filters.chillHoursMax) : null,
+      bearingAgeMin: filters.bearingAgeMin ? Number(filters.bearingAgeMin) : null,
+      bearingAgeMax: filters.bearingAgeMax ? Number(filters.bearingAgeMax) : null,
+      heightMin: filters.heightMin ? Number(filters.heightMin) : null,
+      heightMax: filters.heightMax ? Number(filters.heightMax) : null,
+      spreadMin: filters.spreadMin ? Number(filters.spreadMin) : null,
+      spreadMax: filters.spreadMax ? Number(filters.spreadMax) : null,
+      soilPhMin: filters.soilPhMin ? Number(filters.soilPhMin) : null,
+      soilPhMax: filters.soilPhMax ? Number(filters.soilPhMax) : null,
+    }),
+    [
+      filters.bearingAgeMax,
+      filters.bearingAgeMin,
+      filters.chillHoursMax,
+      filters.chillHoursMin,
+      filters.heightMax,
+      filters.heightMin,
+      filters.soilPhMax,
+      filters.soilPhMin,
+      filters.spreadMax,
+      filters.spreadMin,
+    ]
+  );
+
   const { plants, total } = useMemo(
     () =>
       filterBrowsePlants(allPlants, {
+        q: filters.q,
         categories: filters.categories.length > 0 ? filters.categories : undefined,
         zoneMin: filters.zoneMin ? Number(filters.zoneMin) : null,
         zoneMax: filters.zoneMax ? Number(filters.zoneMax) : null,
+        ...contextualNumericFilters,
         availableOnly: filters.available,
         sun: filters.sun.length > 0 ? filters.sun : undefined,
         growthRate: filters.growthRate.length > 0 ? filters.growthRate : undefined,
@@ -121,13 +189,78 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
 
   const totalPages = Math.ceil(total / PER_PAGE);
 
+  const facetCounts = useMemo(() => {
+    const zoneMin = filters.zoneMin ? Number(filters.zoneMin) : null;
+    const zoneMax = filters.zoneMax ? Number(filters.zoneMax) : null;
+    const selectedCategories = filters.categories.length > 0 ? filters.categories : undefined;
+    const selectedSun = filters.sun.length > 0 ? filters.sun : undefined;
+    const selectedGrowthRate = filters.growthRate.length > 0 ? filters.growthRate : undefined;
+
+    const categories = CATEGORY_OPTIONS.reduce<Record<string, number>>((acc, category) => {
+      acc[category] = filterBrowsePlants(allPlants, {
+        q: filters.q,
+        categories: [category],
+        zoneMin,
+        zoneMax,
+        ...contextualNumericFilters,
+        availableOnly: filters.available,
+        sun: selectedSun,
+        growthRate: selectedGrowthRate,
+      }).total;
+      return acc;
+    }, {});
+
+    const sun = SUN_OPTIONS.reduce<Record<string, number>>((acc, value) => {
+      acc[value] = filterBrowsePlants(allPlants, {
+        q: filters.q,
+        categories: selectedCategories,
+        zoneMin,
+        zoneMax,
+        ...contextualNumericFilters,
+        availableOnly: filters.available,
+        sun: [value],
+        growthRate: selectedGrowthRate,
+      }).total;
+      return acc;
+    }, {});
+
+    const growthRate = GROWTH_RATE_OPTIONS.reduce<Record<string, number>>((acc, value) => {
+      acc[value] = filterBrowsePlants(allPlants, {
+        q: filters.q,
+        categories: selectedCategories,
+        zoneMin,
+        zoneMax,
+        ...contextualNumericFilters,
+        availableOnly: filters.available,
+        sun: selectedSun,
+        growthRate: [value],
+      }).total;
+      return acc;
+    }, {});
+
+    const available = filterBrowsePlants(allPlants, {
+      q: filters.q,
+      categories: selectedCategories,
+      zoneMin,
+      zoneMax,
+      ...contextualNumericFilters,
+      availableOnly: true,
+      sun: selectedSun,
+      growthRate: selectedGrowthRate,
+    }).total;
+
+    return { categories, sun, growthRate, available };
+  }, [allPlants, contextualNumericFilters, filters]);
+
   // Genus-grouped view: computed from ALL filtered plants (not paginated)
   const genusGroups = useMemo(() => {
     if (filters.groupBy !== 'genus') return [];
     const allFiltered = filterBrowsePlants(allPlants, {
+      q: filters.q,
       categories: filters.categories.length > 0 ? filters.categories : undefined,
       zoneMin: filters.zoneMin ? Number(filters.zoneMin) : null,
       zoneMax: filters.zoneMax ? Number(filters.zoneMax) : null,
+      ...contextualNumericFilters,
       availableOnly: filters.available,
       sun: filters.sun.length > 0 ? filters.sun : undefined,
       growthRate: filters.growthRate.length > 0 ? filters.growthRate : undefined,
@@ -135,7 +268,7 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
       perPage: 9999,
     });
     return groupBrowsePlantsByGenus(allFiltered.plants, GENUS_COMMON_NAMES);
-  }, [allPlants, filters]);
+  }, [allPlants, contextualNumericFilters, filters]);
 
   const updateFilters = useCallback((patch: Partial<BrowseFiltersState>) => {
     setFilters((prev) => {
@@ -161,9 +294,20 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
 
   const clearAll = useCallback(() => {
     setFilters({
+      q: '',
       categories: [],
       zoneMin: '',
       zoneMax: '',
+      chillHoursMin: '',
+      chillHoursMax: '',
+      bearingAgeMin: '',
+      bearingAgeMax: '',
+      heightMin: '',
+      heightMax: '',
+      spreadMin: '',
+      spreadMax: '',
+      soilPhMin: '',
+      soilPhMax: '',
       available: false,
       sun: [],
       growthRate: [],
@@ -179,6 +323,9 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     : null;
 
   const activeChips: Array<{ label: string; onRemove: () => void }> = [];
+  if (filters.q.trim()) {
+    activeChips.push({ label: `Keyword: ${filters.q.trim()}`, onRemove: () => updateFilters({ q: '' }) });
+  }
   if (filters.categories.length > 0) {
     filters.categories.forEach((cat) => {
       activeChips.push({ label: cat, onRemove: () => toggleInList('categories', cat) });
@@ -200,6 +347,66 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   if (filters.available) {
     activeChips.push({ label: 'In stock', onRemove: () => updateFilters({ available: false }) });
   }
+  if (filters.chillHoursMin) {
+    activeChips.push({
+      label: `Chill min: ${filters.chillHoursMin}`,
+      onRemove: () => updateFilters({ chillHoursMin: '' }),
+    });
+  }
+  if (filters.chillHoursMax) {
+    activeChips.push({
+      label: `Chill max: ${filters.chillHoursMax}`,
+      onRemove: () => updateFilters({ chillHoursMax: '' }),
+    });
+  }
+  if (filters.bearingAgeMin) {
+    activeChips.push({
+      label: `Bearing min: ${filters.bearingAgeMin}y`,
+      onRemove: () => updateFilters({ bearingAgeMin: '' }),
+    });
+  }
+  if (filters.bearingAgeMax) {
+    activeChips.push({
+      label: `Bearing max: ${filters.bearingAgeMax}y`,
+      onRemove: () => updateFilters({ bearingAgeMax: '' }),
+    });
+  }
+  if (filters.heightMin) {
+    activeChips.push({
+      label: `Height min: ${filters.heightMin}ft`,
+      onRemove: () => updateFilters({ heightMin: '' }),
+    });
+  }
+  if (filters.heightMax) {
+    activeChips.push({
+      label: `Height max: ${filters.heightMax}ft`,
+      onRemove: () => updateFilters({ heightMax: '' }),
+    });
+  }
+  if (filters.spreadMin) {
+    activeChips.push({
+      label: `Spread min: ${filters.spreadMin}ft`,
+      onRemove: () => updateFilters({ spreadMin: '' }),
+    });
+  }
+  if (filters.spreadMax) {
+    activeChips.push({
+      label: `Spread max: ${filters.spreadMax}ft`,
+      onRemove: () => updateFilters({ spreadMax: '' }),
+    });
+  }
+  if (filters.soilPhMin) {
+    activeChips.push({
+      label: `Soil pH min: ${filters.soilPhMin}`,
+      onRemove: () => updateFilters({ soilPhMin: '' }),
+    });
+  }
+  if (filters.soilPhMax) {
+    activeChips.push({
+      label: `Soil pH max: ${filters.soilPhMax}`,
+      onRemove: () => updateFilters({ soilPhMax: '' }),
+    });
+  }
   if (filters.sun.length > 0) {
     filters.sun.forEach((s) => {
       activeChips.push({ label: s, onRemove: () => toggleInList('sun', s) });
@@ -215,16 +422,42 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
       <PlantFilterSidebar
         filters={filters}
+        facetCounts={facetCounts}
+        totalResults={total}
         onZoneMinChange={(v) => updateFilters({ zoneMin: v })}
         onZoneMaxChange={(v) => updateFilters({ zoneMax: v })}
         onToggleCategory={(v) => toggleInList('categories', v)}
         onToggleSun={(v) => toggleInList('sun', v)}
         onToggleGrowthRate={(v) => toggleInList('growthRate', v)}
+        onChillHoursMinChange={(v) => updateFilters({ chillHoursMin: v })}
+        onChillHoursMaxChange={(v) => updateFilters({ chillHoursMax: v })}
+        onBearingAgeMinChange={(v) => updateFilters({ bearingAgeMin: v })}
+        onBearingAgeMaxChange={(v) => updateFilters({ bearingAgeMax: v })}
+        onHeightMinChange={(v) => updateFilters({ heightMin: v })}
+        onHeightMaxChange={(v) => updateFilters({ heightMax: v })}
+        onSpreadMinChange={(v) => updateFilters({ spreadMin: v })}
+        onSpreadMaxChange={(v) => updateFilters({ spreadMax: v })}
+        onSoilPhMinChange={(v) => updateFilters({ soilPhMin: v })}
+        onSoilPhMaxChange={(v) => updateFilters({ soilPhMax: v })}
         onToggleAvailable={() => updateFilters({ available: !filters.available })}
         onClearAll={clearAll}
       />
 
       <div>
+        <div className="mb-4">
+          <SearchBar
+            value={filters.q}
+            onValueChange={(value) => updateFilters({ q: value })}
+            onSubmit={(event) => event.preventDefault()}
+            className="w-full max-w-none"
+            placeholders={[
+              "Search 'hazelnut'...",
+              "Search 'chestnut'...",
+              "Search 'disease resistant'...",
+            ]}
+            inputId="browse-search-input"
+          />
+        </div>
         <SortBar
           total={filters.groupBy === 'genus' ? genusGroups.length : total}
           page={filters.groupBy === 'genus' ? 1 : filters.page}
@@ -322,6 +555,9 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
                     cultivarCount={p.cultivar_count}
                     zoneMin={p.zone_min}
                     zoneMax={p.zone_max}
+                    lowestPrice={p.lowest_price_cents}
+                    bestNursery={p.best_nursery_name}
+                    hasGrowingProfile={p.has_growing_profile}
                   />
                 ))}
               </div>
@@ -347,7 +583,7 @@ function GenusGroupCard({ group }: { group: GenusBrowseGroup }) {
   return (
     <Link
       href={`/plants/genus/${group.genus_slug}`}
-      className="group block rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary p-5 transition-colors hover:border-border hover:bg-surface-raised"
+      className="group block rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary p-5 plant-card-hover transition-colors hover:border-border hover:bg-surface-raised"
     >
       <p className="font-serif text-lg font-semibold text-text-primary group-hover:text-accent">
         {group.genus_common_name}
