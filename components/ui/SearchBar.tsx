@@ -10,6 +10,7 @@ interface AutocompleteSuggestion {
   slug: string;
   type: SuggestionType;
   speciesSlug?: string;
+  matchedAlias?: string;
 }
 
 interface SearchBarProps {
@@ -254,8 +255,15 @@ export function SearchBar({
                   : 'text-text-secondary hover:bg-surface-inset'
               }`}
             >
-              <span className="truncate">{item.name}</span>
-              <span className="ml-3 rounded bg-surface-inset px-2 py-0.5 text-[10px] uppercase tracking-wide text-text-tertiary">
+              <span className="min-w-0 flex-1">
+                <span className="truncate block">{item.name}</span>
+                {item.matchedAlias && (
+                  <span className="truncate block text-xs text-text-tertiary">
+                    also known as: {item.matchedAlias}
+                  </span>
+                )}
+              </span>
+              <span className="ml-3 shrink-0 rounded bg-surface-inset px-2 py-0.5 text-[10px] uppercase tracking-wide text-text-tertiary">
                 {item.type}
               </span>
             </button>

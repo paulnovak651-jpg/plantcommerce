@@ -99,13 +99,15 @@ export function ZonePrompt() {
 }
 
 /**
- * Full-width banner shown below the header when no zone is saved.
- * Dismisses itself once a zone is set.
+ * Full-width banner below the header.
+ * - When no zone is saved: prompts the user to set their zone.
+ * - When zone is saved: shows persistent "Showing plants for Zone X" with change/clear.
  */
 export function ZoneBanner() {
   const [savedZone, setSavedZone] = useState<number | null>(null);
   const [selected, setSelected] = useState<string>('');
   const [mounted, setMounted] = useState(false);
+  const [changing, setChanging] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -114,18 +116,56 @@ export function ZoneBanner() {
 
   useEffect(() => {
     function sync() {
-      setSavedZone(getUserZone());
+      const z = getUserZone();
+      setSavedZone(z);
+      setChanging(false);
     }
     window.addEventListener('zone-changed', sync);
     return () => window.removeEventListener('zone-changed', sync);
   }, []);
 
-  if (!mounted || savedZone) return null;
+  if (!mounted) return null;
 
+  // Zone is set — show persistent indicator
+  if (savedZone && !changing) {
+    return (
+      <div className="border-b border-border-subtle bg-surface-raised/60 px-4 py-2">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-3 text-sm">
+          <span className="text-text-secondary">
+            Showing plants for <span className="font-medium text-text-primary">Zone {savedZone}</span>
+          </span>
+          <button
+            onClick={() => {
+              setSelected(String(savedZone));
+              setChanging(true);
+            }}
+            className="text-xs text-accent hover:underline"
+          >
+            Change
+          </button>
+          <button
+            onClick={() => {
+              clearUserZone();
+              setSavedZone(null);
+              setSelected('');
+              dispatchZoneChanged(null);
+            }}
+            className="text-xs text-text-tertiary hover:text-text-secondary"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Changing zone or no zone set — show zone selector
   return (
     <div className="border-b border-border-subtle bg-surface-raised px-4 py-3">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-3 text-sm">
-        <span className="text-text-secondary">What&apos;s your USDA growing zone?</span>
+        <span className="text-text-secondary">
+          {changing ? 'Change your zone:' : 'What\u2019s your USDA growing zone?'}
+        </span>
         <select
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
@@ -142,6 +182,7 @@ export function ZoneBanner() {
             const zone = Number(selected);
             setUserZone(zone);
             setSavedZone(zone);
+            setChanging(false);
             dispatchZoneChanged(zone);
           }}
           disabled={!selected}
@@ -149,14 +190,24 @@ export function ZoneBanner() {
         >
           Set Zone
         </button>
-        <a
-          href="https://planthardiness.ars.usda.gov/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-accent hover:underline"
-        >
-          Not sure? Find your zone
-        </a>
+        {changing && (
+          <button
+            onClick={() => setChanging(false)}
+            className="text-xs text-text-tertiary hover:text-text-secondary"
+          >
+            Cancel
+          </button>
+        )}
+        {!changing && (
+          <a
+            href="https://planthardiness.ars.usda.gov/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-accent hover:underline"
+          >
+            Not sure? Find your zone
+          </a>
+        )}
       </div>
     </div>
   );

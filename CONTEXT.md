@@ -17,15 +17,16 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 
 ---
 
-## Current State (as of 2026-03-10)
+## Current State (as of 2026-03-11)
 
-- **Foundation:** Solid. 166+ tests passing, TypeScript strict, CI green. 48 SQL migrations applied.
+- **Foundation:** Solid. 230+ tests passing, TypeScript strict, CI green. 49 SQL migrations applied (+ migration 050 pending deploy).
 - **Multi-genus:** 15+ genera seeded — hazelnuts, chestnuts, walnuts, hickories, apples, stone fruit, persimmons, mulberries, elderberries, grapes, blueberries, figs, pears, gooseberries/currants, raspberries/blackberries, kiwi, goumi, sea buckthorn, hackberry.
 - **Live data:** 3 nurseries live (Burnt Ridge, Grimo, Raintree). Pipeline consent-gated. Cron: Monday 6am UTC.
 - **Deployment:** Live at https://plantfinder-cyan.vercel.app.
 - **Scrapers:** Data-driven registry with generic Shopify + WooCommerce scrapers. Config-driven — adding a nursery is a registry entry.
 - **Knowledge graph:** Taxonomy tree (37+ nodes, Kingdom→Genus) + growing profiles + pollination profiles.
-- **Browse/Search:** Full filtering (zone, category, availability, chill hours, bearing age, height, genus grouping), active filter chips, skeleton loaders, sort options, pagination, search autocomplete.
+- **Browse/Search:** Registry-driven faceted filtering (zone, category, sun, growth rate, availability, chill hours, bearing age, height, pH, spread), active filter pills, skeleton loaders, sort options, pagination, search autocomplete with alias matching. Hybrid data flow: SSR seed for instant first render, API-driven for subsequent changes with 300ms debounce.
+- **Facet system:** Single-source-of-truth `FACET_REGISTRY` drives sidebar, URL state, filter predicates, and count computation. Cross-facet counts (each facet counted against results filtered by all OTHER facets). Recovery hints for zero-result states show which filter to remove and expected result count.
 - **Genus hubs:** `/plants/genus/[slug]` pages with species cards, growing profiles, breadcrumbs (Category → Genus → Species → Cultivar).
 - **Price comparison:** Side-by-side nursery comparison tables with best-price tags, trust badges (Live/Tracked/Community), price sparklines, mobile card layout.
 - **Nursery maps:** Leaflet + OpenStreetMap on nursery index + cultivar pages.
@@ -35,6 +36,7 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 - **Admin tools:** `/admin/unmatched` + `/admin/listings` (token-protected).
 - **Homepage:** Dynamic sections (Recently Restocked, Best Deals, New to Database), seasonal banner, zone recommendations, scroll reveal animations.
 - **UI polish:** 30+ visual refinements — nav highlighting, custom checkboxes, filter chips, animations, skeleton loaders, grain textures, per-category card colors, botanical sketch placeholders, typography refinements, tabular-nums pricing, hover micro-interactions, toast notifications, progressive disclosure.
+- **Zone awareness:** Zone persistence in localStorage, zone prompt on browse pages, zone-changed events propagate to facet state, ZoneCompatibility badges on species/cultivar pages.
 
 ---
 
@@ -76,15 +78,15 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 - **species_growing_profiles** — USDA zones, chill hours, height/spread, pH, bearing age, sun/water/growth rate
 
 ### Search
-- **material_search_index** — materialized view with trigram indexes + zone token expansion
+- **material_search_index** — materialized view with trigram indexes, zone token expansion, and `alias_names` column (pipe-separated display aliases from aliases table, migration 050)
 
 ---
 
 ## API
 
-9 endpoints with consistent response envelope, HATEOAS links, and structured data (llms.txt + JSON-LD) for AI agent discoverability.
+10 endpoints with consistent response envelope, HATEOAS links, and structured data (llms.txt + JSON-LD) for AI agent discoverability.
 
-Endpoints cover: plants, cultivars, nurseries, search, pipeline trigger, community listings (POST submit + GET approved).
+Endpoints cover: plants, cultivars, nurseries, search, browse (facet-driven filtering + counts), pipeline trigger, community listings (POST submit + GET approved).
 
 ---
 
@@ -164,6 +166,14 @@ Generic Shopify and WooCommerce scrapers available — new nurseries can be onbo
   - D: Page Restructuring (progressive disclosure on species pages, homepage dynamic sections)
   - E: Visual Density & Design Refinement (card border treatment, tabular-nums, hover micro-interactions, toast notifications, scroll reveal, seasonal banner)
   - F: Zone-Aware Features (zone recommendations, search autocomplete)
+- ✅ Sprint 6 Discovery (SPRINT6_DISCOVERY.md) — 12 deliverables:
+  - #1-5: Zone persistence (localStorage + prompt), ZoneCompatibility badges, genus common names, browse component decomposition (BrowseShell/Header/Grid/ActiveFilterPills/SmartEmptyState/FacetControl)
+  - #6-7: Alias-aware autocomplete (matchedAlias display, alias_names MV column via migration 050, ranking fix for alias-only matches)
+  - #8: Search index refresh already wired into pipeline
+  - #9: Registry-driven facet query builder (composable predicates, cross-facet counts, recovery hints, 27 unit tests)
+  - #10: `/api/browse` endpoint (server-side faceted query, rate-limited)
+  - #11: BrowseContent hybrid data flow (SSR seed + API-driven with 300ms debounce + AbortController)
+  - #12: SmartEmptyState recovery hints UI (amber-toned panel, top-3 suggestions)
 
 ### Current priorities
 1. **Nursery consent & outreach** ← NEXT — draft outreach template, contact existing 3 nurseries

@@ -714,7 +714,7 @@ export function groupBrowsePlantsByGenus(
   const groups: GenusBrowseGroup[] = Array.from(map.values()).map((g) => ({
     genus_slug: g.genus_slug,
     genus_name: g.genus_name,
-    genus_common_name: genusCommonNames[g.genus_slug] ?? g.genus_name,
+    genus_common_name: genusCommonNames[g.genus_slug] ?? genusCommonNames[g.genus_slug.replace(/^genus-/, '')] ?? g.genus_name,
     species_count: g.species_count,
     cultivar_count: g.cultivar_count,
     nursery_count: g.nurseries.size,

@@ -2,122 +2,124 @@
 
 import { useState } from 'react';
 import { Disclosure } from '@/components/ui/Disclosure';
-import type { BrowseFiltersState } from '@/components/BrowseContent';
+import {
+  FACET_REGISTRY,
+  getFacetsByGroup,
+  type FacetDefinition,
+} from '@/lib/facets/registry';
+import {
+  MultiSelectControl,
+  BooleanControl,
+  ZoneRangeControl,
+  RangeControl,
+} from '@/components/browse/FacetControl';
 
-export const CATEGORY_OPTIONS = [
-  'Nut Trees',
-  'Apples & Crabapples',
-  'Berries',
-  'Cherries & Plums',
-  'Figs',
-  'Grapes',
-  'Mulberries',
-  'Pears',
-  'Persimmons',
-  'Quinces',
-  'Other',
-] as const;
+// Re-export option values for backwards compatibility with BrowseContent facet counting
+export const CATEGORY_OPTIONS = FACET_REGISTRY.find((f) => f.key === 'category')!.options!.map((o) => o.value);
+export const SUN_OPTIONS = FACET_REGISTRY.find((f) => f.key === 'sun')!.options!.map((o) => o.value);
+export const GROWTH_RATE_OPTIONS = FACET_REGISTRY.find((f) => f.key === 'growthRate')!.options!.map((o) => o.value);
 
-export const SUN_OPTIONS = [
-  'Full Sun',
-  'Full Sun to Partial Shade',
-  'Partial Shade',
-  'Full Shade',
-] as const;
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
-export const GROWTH_RATE_OPTIONS = ['Slow', 'Moderate', 'Fast'] as const;
+/** Generic facet counts — keyed by facet key. */
+export interface FacetCounts {
+  /** Multi-select facets: facetKey → value → count */
+  multiSelect: Record<string, Record<string, number>>;
+  /** Boolean facets: facetKey → count */
+  boolean: Record<string, number>;
+}
 
-interface FacetCounts {
-  categories: Record<string, number>;
-  sun: Record<string, number>;
-  growthRate: Record<string, number>;
-  available: number;
+export interface FilterValues {
+  /** Multi-select selected values, keyed by facet key */
+  multiSelect: Record<string, string[]>;
+  /** Boolean values, keyed by facet key */
+  booleans: Record<string, boolean>;
+  /** Range min values, keyed by range param name (e.g. "zoneMin") */
+  rangeMin: Record<string, string>;
+  /** Range max values, keyed by range param name (e.g. "zoneMax") */
+  rangeMax: Record<string, string>;
 }
 
 interface Props {
-  filters: BrowseFiltersState;
+  filterValues: FilterValues;
   facetCounts: FacetCounts;
   totalResults: number;
-  onZoneMinChange: (value: string) => void;
-  onZoneMaxChange: (value: string) => void;
-  onToggleCategory: (value: string) => void;
-  onToggleSun: (value: string) => void;
-  onToggleGrowthRate: (value: string) => void;
-  onChillHoursMinChange: (value: string) => void;
-  onChillHoursMaxChange: (value: string) => void;
-  onBearingAgeMinChange: (value: string) => void;
-  onBearingAgeMaxChange: (value: string) => void;
-  onHeightMinChange: (value: string) => void;
-  onHeightMaxChange: (value: string) => void;
-  onSpreadMinChange: (value: string) => void;
-  onSpreadMaxChange: (value: string) => void;
-  onSoilPhMinChange: (value: string) => void;
-  onSoilPhMaxChange: (value: string) => void;
-  onToggleAvailable: () => void;
+  /** Selected categories — used to determine contextual facet visibility */
+  selectedCategories: string[];
+  onMultiSelectToggle: (facetKey: string, value: string) => void;
+  onBooleanToggle: (facetKey: string) => void;
+  onRangeChange: (param: string, value: string) => void;
   onClearAll: () => void;
 }
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function getRangeMinParam(facet: FacetDefinition): string {
+  return facet.rangeMinParam ?? `${facet.key}Min`;
+}
+
+function getRangeMaxParam(facet: FacetDefinition): string {
+  return facet.rangeMaxParam ?? `${facet.key}Max`;
+}
+
+function countActiveFilters(values: FilterValues): number {
+  let count = 0;
+
+  for (const facet of FACET_REGISTRY) {
+    switch (facet.type) {
+      case 'multi-select':
+        count += (values.multiSelect[facet.key] ?? []).length;
+        break;
+      case 'boolean':
+        if (values.booleans[facet.key]) count += 1;
+        break;
+      case 'zone-range': {
+        const minVal = values.rangeMin[getRangeMinParam(facet)] ?? '';
+        const maxVal = values.rangeMax[getRangeMaxParam(facet)] ?? '';
+        if (minVal && maxVal && minVal === maxVal) {
+          count += 1;
+        } else {
+          if (minVal) count += 1;
+          if (maxVal) count += 1;
+        }
+        break;
+      }
+      case 'range': {
+        if (values.rangeMin[getRangeMinParam(facet)]) count += 1;
+        if (values.rangeMax[getRangeMaxParam(facet)]) count += 1;
+        break;
+      }
+    }
+  }
+  return count;
+}
+
+function hasAnyActiveFilter(values: FilterValues): boolean {
+  return countActiveFilters(values) > 0;
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export function PlantFilterSidebar({
-  filters,
+  filterValues,
   facetCounts,
   totalResults,
-  onZoneMinChange,
-  onZoneMaxChange,
-  onToggleCategory,
-  onToggleSun,
-  onToggleGrowthRate,
-  onChillHoursMinChange,
-  onChillHoursMaxChange,
-  onBearingAgeMinChange,
-  onBearingAgeMaxChange,
-  onHeightMinChange,
-  onHeightMaxChange,
-  onSpreadMinChange,
-  onSpreadMaxChange,
-  onSoilPhMinChange,
-  onSoilPhMaxChange,
-  onToggleAvailable,
+  selectedCategories,
+  onMultiSelectToggle,
+  onBooleanToggle,
+  onRangeChange,
   onClearAll,
 }: Props) {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const singleCategory = filters.categories.length === 1 ? filters.categories[0] : null;
-  const showNutTreeFacets = singleCategory === 'Nut Trees';
-  const showBerryFacets = singleCategory === 'Berries';
-  const showProfileFacets = singleCategory != null;
 
-  const zoneFilterCount =
-    filters.zoneMin && filters.zoneMax && filters.zoneMin === filters.zoneMax
-      ? 1
-      : (filters.zoneMin ? 1 : 0) + (filters.zoneMax ? 1 : 0);
-  const contextualFilterCount = [
-    filters.chillHoursMin,
-    filters.chillHoursMax,
-    filters.bearingAgeMin,
-    filters.bearingAgeMax,
-    filters.heightMin,
-    filters.heightMax,
-    filters.spreadMin,
-    filters.spreadMax,
-    filters.soilPhMin,
-    filters.soilPhMax,
-  ].filter((value) => value !== '').length;
-
-  const activeFilterCount =
-    filters.categories.length +
-    filters.sun.length +
-    filters.growthRate.length +
-    zoneFilterCount +
-    contextualFilterCount +
-    (filters.available ? 1 : 0);
-
-  const hasActiveFilters =
-    filters.categories.length > 0 ||
-    filters.zoneMin !== '' ||
-    filters.zoneMax !== '' ||
-    filters.available ||
-    filters.sun.length > 0 ||
-    filters.growthRate.length > 0 ||
-    contextualFilterCount > 0;
+  const activeFilterCount = countActiveFilters(filterValues);
+  const hasActive = hasAnyActiveFilter(filterValues);
 
   function closeSheet(options?: { scrollToTop?: boolean }) {
     setSheetOpen(false);
@@ -126,269 +128,79 @@ export function PlantFilterSidebar({
     }
   }
 
-  function renderRangeInputs(params: {
-    minValue: string;
-    maxValue: string;
-    minLabel: string;
-    maxLabel: string;
-    onMinChange: (value: string) => void;
-    onMaxChange: (value: string) => void;
-    minStep?: string;
-    maxStep?: string;
-    minPlaceholder?: string;
-    maxPlaceholder?: string;
-  }) {
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="w-8 text-sm text-text-tertiary">{params.minLabel}</span>
-          <input
-            type="number"
-            value={params.minValue}
-            step={params.minStep}
-            placeholder={params.minPlaceholder}
-            onChange={(e) => params.onMinChange(e.target.value)}
-            className="flex-1 rounded border border-border bg-surface-raised px-2 py-1 text-sm text-text-primary"
+  function renderFacet(facet: FacetDefinition) {
+    switch (facet.type) {
+      case 'multi-select':
+        return (
+          <MultiSelectControl
+            facet={facet}
+            selected={filterValues.multiSelect[facet.key] ?? []}
+            counts={facetCounts.multiSelect[facet.key] ?? {}}
+            onToggle={(value) => onMultiSelectToggle(facet.key, value)}
           />
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-8 text-sm text-text-tertiary">{params.maxLabel}</span>
-          <input
-            type="number"
-            value={params.maxValue}
-            step={params.maxStep}
-            placeholder={params.maxPlaceholder}
-            onChange={(e) => params.onMaxChange(e.target.value)}
-            className="flex-1 rounded border border-border bg-surface-raised px-2 py-1 text-sm text-text-primary"
+        );
+
+      case 'boolean':
+        return (
+          <BooleanControl
+            facet={facet}
+            checked={filterValues.booleans[facet.key] ?? false}
+            count={facetCounts.boolean[facet.key] ?? 0}
+            onToggle={() => onBooleanToggle(facet.key)}
           />
-        </div>
-      </div>
-    );
+        );
+
+      case 'zone-range': {
+        const minParam = getRangeMinParam(facet);
+        const maxParam = getRangeMaxParam(facet);
+        return (
+          <ZoneRangeControl
+            facet={facet}
+            minValue={filterValues.rangeMin[minParam] ?? ''}
+            maxValue={filterValues.rangeMax[maxParam] ?? ''}
+            onMinChange={(v) => onRangeChange(minParam, v)}
+            onMaxChange={(v) => onRangeChange(maxParam, v)}
+          />
+        );
+      }
+
+      case 'range': {
+        const minParam = getRangeMinParam(facet);
+        const maxParam = getRangeMaxParam(facet);
+        return (
+          <RangeControl
+            facet={facet}
+            minValue={filterValues.rangeMin[minParam] ?? ''}
+            maxValue={filterValues.rangeMax[maxParam] ?? ''}
+            onMinChange={(v) => onRangeChange(minParam, v)}
+            onMaxChange={(v) => onRangeChange(maxParam, v)}
+          />
+        );
+      }
+    }
   }
 
   function renderFilters() {
+    const groups = getFacetsByGroup(selectedCategories);
+
     return (
       <>
-        <Disclosure title="Plant Type" defaultOpen={true}>
-          {CATEGORY_OPTIONS.map((cat) => {
-            const count = facetCounts.categories[cat] ?? 0;
-            const checked = filters.categories.includes(cat);
-            const disabled = count === 0 && !checked;
-            return (
-              <label
-                key={cat}
-                className={`flex items-center gap-2 py-1 text-sm text-text-secondary ${
-                  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  className="custom-checkbox"
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={() => onToggleCategory(cat)}
-                />
-                <span>
-                  {cat} ({count})
-                </span>
-              </label>
-            );
-          })}
-        </Disclosure>
-
-        <Disclosure title="USDA Zone" defaultOpen={true}>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="w-8 text-sm text-text-tertiary">Min</span>
-              <select
-                value={filters.zoneMin}
-                onChange={(e) => onZoneMinChange(e.target.value)}
-                className="flex-1 rounded border border-border bg-surface-raised px-2 py-1 text-sm text-text-primary"
-              >
-                <option value="">Any</option>
-                {Array.from({ length: 13 }, (_, i) => i + 1).map((z) => (
-                  <option key={z} value={String(z)}>
-                    {z}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-8 text-sm text-text-tertiary">Max</span>
-              <select
-                value={filters.zoneMax}
-                onChange={(e) => onZoneMaxChange(e.target.value)}
-                className="flex-1 rounded border border-border bg-surface-raised px-2 py-1 text-sm text-text-primary"
-              >
-                <option value="">Any</option>
-                {Array.from({ length: 13 }, (_, i) => i + 1).map((z) => (
-                  <option key={z} value={String(z)}>
-                    {z}
-                  </option>
-                ))}
-              </select>
-            </div>
+        {groups.map(({ group, facets }) => (
+          <div key={group.key}>
+            {facets.map((facet) => (
+              <Disclosure key={facet.key} title={facet.label} defaultOpen={facet.defaultOpen}>
+                {renderFacet(facet)}
+              </Disclosure>
+            ))}
           </div>
-        </Disclosure>
-
-        <Disclosure title="Availability" defaultOpen={true}>
-          {(() => {
-            const disabled = facetCounts.available === 0 && !filters.available;
-            return (
-          <label
-            className={`flex items-center gap-2 py-1 text-sm text-text-secondary ${
-              disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-            }`}
-          >
-            <input
-              type="checkbox"
-              className="custom-checkbox"
-              checked={filters.available}
-              disabled={disabled}
-              onChange={onToggleAvailable}
-            />
-            <span>In stock at nurseries ({facetCounts.available})</span>
-          </label>
-            );
-          })()}
-        </Disclosure>
-
-        <Disclosure title="Sun Requirement" defaultOpen={false}>
-          {SUN_OPTIONS.map((val) => {
-            const count = facetCounts.sun[val] ?? 0;
-            const checked = filters.sun.includes(val);
-            const disabled = count === 0 && !checked;
-            return (
-              <label
-                key={val}
-                className={`flex items-center gap-2 py-1 text-sm text-text-secondary ${
-                  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  className="custom-checkbox"
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={() => onToggleSun(val)}
-                />
-                <span>
-                  {val} ({count})
-                </span>
-              </label>
-            );
-          })}
-        </Disclosure>
-
-        <Disclosure title="Growth Rate" defaultOpen={false}>
-          {GROWTH_RATE_OPTIONS.map((val) => {
-            const count = facetCounts.growthRate[val] ?? 0;
-            const checked = filters.growthRate.includes(val);
-            const disabled = count === 0 && !checked;
-            return (
-              <label
-                key={val}
-                className={`flex items-center gap-2 py-1 text-sm text-text-secondary ${
-                  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  className="custom-checkbox"
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={() => onToggleGrowthRate(val)}
-                />
-                <span>
-                  {val} ({count})
-                </span>
-              </label>
-            );
-          })}
-        </Disclosure>
-
-        {showNutTreeFacets && (
-          <>
-            <Disclosure title="Chill Hours" defaultOpen={false}>
-              {renderRangeInputs({
-                minValue: filters.chillHoursMin,
-                maxValue: filters.chillHoursMax,
-                minLabel: 'Min',
-                maxLabel: 'Max',
-                minPlaceholder: 'e.g. 600',
-                maxPlaceholder: 'e.g. 1200',
-                onMinChange: onChillHoursMinChange,
-                onMaxChange: onChillHoursMaxChange,
-              })}
-            </Disclosure>
-
-            <Disclosure title="Bearing Age (Years)" defaultOpen={false}>
-              {renderRangeInputs({
-                minValue: filters.bearingAgeMin,
-                maxValue: filters.bearingAgeMax,
-                minLabel: 'Min',
-                maxLabel: 'Max',
-                minPlaceholder: 'e.g. 3',
-                maxPlaceholder: 'e.g. 7',
-                onMinChange: onBearingAgeMinChange,
-                onMaxChange: onBearingAgeMaxChange,
-              })}
-            </Disclosure>
-          </>
-        )}
-
-        {showProfileFacets && (
-          <>
-            <Disclosure title="Mature Height (ft)" defaultOpen={false}>
-              {renderRangeInputs({
-                minValue: filters.heightMin,
-                maxValue: filters.heightMax,
-                minLabel: 'Min',
-                maxLabel: 'Max',
-                minPlaceholder: 'e.g. 6',
-                maxPlaceholder: 'e.g. 20',
-                onMinChange: onHeightMinChange,
-                onMaxChange: onHeightMaxChange,
-              })}
-            </Disclosure>
-
-            <Disclosure title="Mature Spread (ft)" defaultOpen={false}>
-              {renderRangeInputs({
-                minValue: filters.spreadMin,
-                maxValue: filters.spreadMax,
-                minLabel: 'Min',
-                maxLabel: 'Max',
-                minPlaceholder: 'e.g. 4',
-                maxPlaceholder: 'e.g. 16',
-                onMinChange: onSpreadMinChange,
-                onMaxChange: onSpreadMaxChange,
-              })}
-            </Disclosure>
-          </>
-        )}
-
-        {showBerryFacets && (
-          <Disclosure title="Soil pH" defaultOpen={false}>
-            {renderRangeInputs({
-              minValue: filters.soilPhMin,
-              maxValue: filters.soilPhMax,
-              minLabel: 'Min',
-              maxLabel: 'Max',
-              minStep: '0.1',
-              maxStep: '0.1',
-              minPlaceholder: 'e.g. 5.5',
-              maxPlaceholder: 'e.g. 7.0',
-              onMinChange: onSoilPhMinChange,
-              onMaxChange: onSoilPhMaxChange,
-            })}
-          </Disclosure>
-        )}
+        ))}
       </>
     );
   }
 
   return (
     <>
+      {/* Mobile filter trigger */}
       <button
         type="button"
         onClick={() => setSheetOpen(true)}
@@ -400,6 +212,7 @@ export function PlantFilterSidebar({
         {activeFilterCount > 0 ? `Filters (${activeFilterCount})` : 'Filters'}
       </button>
 
+      {/* Mobile full-screen filter sheet */}
       {sheetOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
@@ -447,12 +260,13 @@ export function PlantFilterSidebar({
         </div>
       )}
 
+      {/* Desktop sidebar */}
       <aside className="hidden lg:block w-full">
         <div className="flex items-center justify-between border-b border-border-subtle pb-4">
           <span className="text-sm font-medium uppercase tracking-wide text-text-primary">
             Refine Results
           </span>
-          {hasActiveFilters && (
+          {hasActive && (
             <button onClick={onClearAll} className="text-xs text-accent hover:text-accent-hover">
               Clear all
             </button>

@@ -83,15 +83,26 @@ export async function getGenusBySlug(
   supabase: SupabaseClient,
   genusSlug: string
 ): Promise<GenusOverview | null> {
-  // 1. Get the genus taxonomy node
-  const { data: genusNode, error: genusError } = await supabase
+  // 1. Get the genus taxonomy node — try exact slug first, then with genus- prefix
+  let { data: genusNode, error: genusError } = await supabase
     .from('taxonomy_nodes')
     .select('id, slug, name, botanical_name, description, parent_id, taxonomy_ranks(rank_name)')
     .eq('slug', genusSlug)
     .single();
 
+  // If not found and slug doesn't already have the prefix, retry with genus- prefix
+  if ((genusError || !genusNode) && !genusSlug.startsWith('genus-')) {
+    const prefixed = `genus-${genusSlug}`;
+    const retry = await supabase
+      .from('taxonomy_nodes')
+      .select('id, slug, name, botanical_name, description, parent_id, taxonomy_ranks(rank_name)')
+      .eq('slug', prefixed)
+      .single();
+    genusNode = retry.data;
+    genusError = retry.error;
+  }
+
   if (genusError || !genusNode) {
-    if (genusError) console.error('getGenusBySlug genus lookup error:', genusError);
     return null;
   }
 

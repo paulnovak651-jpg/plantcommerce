@@ -50,7 +50,7 @@ interface NurseryInfo {
 function textMatchScore(parsed: ParsedQuery, result: SearchResult): number {
   if (parsed.plantTerms.length === 0) return 0.5;
 
-  const haystack = [
+  const primaryHaystack = [
     result.canonical_name,
     result.botanical_name,
     result.species_common_name,
@@ -62,9 +62,25 @@ function textMatchScore(parsed: ParsedQuery, result: SearchResult): number {
 
   let matched = 0;
   for (const term of parsed.plantTerms) {
-    if (haystack.includes(term)) matched++;
+    if (primaryHaystack.includes(term)) matched++;
   }
-  return matched / parsed.plantTerms.length;
+  const primaryScore = matched / parsed.plantTerms.length;
+
+  // If primary fields matched well, use that score directly
+  if (primaryScore >= 0.5) return primaryScore;
+
+  // Check alias-enriched search_text as fallback (slightly discounted)
+  if (result.search_text) {
+    const fullHaystack = result.search_text.toLowerCase();
+    let aliasMatched = 0;
+    for (const term of parsed.plantTerms) {
+      if (fullHaystack.includes(term)) aliasMatched++;
+    }
+    const aliasScore = (aliasMatched / parsed.plantTerms.length) * 0.85;
+    return Math.max(primaryScore, aliasScore);
+  }
+
+  return primaryScore;
 }
 
 // ---------- Availability ----------

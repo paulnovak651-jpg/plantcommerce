@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getGenusBySlug } from '@/lib/queries/genus';
-import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
+import { genusCommonName } from '@/lib/genus-names';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Text } from '@/components/ui/Text';
 import { BotanicalName } from '@/components/ui/BotanicalName';
@@ -127,7 +127,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!genus) return { title: 'Genus Not Found' };
 
-  const commonName = GENUS_COMMON_NAMES[genusSlug] ?? genus.name;
+  const commonName = genusCommonName(genusSlug) ?? genus.name;
   const title = `${commonName} (${genus.name}) - Species & Availability`;
   const description = genus.description
     ? genus.description.slice(0, 160)
@@ -152,7 +152,7 @@ export default async function GenusHubPage({ params }: Props) {
 
   if (!genus) notFound();
 
-  const commonName = GENUS_COMMON_NAMES[genusSlug] ?? genus.name;
+  const commonName = genusCommonName(genusSlug) ?? genus.name;
   const categoryName = genus.species[0]?.display_category ?? genus.family_name ?? 'Plants';
   const categoryParam = genus.species[0]?.display_category
     ? `/browse?category=${encodeURIComponent(genus.species[0].display_category)}`
@@ -299,7 +299,7 @@ export default async function GenusHubPage({ params }: Props) {
             </Text>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {relatedGenera.map((item) => {
-                const displayName = GENUS_COMMON_NAMES[item.slug] ?? item.name;
+                const displayName = genusCommonName(item.slug) ?? item.name;
                 return (
                   <Link
                     key={item.slug}

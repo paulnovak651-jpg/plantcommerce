@@ -6,7 +6,7 @@ import {
   getRelatedSpeciesWithOffers,
 } from '@/lib/queries/plants';
 import { loadSpeciesPage } from '@/lib/queries/loaders';
-import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
+import { genusCommonName as getGenusCommonName } from '@/lib/genus-names';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -20,6 +20,7 @@ import { JsonLd } from '@/components/JsonLd';
 import { ListingCard } from '@/components/ListingCard';
 import { QuickFactsRibbon } from '@/components/QuickFactsRibbon';
 import type { Cultivar } from '@/lib/types';
+import { ZoneCompatibility } from '@/components/ZoneCompatibility';
 import type { GrowingProfile } from '@/lib/types';
 
 interface Props {
@@ -91,7 +92,7 @@ export default async function SpeciesPage({ params }: Props) {
     ? await getRelatedSpeciesWithOffers(supabase, species.genus, species.slug)
     : [];
   const genusNode = taxonomyPath.find((n) => n.rank === 'genus');
-  const genusCommonName = genusNode ? (GENUS_COMMON_NAMES[genusNode.slug] ?? genusNode.name) : null;
+  const genusCommonName = genusNode ? (getGenusCommonName(genusNode.slug) ?? genusNode.name) : null;
 
   // Group cultivars by material type
   const clones = cultivars.filter((c) => c.material_type === 'cultivar_clone');
@@ -188,6 +189,12 @@ export default async function SpeciesPage({ params }: Props) {
       {growingProfile && (
         <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
           <QuickFactsRibbon facts={buildQuickFacts(growingProfile)} />
+          <div className="mt-3">
+            <ZoneCompatibility
+              zoneMin={growingProfile.usda_zone_min}
+              zoneMax={growingProfile.usda_zone_max}
+            />
+          </div>
         </section>
       )}
 

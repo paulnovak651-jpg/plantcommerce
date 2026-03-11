@@ -1,6 +1,6 @@
 # Plant Commerce — Vision & Status Document
 
-*Last updated: 2026-03-10. For sharing with collaborators and AI agents.*
+*Last updated: 2026-03-11. For sharing with collaborators and AI agents.*
 
 
 ## What Is This?
@@ -76,9 +76,9 @@ Our pipeline decomposes these into structured components (botanical name, propag
 - `unmatched_names` — product names the resolver couldn't match
 
 **Search:**
-- `material_search_index` — materialized view with trigram indexes, zone token expansion, category filtering, availability counts
+- `material_search_index` — materialized view with trigram indexes, zone token expansion, category filtering, availability counts, `alias_names` column (pipe-separated display aliases for autocomplete)
 
-**48 SQL migrations** applied.
+**49 SQL migrations** applied (+ migration 050 pending deploy).
 
 ### Pipeline (the engine)
 
@@ -95,7 +95,7 @@ Our pipeline decomposes these into structured components (botanical name, propag
 | Page | Description |
 |------|-------------|
 | `/` | Homepage with search, category cards, stats, "How It Works" |
-| `/browse` | Explorer with zone/category/availability filters, species or genus grouping, sort options, active filter chips, skeleton loaders |
+| `/browse` | Explorer with registry-driven faceted filtering (zone, category, sun, growth rate, availability, chill hours, height, pH, spread), species or genus grouping, sort options, active filter pills, skeleton loaders, hybrid SSR seed + API-driven data flow, zero-result recovery hints |
 | `/search` | Full-text search with zone/category/in-stock filters |
 | `/plants/genus/[genusSlug]` | Genus hub — all species in a genus with growing profiles, breadcrumbs |
 | `/plants/[speciesSlug]` | Species detail — taxonomy lineage, growing profile grid, cultivar cards with availability badges, section dividers, related species pills |
@@ -113,7 +113,7 @@ Our pipeline decomposes these into structured components (botanical name, propag
 
 ### API (20 endpoints)
 
-Plants, cultivars, nurseries, search, pipeline trigger/status/health, community listings, stock alerts, admin tools, schema endpoint, dashboard/sessions/tasks. Standard envelope: `{ ok: true, data, meta, links }`. Rate-limited. AI-readable docs at `/llms.txt` and `/llms-full.txt`.
+Plants, cultivars, nurseries, search, browse (facet-driven filtering with cross-facet counts and recovery hints), autocomplete (alias-aware), pipeline trigger/status/health, community listings, stock alerts, admin tools, schema endpoint, dashboard/sessions/tasks. Standard envelope: `{ ok: true, data, meta, links }`. Rate-limited. AI-readable docs at `/llms.txt` and `/llms-full.txt`.
 
 ### UI Polish
 
@@ -133,8 +133,9 @@ Plants, cultivars, nurseries, search, pipeline trigger/status/health, community 
 - Related species pill links
 
 ### Tests & CI
-- **99+ tests** across multiple suites, all passing
+- **230+ tests** across multiple suites, all passing
 - GitHub Actions CI: typecheck (`tsc --noEmit`) + test on push/PR to master
+- Key test suites: facet query builder (27 tests), facet state (16 tests), search scoring, pipeline, resolver
 
 ## What's Generic vs. Domain-Specific
 
@@ -156,18 +157,20 @@ Plants, cultivars, nurseries, search, pipeline trigger/status/health, community 
 
 This has been proven — the project has expanded from a single genus (hazelnuts) to 15+ genera across nut trees, fruit trees, berries, vines, and support species.
 
-## Current State (as of 2026-03-10)
+## Current State (as of 2026-03-11)
 
 ### What's working
 - Multi-genus platform with 15+ genera seeded across fruit, nut, berry, vine, and support species
 - 3 nurseries live with scraped inventory (Burnt Ridge, Grimo, Raintree)
 - Data-driven scraper pipeline with generic Shopify + WooCommerce support
 - Config-driven parser and resolver (genus registry pattern)
-- Full browse/search/filter experience with zone, category, availability, and genus grouping
+- Registry-driven faceted browse with cross-facet counts, recovery hints, hybrid SSR+API data flow
+- Alias-aware autocomplete (shows "also known as" in dropdown, alias_names from materialized view)
+- Zone persistence (localStorage), zone prompt, zone compatibility badges on plant pages
 - Genus hub pages for hierarchical browsing (Category → Genus → Species → Cultivar)
 - Price comparison tables, nursery maps, stock alerts, pollination checker
 - Community marketplace with anonymous listings and admin moderation
-- 48 migrations, 99+ tests, TypeScript strict, CI green
+- 49 migrations, 230+ tests, TypeScript strict, CI green
 - Live at https://plantfinder-cyan.vercel.app
 
 ### What's next

@@ -29,6 +29,7 @@ import { PriceSparkline } from '@/components/PriceSparkline';
 import { getApprovedListingsForCultivar } from '@/lib/queries/listings';
 import { getLatestPriceChanges, getPriceHistoryForOffers } from '@/lib/queries/price-history';
 import { formatPrice } from '@/lib/format';
+import { ZoneCompatibility } from '@/components/ZoneCompatibility';
 import type { GrowingProfile } from '@/lib/types';
 
 interface Props {
@@ -490,6 +491,12 @@ export default async function CultivarPage({ params }: Props) {
       {quickFacts.length > 0 && (
         <section>
           <QuickFactsRibbon facts={quickFacts} />
+          <div className="mt-3">
+            <ZoneCompatibility
+              zoneMin={growingProfile?.usda_zone_min ?? null}
+              zoneMax={growingProfile?.usda_zone_max ?? null}
+            />
+          </div>
         </section>
       )}
 

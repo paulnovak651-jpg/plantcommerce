@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Cultivar, PlantEntity } from '@/lib/types';
-import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
+import { genusCommonName } from '@/lib/genus-names';
 
 interface PlantCategoryRow {
   id: string;
@@ -291,7 +291,7 @@ export async function getHomepageCategories(
         .slice(0, 3)
         .map((g) => ({
           slug: g.slug,
-          common_name: GENUS_COMMON_NAMES[g.slug] ?? g.slug,
+          common_name: genusCommonName(g.slug) ?? g.slug,
           species_count: g.species_count,
         }));
 

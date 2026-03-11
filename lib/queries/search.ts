@@ -16,6 +16,10 @@ export interface SearchResult {
   usda_zone_min: number | null;
   usda_zone_max: number | null;
   display_category: string | null;
+  /** Full search text including aliases — used for scoring, not display */
+  search_text?: string;
+  /** Pipe-separated display-friendly alias names */
+  alias_names?: string | null;
 }
 
 export interface SearchFilters {
