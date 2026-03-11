@@ -84,7 +84,7 @@ It also will provide general information about the plants in a clean easy to sor
 
 Business entity: Even Flow Nursery LLC
 Stack: Next.js 16.1.6 (App Router), React 19.2.4, TypeScript 5.9.3 strict, Tailwind CSS 4.2.1, Supabase (PostgreSQL + RLS), Cheerio 1.2.0
-Tests: Vitest, 99 tests (must stay passing)
+Tests: Vitest, 230+ tests (must stay passing)
 CI: GitHub Actions
 Live: https://plantfinder-cyan.vercel.app
 
@@ -92,28 +92,22 @@ Live: https://plantfinder-cyan.vercel.app
 
 ## Current State
 
-- Sprint 4 Phase 1 ✅ complete — RangeBar, IconRating, TraitGrid visual components; species + cultivar pages show growing bars; homepage cleaned up
-- Sprint 4 Phase 2 ✅ complete — Explorer page at `/browse`, FilterBar (zone/category/availability), enhanced Cladogram (mini zone bars, cultivar counts, category dimming), detail panel, nav simplified to Search | Explore | Nurseries, species page stats + availability badges
-- Sprint 4 Phase 3 ✅ complete — Leaflet nursery maps on index (300px) + cultivar mini-map (200px); nursery detail cleanup (ALL CAPS names, hide null Last Updated, remove Sales Type)
-- Sprint 4 Phase 4 ✅ complete — `community_listings` table (migration 013), POST/GET `/api/listings`, ListingCard + ListingForm components, `/listings/new` submission page, `/admin/listings` moderation queue, listing sections on cultivar + species pages
-- 3 nurseries live: Burnt Ridge (18 offers), Grimo (28 offers), Raintree (validated)
-- Knowledge graph: taxonomy tree + growing profiles for 4 Corylus species
-- Deployment live at https://plantfinder-cyan.vercel.app (commit 4b57a89)
+- Sprints 1–7 ✅ complete — see CONTEXT.md for full history
+- **Sprint 7** (latest): Nav cleanup (Browse/Marketplace/Nurseries only), browse hero removed, category context bar + quick-filter chips on browse, header search → /browse, typography audit
+- 15+ genera seeded, 3 nurseries live (Burnt Ridge, Grimo, Raintree)
+- 230+ tests passing, 49+ SQL migrations, TypeScript strict
+- Registry-driven faceted browse, alias-aware autocomplete, zone persistence, price comparison, stock alerts
+- Deployment live at https://plantfinder-cyan.vercel.app
 
 ---
 
 ## Current Priorities
 
-**Next Up — Nursery Outreach & Consent**
-- Draft outreach email template for Burnt Ridge, Grimo, Raintree
-- Polish site before contacting nurseries (site is now ready)
-- Contact existing 3 nurseries for retroactive consent
-
-**After Outreach — Phase 5 (TBD)**
-- Supabase Auth + lightweight user accounts (tie listings to accounts, trust tier progression)
-- Price alerts / stock notifications
-- Build remaining scrapers (One Green World + others, consent required first)
-- Parser generalization beyond hazelnut
+1. **Nursery consent & outreach** — draft outreach template, contact Burnt Ridge/Grimo/Raintree for retroactive consent
+2. **Data quality** — enrich cultivar attributes (height, pH, chill hours, pollination), populate missing alias/common names
+3. **Build remaining scrapers** — One Green World + others, only after consent obtained
+4. **Auth & engagement** — Supabase Auth, tie listings to accounts, trust tier progression
+5. **Cultivar empty-state CTAs** — "Get notified" / "Know a nursery?" links on zero-offer cultivar pages
 
 ---
 
@@ -133,29 +127,21 @@ Live: https://plantfinder-cyan.vercel.app
 | What | Where |
 |------|-------|
 | Scraper interface + registry | `lib/scraper/index.ts` |
-| Burnt Ridge scraper (reference) | `lib/scraper/burnt-ridge.ts` |
 | Pipeline trigger | `app/api/pipeline/scrape/route.ts` |
 | Parser logic | `lib/resolver/parser.ts` |
 | Resolver (12-method chain) | `lib/resolver/resolver.ts` |
+| Facet registry (single source of truth) | `lib/facets/registry.ts` |
+| Facet state (URL serialization) | `lib/facets/state.ts` |
+| Facet query builder | `lib/queries/facet-query-builder.ts` |
+| Browse orchestrator | `components/BrowseContent.tsx` |
+| Browse decomposition | `components/browse/` (BrowseShell, BrowseHeader, BrowseGrid, ActiveFilterPills, SmartEmptyState, FacetControl, CategoryContext) |
+| Category colors (shared) | `lib/category-colors.ts` |
+| Zone persistence | `lib/zone-persistence.ts` |
+| Autocomplete API | `app/api/autocomplete/route.ts` |
+| Browse API | `app/api/browse/route.ts` |
 | DB queries | `lib/queries/` |
-| Explorer query | `lib/queries/explorer.ts` |
-| Growing profile query | `lib/queries/growing.ts` |
-| Taxonomy query | `lib/queries/taxonomy.ts` |
+| Design system components | `components/ui/` (Text, Tag, Surface, BotanicalName, SearchBar, Disclosure, EmptyState) |
 | Supabase clients | `lib/supabase/server.ts` |
 | API envelope helpers | `lib/api-helpers.ts` |
-| Explorer page | `app/browse/page.tsx` |
-| ExplorerLayout (client shell) | `components/ExplorerLayout.tsx` |
-| FilterBar | `components/FilterBar.tsx` |
-| Cladogram | `components/Cladogram.tsx` |
-| TraitGrid | `components/ui/TraitGrid.tsx` |
-| RangeBar | `components/ui/RangeBar.tsx` |
-| Nursery map (dynamic wrapper) | `components/NurseryMap.tsx` |
-| Nursery map (Leaflet client) | `components/NurseryMapClient.tsx` |
-| Listing card | `components/ListingCard.tsx` |
-| Listing submission form | `components/ListingForm.tsx` |
-| Listings API | `app/api/listings/route.ts` |
-| Listings submission page | `app/listings/new/page.tsx` |
-| Listings moderation admin | `app/admin/listings/page.tsx` |
-| Listings DB queries | `lib/queries/listings.ts` |
 | SQL migrations | `sql/migrations/` |
 | Full context + architecture | `CONTEXT.md` |

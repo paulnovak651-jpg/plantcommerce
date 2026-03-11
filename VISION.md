@@ -95,8 +95,8 @@ Our pipeline decomposes these into structured components (botanical name, propag
 | Page | Description |
 |------|-------------|
 | `/` | Homepage with search, category cards, stats, "How It Works" |
-| `/browse` | Explorer with registry-driven faceted filtering (zone, category, sun, growth rate, availability, chill hours, height, pH, spread), species or genus grouping, sort options, active filter pills, skeleton loaders, hybrid SSR seed + API-driven data flow, zero-result recovery hints |
-| `/search` | Full-text search with zone/category/in-stock filters |
+| `/browse` | Unified search+browse surface with registry-driven faceted filtering (zone, category, sun, growth rate, availability, chill hours, height, pH, spread), species or genus grouping, sort options, active filter pills, category context bar, quick-filter category chips, skeleton loaders, hybrid SSR seed + API-driven data flow, zero-result recovery hints |
+| `/search` | Redirect to `/browse` (kept for backward compatibility/SEO) |
 | `/plants/genus/[genusSlug]` | Genus hub — all species in a genus with growing profiles, breadcrumbs |
 | `/plants/[speciesSlug]` | Species detail — taxonomy lineage, growing profile grid, cultivar cards with availability badges, section dividers, related species pills |
 | `/plants/[speciesSlug]/[cultivarSlug]` | Cultivar detail — price comparison table (best price tag, mobile cards), nursery map, stock alert signup, pollination info |
@@ -175,10 +175,13 @@ This has been proven — the project has expanded from a single genus (hazelnuts
 
 ### What's next
 1. **Nursery consent & outreach** — draft outreach template, contact existing 3 nurseries for retroactive consent
-2. **Build remaining scrapers** — One Green World + others, only after consent
-3. **Auth & engagement** — Supabase Auth, tie listings to accounts, trust tier progression
-4. **Expand genus coverage** — seed more cultivar data for existing genera, add new genera as nursery data comes in
-5. **Price history UI** — surface price trends from the price_history table
+2. **Data quality** — enrich cultivar attributes (height, pH, chill hours, pollination), populate alias/common names for better search
+3. **Cultivar empty-state CTAs** — "Get notified" / "Know a nursery?" on zero-offer cultivar pages (no dead ends)
+4. **Build remaining scrapers** — One Green World + others, only after consent
+5. **Auth & engagement** — Supabase Auth, tie listings to accounts, trust tier progression
+6. **Expand genus coverage** — seed more cultivar data for existing genera, add new genera as nursery data comes in
+7. **Price history UI** — surface price trends from the price_history table
+8. **Conversational agent** — "What should I grow?" wizard (prerequisites: complete attribute data, alias mapping, zone persistence — all done)
 
 ## Nursery Consent Strategy
 

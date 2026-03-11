@@ -1,7 +1,8 @@
 # Plant Commerce — Knowledge Graph Schema Specification
 
 *Migration plan for Wave 4. Created 2026-02-24.*
-*To be implemented as numbered SQL migrations in `sql/` directory.*
+*Status: ✅ All migrations in this document have been applied. This file is retained as a reference for the schema design decisions.*
+*Actual migrations are in `sql/migrations/`.*
 
 ---
 

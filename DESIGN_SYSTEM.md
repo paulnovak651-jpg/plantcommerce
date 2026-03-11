@@ -439,9 +439,29 @@ Apply both font variables to `<html>` className.
 
 ---
 
+### 9. `<CategoryContext>` (browse surface)
+Compact gradient bar showing the active category on the browse page.
+
+```tsx
+interface CategoryContextProps {
+  category: string;
+  total: number;
+  onClear: () => void;
+}
+```
+
+Uses shared `lib/category-colors.ts` for gradient backgrounds — same colors as homepage `CategoryCard` components. Provides visual continuity between homepage category selection and browse filtering.
+
+### Shared Color Constants
+
+Category colors are defined in `lib/category-colors.ts` and imported by both `CategoryCard` (homepage) and `CategoryContext` (browse). Do not define category colors inline — always import from the shared module.
+
+---
+
 ## Notes for the Builder
 
 - **Don't break existing functionality.** All existing pages, API routes, and tests must continue working. This is a visual reskin, not a rewrite.
 - **Keep server components.** Page-level components stay as server components. Only new interactive components (Disclosure, SearchBar, TaxonomyPath) need `'use client'`.
 - **Satoshi font files** need to be downloaded from https://www.fontshare.com/fonts/satoshi and placed in `public/fonts/`. Get the WOFF2 files for Regular (400), Medium (500), and Bold (700).
+- **Use `<Text>` for all page-level typography.** As of Sprint 7, all homepage and browse page text uses the `<Text>` component. Do not introduce raw Tailwind font/text classes for headings, body, captions, or prices — use `<Text variant="...">` instead. Exceptions: white text on dynamic gradient backgrounds (CategoryCard interiors), SVG labels, and layout utility classes.
 - **Progressive approach:** Implement the design tokens and components first, then restyle pages one at a time starting with the homepage and cultivar page.

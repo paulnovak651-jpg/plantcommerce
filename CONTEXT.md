@@ -19,13 +19,14 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 
 ## Current State (as of 2026-03-11)
 
-- **Foundation:** Solid. 230+ tests passing, TypeScript strict, CI green. 49 SQL migrations applied (+ migration 050 pending deploy).
+- **Foundation:** Solid. 230+ tests passing, TypeScript strict, CI green. 49+ SQL migrations applied.
 - **Multi-genus:** 15+ genera seeded — hazelnuts, chestnuts, walnuts, hickories, apples, stone fruit, persimmons, mulberries, elderberries, grapes, blueberries, figs, pears, gooseberries/currants, raspberries/blackberries, kiwi, goumi, sea buckthorn, hackberry.
 - **Live data:** 3 nurseries live (Burnt Ridge, Grimo, Raintree). Pipeline consent-gated. Cron: Monday 6am UTC.
 - **Deployment:** Live at https://plantfinder-cyan.vercel.app.
 - **Scrapers:** Data-driven registry with generic Shopify + WooCommerce scrapers. Config-driven — adding a nursery is a registry entry.
 - **Knowledge graph:** Taxonomy tree (37+ nodes, Kingdom→Genus) + growing profiles + pollination profiles.
-- **Browse/Search:** Registry-driven faceted filtering (zone, category, sun, growth rate, availability, chill hours, bearing age, height, pH, spread), active filter pills, skeleton loaders, sort options, pagination, search autocomplete with alias matching. Hybrid data flow: SSR seed for instant first render, API-driven for subsequent changes with 300ms debounce.
+- **Navigation:** 3 items: Browse, Marketplace, Nurseries. No separate "Search" nav item — `/search` exists only as a redirect to `/browse` for backward compatibility.
+- **Browse/Search:** Unified browse surface at `/browse`. Registry-driven faceted filtering (zone, category, sun, growth rate, availability, chill hours, bearing age, height, pH, spread), active filter pills, skeleton loaders, sort options, pagination, search autocomplete with alias matching. Hybrid data flow: SSR seed for instant first render, API-driven for subsequent changes with 300ms debounce. Category context bar shows when one category is active. Quick-filter category chips appear when no category is selected.
 - **Facet system:** Single-source-of-truth `FACET_REGISTRY` drives sidebar, URL state, filter predicates, and count computation. Cross-facet counts (each facet counted against results filtered by all OTHER facets). Recovery hints for zero-result states show which filter to remove and expected result count.
 - **Genus hubs:** `/plants/genus/[slug]` pages with species cards, growing profiles, breadcrumbs (Category → Genus → Species → Cultivar).
 - **Price comparison:** Side-by-side nursery comparison tables with best-price tags, trust badges (Live/Tracked/Community), price sparklines, mobile card layout.
@@ -34,8 +35,8 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 - **Stock alerts:** Email signup for availability/price notifications, toast confirmations.
 - **Pollination checker:** Species-level pollination compatibility tool.
 - **Admin tools:** `/admin/unmatched` + `/admin/listings` (token-protected).
-- **Homepage:** Dynamic sections (Recently Restocked, Best Deals, New to Database), seasonal banner, zone recommendations, scroll reveal animations.
-- **UI polish:** 30+ visual refinements — nav highlighting, custom checkboxes, filter chips, animations, skeleton loaders, grain textures, per-category card colors, botanical sketch placeholders, typography refinements, tabular-nums pricing, hover micro-interactions, toast notifications, progressive disclosure.
+- **Homepage:** Dynamic sections (Recently Restocked, Best Deals, New to Database), seasonal banner, zone recommendations, scroll reveal animations. All text uses `<Text>` component system.
+- **UI polish:** 30+ visual refinements — custom checkboxes, filter chips, animations, skeleton loaders, grain textures, per-category card colors, botanical sketch placeholders, typography via `<Text>` component, tabular-nums pricing, hover micro-interactions, toast notifications, progressive disclosure. Category colors extracted to shared `lib/category-colors.ts`.
 - **Zone awareness:** Zone persistence in localStorage, zone prompt on browse pages, zone-changed events propagate to facet state, ZoneCompatibility badges on species/cultivar pages.
 
 ---
@@ -174,12 +175,23 @@ Generic Shopify and WooCommerce scrapers available — new nurseries can be onbo
   - #10: `/api/browse` endpoint (server-side faceted query, rate-limited)
   - #11: BrowseContent hybrid data flow (SSR seed + API-driven with 300ms debounce + AbortController)
   - #12: SmartEmptyState recovery hints UI (amber-toned panel, top-3 suggestions)
+- ✅ Sprint 7 Navigation & Consistency:
+  - #1: Removed "Search" from nav — 3 items: Browse, Marketplace, Nurseries
+  - #2: Removed browse page hero — compact header with `<Text>` h1
+  - #3: Header search form → `/browse` (was `/search`)
+  - #4: Category context bar on browse (gradient bar with name, count, clear button)
+  - #5: Category quick-filter chips on browse when no category selected
+  - #6: Typography audit — converted homepage raw classes to `<Text>` components
+  - Extracted category colors to shared `lib/category-colors.ts`
+  - Created `components/browse/CategoryContext.tsx`
 
 ### Current priorities
 1. **Nursery consent & outreach** ← NEXT — draft outreach template, contact existing 3 nurseries
-2. **Build remaining scrapers** — One Green World + others, only after consent obtained
-3. **Auth + engagement** — Supabase Auth, tie listings to accounts, trust tier progression
-4. **Expand genus data** — more cultivar coverage for seeded genera
+2. **Data quality** — enrich cultivar attributes (height, pH, chill hours, pollination), populate alias/common names
+3. **Cultivar empty-state CTAs** — "Get notified" / "Know a nursery?" on zero-offer pages
+4. **Build remaining scrapers** — One Green World + others, only after consent obtained
+5. **Auth + engagement** — Supabase Auth, tie listings to accounts, trust tier progression
+6. **Expand genus data** — more cultivar coverage for seeded genera
 
 ---
 
@@ -247,7 +259,7 @@ Use these as the source of truth for search URL state, result card fields, listi
       ▼
 [Next.js App — plantfinder-cyan.vercel.app]
       │
-      ├── Pages: home, search, species, cultivar, nursery index, nursery detail
+      ├── Pages: home, browse, species, cultivar, nursery index, nursery detail
       │   └── Server-rendered, pulls from Supabase directly
       │
       ├── API (9 endpoints)
