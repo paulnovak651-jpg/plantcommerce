@@ -1,4 +1,4 @@
-# Sprint 7: Explore Mode — Taxonomy-Driven Browse Discovery
+# Sprint 8: Explore Mode — Taxonomy-Driven Browse Discovery
 
 ## Status
 
