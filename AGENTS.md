@@ -92,8 +92,8 @@ Live: https://plantfinder-cyan.vercel.app
 
 ## Current State
 
-- Sprints 1–7 ✅ complete — see CONTEXT.md for full history
-- **Sprint 7** (latest): Nav cleanup (Browse/Marketplace/Nurseries only), browse hero removed, category context bar + quick-filter chips on browse, header search → /browse, typography audit
+- Sprints 1–11 complete — see CONTEXT.md for full history
+- **Sprint 12** (ACTIVE): Progressive Disclosure UX Restructure — see `SPRINT12_PROGRESSIVE_DISCLOSURE.md`
 - 15+ genera seeded, 3 nurseries live (Burnt Ridge, Grimo, Raintree)
 - 230+ tests passing, 49+ SQL migrations, TypeScript strict
 - Registry-driven faceted browse, alias-aware autocomplete, zone persistence, price comparison, stock alerts
@@ -103,11 +103,17 @@ Live: https://plantfinder-cyan.vercel.app
 
 ## Current Priorities
 
-1. **Nursery consent & outreach** — draft outreach template, contact Burnt Ridge/Grimo/Raintree for retroactive consent
-2. **Data quality** — enrich cultivar attributes (height, pH, chill hours, pollination), populate missing alias/common names
-3. **Build remaining scrapers** — One Green World + others, only after consent obtained
-4. **Auth & engagement** — Supabase Auth, tie listings to accounts, trust tier progression
-5. **Cultivar empty-state CTAs** — "Get notified" / "Know a nursery?" links on zero-offer cultivar pages
+**Active Sprint: SPRINT12_PROGRESSIVE_DISCLOSURE.md** — Read the full sprint doc before starting work.
+
+Execute phases in order:
+
+1. **Phase 1: Homepage Hero & Nav Cleanup** — Add hero with search + quick-start chips, remove Marketplace from nav, remove Explore/Refine toggle, remove Pollination "coming soon" tab, replace header search with SearchBar component
+2. **Phase 2: Surface Prices Earlier** — Add min_price_cents to browse API, show "From $X" on PlantCard and species page cultivar cards, move PriceComparisonTable out of Buy tab
+3. **Phase 3: Cultivar Page Restructure** — Decompose 36KB page into components, progressive disclosure layout (hero → buy → growing accordion → about accordion)
+4. **Phase 4: Compare Flow** — CompareContext, CompareTray, /compare page with CompareTable
+5. **Phase 5: Search Polish** — Refinements to SearchBar dropdown
+
+Each phase is independently shippable. Run `npm test` and `npx tsc --noEmit` after each phase.
 
 ---
 
@@ -119,6 +125,7 @@ Live: https://plantfinder-cyan.vercel.app
 - Tests must pass: run `npm test` before wrapping a coding task
 - No secrets in code: env vars only, never commit `.env*.local`
 - No new scrapers without nursery consent — see CONTEXT.md
+- No new npm dependencies in Sprint 12 — everything needed is already installed
 
 ---
 
@@ -126,6 +133,8 @@ Live: https://plantfinder-cyan.vercel.app
 
 | What | Where |
 |------|-------|
+| **Sprint 12 spec** | `SPRINT12_PROGRESSIVE_DISCLOSURE.md` |
+| **UX product spec** | `UX_PRODUCT_SPEC.md` |
 | Scraper interface + registry | `lib/scraper/index.ts` |
 | Pipeline trigger | `app/api/pipeline/scrape/route.ts` |
 | Parser logic | `lib/resolver/parser.ts` |
@@ -135,7 +144,10 @@ Live: https://plantfinder-cyan.vercel.app
 | Facet query builder | `lib/queries/facet-query-builder.ts` |
 | Browse orchestrator | `components/BrowseContent.tsx` |
 | Browse decomposition | `components/browse/` (BrowseShell, BrowseHeader, BrowseGrid, ActiveFilterPills, SmartEmptyState, FacetControl, CategoryContext) |
+| Browse page client | `components/browse/BrowsePageClient.tsx` |
+| Taxonomy explorer | `components/browse/TaxonomyExplorer.tsx` |
 | Category colors (shared) | `lib/category-colors.ts` |
+| Category definitions | `lib/browse-categories.ts` |
 | Zone persistence | `lib/zone-persistence.ts` |
 | Autocomplete API | `app/api/autocomplete/route.ts` |
 | Browse API | `app/api/browse/route.ts` |
