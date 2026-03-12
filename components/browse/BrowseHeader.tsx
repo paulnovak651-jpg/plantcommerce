@@ -17,6 +17,8 @@ interface BrowseHeaderProps {
   onSortChange: (value: string) => void;
   onGroupByChange: (value: 'species' | 'genus') => void;
   onCategorySelect: (category: string) => void;
+  /** When true, hides category pills and genus toggle (user navigated via funnel). */
+  inFunnel?: boolean;
 }
 
 export function BrowseHeader({
@@ -31,10 +33,12 @@ export function BrowseHeader({
   onSortChange,
   onGroupByChange,
   onCategorySelect,
+  inFunnel = false,
 }: BrowseHeaderProps) {
   return (
     <>
-      {selectedCategories.length === 0 && (
+      {/* Hide category pills when user navigated via funnel or when a category is selected */}
+      {!inFunnel && selectedCategories.length === 0 && (
         <div className="mb-3 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {CATEGORY_OPTIONS.map((cat) => (
             <button
@@ -71,30 +75,33 @@ export function BrowseHeader({
         sort={sort}
         onSortChange={onSortChange}
       />
-      <div className="mb-4 flex justify-end -mt-2">
-        <div className="flex items-center gap-1 rounded-lg border border-border bg-surface-inset p-0.5">
-          <button
-            onClick={() => onGroupByChange('species')}
-            className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-              groupBy === 'species'
-                ? 'bg-surface-raised text-text-primary shadow-sm'
-                : 'text-text-tertiary hover:text-text-secondary'
-            }`}
-          >
-            Species
-          </button>
-          <button
-            onClick={() => onGroupByChange('genus')}
-            className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-              groupBy === 'genus'
-                ? 'bg-surface-raised text-text-primary shadow-sm'
-                : 'text-text-tertiary hover:text-text-secondary'
-            }`}
-          >
-            Genus
-          </button>
+      {/* Hide species/genus toggle when user navigated via funnel (already scoped to genus) */}
+      {!inFunnel && (
+        <div className="mb-4 flex justify-end -mt-2">
+          <div className="flex items-center gap-1 rounded-lg border border-border bg-surface-inset p-0.5">
+            <button
+              onClick={() => onGroupByChange('species')}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                groupBy === 'species'
+                  ? 'bg-surface-raised text-text-primary shadow-sm'
+                  : 'text-text-tertiary hover:text-text-secondary'
+              }`}
+            >
+              Species
+            </button>
+            <button
+              onClick={() => onGroupByChange('genus')}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                groupBy === 'genus'
+                  ? 'bg-surface-raised text-text-primary shadow-sm'
+                  : 'text-text-tertiary hover:text-text-secondary'
+              }`}
+            >
+              Genus
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

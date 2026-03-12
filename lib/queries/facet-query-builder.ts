@@ -366,7 +366,8 @@ const DEFAULT_PER_PAGE = 24;
 export async function queryBrowsePlants(
   supabase: SupabaseClient,
   state: FacetState,
-  perPage: number = DEFAULT_PER_PAGE
+  perPage: number = DEFAULT_PER_PAGE,
+  genusSlug?: string
 ): Promise<FacetQueryResult> {
   // Fetch all browse plants (the data layer handles multi-table assembly)
   const allPlants = await getAllBrowsePlants(supabase);
@@ -381,6 +382,11 @@ export async function queryBrowsePlants(
   // Apply all filters
   let filtered = allPlants.filter((plant) => {
     if (q && !matchesKeyword(plant, q)) return false;
+    // Genus filter from funnel navigation
+    if (genusSlug) {
+      const slug = plant.genus_slug?.replace(/^genus-/, '');
+      if (slug !== genusSlug) return false;
+    }
     return predicates.every((pred) => pred(plant));
   });
 

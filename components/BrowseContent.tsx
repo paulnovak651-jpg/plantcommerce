@@ -16,8 +16,13 @@ import { BrowseShell } from '@/components/browse/BrowseShell';
 import { BrowseHeader } from '@/components/browse/BrowseHeader';
 import { BrowseGrid } from '@/components/browse/BrowseGrid';
 import { CategoryContext } from '@/components/browse/CategoryContext';
+import { CategoryCards } from '@/components/browse/CategoryCards';
+import { GenusCards } from '@/components/browse/GenusCards';
+import { BrowseBreadcrumb } from '@/components/browse/BrowseBreadcrumb';
 import type { FilterPill } from '@/components/browse/ActiveFilterPills';
 import { FACET_REGISTRY } from '@/lib/facets/registry';
+import { getTopCategory, CATEGORY_MAPPING } from '@/lib/browse-categories';
+import { getGenusCounts } from '@/lib/queries/genus-counts';
 
 const PER_PAGE = 24;
 const DEBOUNCE_MS = 300;
@@ -178,6 +183,16 @@ interface BrowseApiResponse {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers: resolve display_category values for a top-level browse category
+// ---------------------------------------------------------------------------
+
+function getDisplayCategoriesForSlug(slug: string): string[] {
+  return Object.entries(CATEGORY_MAPPING)
+    .filter(([, mapped]) => mapped === slug)
+    .map(([displayCat]) => displayCat);
+}
+
+// ---------------------------------------------------------------------------
 // Orchestrator
 // ---------------------------------------------------------------------------
 
@@ -187,6 +202,21 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   // FacetState is the single source of truth for all filter state
   const [facetState, setFacetState] = useState<FacetState>(() =>
     parseFacetState(searchParams)
+  );
+
+  // ---- Funnel state ----
+  const [browseStep, setBrowseStep] = useState<'categories' | 'genera' | 'cultivars'>(() => {
+    const cat = searchParams.get('cat');
+    const genus = searchParams.get('genus');
+    if (cat && genus) return 'cultivars';
+    if (cat) return 'genera';
+    return 'categories';
+  });
+  const [selectedTopCategory, setSelectedTopCategory] = useState<string | null>(
+    () => searchParams.get('cat'),
+  );
+  const [selectedGenus, setSelectedGenus] = useState<string | null>(
+    () => searchParams.get('genus'),
   );
 
   // API-driven results state
@@ -231,12 +261,39 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     return () => window.removeEventListener('zone-changed', handleZoneChanged);
   }, []);
 
-  // Sync URL when facet state changes
+  // Sync URL when facet state or funnel state changes
   useEffect(() => {
     const qs = serializeFacetState(facetState);
-    const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    const params = new URLSearchParams(qs);
+
+    // Add funnel params
+    if (selectedTopCategory) params.set('cat', selectedTopCategory);
+    else params.delete('cat');
+    if (selectedGenus) params.set('genus', selectedGenus);
+    else params.delete('genus');
+
+    const finalQs = params.toString();
+    const url = finalQs ? `${window.location.pathname}?${finalQs}` : window.location.pathname;
     window.history.replaceState(null, '', url);
-  }, [facetState]);
+  }, [facetState, selectedTopCategory, selectedGenus]);
+
+  // Handle browser back/forward for funnel state
+  useEffect(() => {
+    function handlePopState() {
+      const sp = new URLSearchParams(window.location.search);
+      const cat = sp.get('cat');
+      const genus = sp.get('genus');
+
+      setSelectedTopCategory(cat);
+      setSelectedGenus(genus);
+
+      if (cat && genus) setBrowseStep('cultivars');
+      else if (cat) setBrowseStep('genera');
+      else setBrowseStep('categories');
+    }
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Scroll to top on page change
   useEffect(() => {
@@ -244,11 +301,62 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   }, [facetState.page]);
 
   // -------------------------------------------------------------------------
+  // Funnel navigation
+  // -------------------------------------------------------------------------
+
+  const navigateToCategory = useCallback((slug: string) => {
+    setSelectedTopCategory(slug);
+    setSelectedGenus(null);
+    setBrowseStep('genera');
+
+    // Set the display_category facet filter for this top category
+    const displayCats = getDisplayCategoriesForSlug(slug);
+    setHasUserChanged(true);
+    setFacetState((prev) => ({
+      ...prev,
+      multiSelect: { ...prev.multiSelect, category: displayCats },
+      page: 1,
+    }));
+  }, []);
+
+  const navigateToGenus = useCallback((genusSlug: string) => {
+    setSelectedGenus(genusSlug);
+    setBrowseStep('cultivars');
+    setHasUserChanged(true);
+    // Genus filtering happens via the facet state — we pass it to the API
+    setFacetState((prev) => ({
+      ...prev,
+      page: 1,
+      groupBy: 'species' as const,
+    }));
+  }, []);
+
+  const navigateToStep = useCallback((step: 'categories' | 'genera') => {
+    if (step === 'categories') {
+      setSelectedTopCategory(null);
+      setSelectedGenus(null);
+      setBrowseStep('categories');
+      // Clear category facet
+      setHasUserChanged(true);
+      setFacetState((prev) => ({
+        ...prev,
+        multiSelect: { ...prev.multiSelect, category: [] },
+        page: 1,
+      }));
+    } else if (step === 'genera') {
+      setSelectedGenus(null);
+      setBrowseStep('genera');
+    }
+  }, []);
+
+  // -------------------------------------------------------------------------
   // API fetch with debouncing
   // -------------------------------------------------------------------------
 
   useEffect(() => {
     if (!hasUserChanged) return;
+    // Only fetch from API when at the cultivar step
+    if (browseStep !== 'cultivars') return;
 
     // Cancel any pending debounce
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -262,8 +370,12 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
       setLoading(true);
 
       const qs = serializeFacetState(facetState);
+      const params = new URLSearchParams(qs);
+      // Add genus filter if selected
+      if (selectedGenus) params.set('genus', selectedGenus);
       const perPage = facetState.groupBy === 'genus' ? 999 : PER_PAGE;
-      const url = `/api/browse?${qs}&perPage=${perPage}`;
+      params.set('perPage', String(perPage));
+      const url = `/api/browse?${params.toString()}`;
 
       fetch(url, { signal: controller.signal, cache: 'no-store' })
         .then((res) => res.json() as Promise<BrowseApiResponse>)
@@ -288,7 +400,7 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [facetState, hasUserChanged]);
+  }, [facetState, hasUserChanged, browseStep, selectedGenus]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -308,8 +420,17 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     return filterWithFacets(allPlants, facetState, PER_PAGE);
   }, [allPlants, facetState, hasUserChanged, apiPlants]);
 
-  const plants = apiPlants ?? seedResult?.plants ?? [];
-  const total = apiTotal ?? seedResult?.total ?? 0;
+  // For cultivar step, filter by genus client-side when using seed data
+  const filteredSeedPlants = useMemo(() => {
+    if (!seedResult?.plants || !selectedGenus) return seedResult?.plants ?? [];
+    return seedResult.plants.filter((p) => {
+      const slug = p.genus_slug?.replace(/^genus-/, '');
+      return slug === selectedGenus;
+    });
+  }, [seedResult, selectedGenus]);
+
+  const plants = apiPlants ?? filteredSeedPlants;
+  const total = apiTotal ?? (selectedGenus ? filteredSeedPlants.length : seedResult?.total ?? 0);
   const facetCounts = apiFacetCounts ?? seedResult?.facetCounts ?? {};
   const recoveryHints = apiRecoveryHints.length > 0
     ? apiRecoveryHints
@@ -322,6 +443,16 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     if (facetState.groupBy !== 'genus') return [];
     return groupBrowsePlantsByGenus(plants, GENUS_COMMON_NAMES);
   }, [facetState.groupBy, plants]);
+
+  // Genus counts for Step 2 genus cards
+  const genusCounts = useMemo(() => {
+    if (browseStep !== 'genera' || !selectedTopCategory) return {};
+    return getGenusCounts(allPlants, selectedTopCategory);
+  }, [browseStep, selectedTopCategory, allPlants]);
+
+  // Resolve top category and genus label for breadcrumb
+  const topCategory = selectedTopCategory ? getTopCategory(selectedTopCategory) : undefined;
+  const genusEntry = topCategory?.genera.find((g) => g.genusSlug === selectedGenus);
 
   // -------------------------------------------------------------------------
   // State update helper
@@ -412,72 +543,99 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   // Render
   // -------------------------------------------------------------------------
 
+  // Step 1: Category selection — no sidebar, no header, just cards
+  if (browseStep === 'categories') {
+    return (
+      <div className="max-w-3xl mx-auto">
+        <CategoryCards onCategorySelect={navigateToCategory} />
+      </div>
+    );
+  }
+
+  // Step 2: Genus selection — no sidebar, breadcrumb + genus cards
+  if (browseStep === 'genera' && topCategory) {
+    return (
+      <div className="max-w-3xl mx-auto">
+        <BrowseBreadcrumb
+          step="genera"
+          categoryLabel={topCategory.label}
+          onNavigate={navigateToStep}
+        />
+        <GenusCards
+          category={topCategory}
+          genusCounts={genusCounts}
+          onGenusSelect={navigateToGenus}
+        />
+      </div>
+    );
+  }
+
+  // Step 3: Cultivar browse — full layout with sidebar
   const headerTotal = facetState.groupBy === 'genus' ? genusGroups.length : total;
   const headerPage = facetState.groupBy === 'genus' ? 1 : facetState.page;
   const headerPerPage = facetState.groupBy === 'genus' ? genusGroups.length : PER_PAGE;
   const selectedCategories = facetState.multiSelect['category'] ?? [];
 
   return (
-    <BrowseShell
-      sidebar={
-        <PlantFilterSidebar
-          filterValues={toFilterValues(facetState)}
-          facetCounts={sidebarCounts}
-          totalResults={total}
-          selectedCategories={selectedCategories}
-          onMultiSelectToggle={handleMultiSelectToggle}
-          onBooleanToggle={handleBooleanToggle}
-          onRangeChange={handleRangeChange}
-          onClearAll={clearAll}
-        />
-      }
-    >
-      {selectedCategories.length === 1 && (
-        <CategoryContext
-          category={selectedCategories[0]}
-          total={headerTotal}
-          onClear={() =>
-            updateState({ multiSelect: { ...facetState.multiSelect, category: [] } })
-          }
-        />
-      )}
-
-      <BrowseHeader
-        query={facetState.q}
-        sort={facetState.sort}
-        groupBy={facetState.groupBy}
-        total={headerTotal}
-        page={headerPage}
-        perPage={headerPerPage}
-        selectedCategories={selectedCategories}
-        onQueryChange={(value) => updateState({ q: value })}
-        onSortChange={(v) => updateState({ sort: v, page: 1 })}
-        onGroupByChange={(v) => updateState({ groupBy: v, page: 1 })}
-        onCategorySelect={(cat) =>
-          updateState({ multiSelect: { ...facetState.multiSelect, category: [cat] } })
-        }
+    <>
+      <BrowseBreadcrumb
+        step="cultivars"
+        categoryLabel={topCategory?.label}
+        genusLabel={genusEntry?.commonName}
+        onNavigate={navigateToStep}
       />
-
-      {loading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-          <span className="ml-2 text-sm text-text-tertiary">Updating results...</span>
-        </div>
-      )}
-
-      <div className={loading ? 'opacity-50 pointer-events-none transition-opacity' : ''}>
-        <BrowseGrid
+      <BrowseShell
+        sidebar={
+          <PlantFilterSidebar
+            filterValues={toFilterValues(facetState)}
+            facetCounts={sidebarCounts}
+            totalResults={total}
+            selectedCategories={selectedCategories}
+            onMultiSelectToggle={handleMultiSelectToggle}
+            onBooleanToggle={handleBooleanToggle}
+            onRangeChange={handleRangeChange}
+            onClearAll={clearAll}
+          />
+        }
+      >
+        <BrowseHeader
+          query={facetState.q}
+          sort={facetState.sort}
           groupBy={facetState.groupBy}
-          plants={plants}
-          genusGroups={genusGroups}
-          activePills={activePills}
-          recoveryHints={recoveryHints}
-          currentPage={facetState.page}
-          totalPages={totalPages}
-          onPageChange={(p) => updateState({ page: p })}
-          onClearAll={clearAll}
+          total={headerTotal}
+          page={headerPage}
+          perPage={headerPerPage}
+          selectedCategories={selectedCategories}
+          onQueryChange={(value) => updateState({ q: value })}
+          onSortChange={(v) => updateState({ sort: v, page: 1 })}
+          onGroupByChange={(v) => updateState({ groupBy: v, page: 1 })}
+          onCategorySelect={(cat) =>
+            updateState({ multiSelect: { ...facetState.multiSelect, category: [cat] } })
+          }
+          inFunnel={browseStep === 'cultivars'}
         />
-      </div>
-    </BrowseShell>
+
+        {loading && (
+          <div className="flex items-center justify-center py-8">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+            <span className="ml-2 text-sm text-text-tertiary">Updating results...</span>
+          </div>
+        )}
+
+        <div className={loading ? 'opacity-50 pointer-events-none transition-opacity' : ''}>
+          <BrowseGrid
+            groupBy={facetState.groupBy}
+            plants={plants}
+            genusGroups={genusGroups}
+            activePills={activePills}
+            recoveryHints={recoveryHints}
+            currentPage={facetState.page}
+            totalPages={totalPages}
+            onPageChange={(p) => updateState({ page: p })}
+            onClearAll={clearAll}
+          />
+        </div>
+      </BrowseShell>
+    </>
   );
 }

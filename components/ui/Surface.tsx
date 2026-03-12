@@ -2,6 +2,7 @@ interface SurfaceProps {
   elevation?: 'flat' | 'raised' | 'elevated';
   padding?: 'none' | 'compact' | 'default' | 'spacious';
   className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }
 
@@ -22,10 +23,11 @@ export function Surface({
   elevation = 'raised',
   padding = 'default',
   className = '',
+  style,
   children,
 }: SurfaceProps) {
   return (
-    <div className={`${elevationStyles[elevation]} ${paddingStyles[padding]} ${className}`}>
+    <div className={`${elevationStyles[elevation]} ${paddingStyles[padding]} ${className}`} style={style}>
       {children}
     </div>
   );

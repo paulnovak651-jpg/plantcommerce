@@ -29,12 +29,16 @@ export const GET = withRateLimit(async function GET(request: NextRequest) {
   // Parse all facet state from URL params
   const facetState = parseFacetState(searchParams);
 
+  // Optional genus filter from funnel navigation
+  const genus = searchParams.get('genus') ?? undefined;
+
   try {
     const supabase = await createClient();
     const { plants, total, facetCounts, recoveryHints } = await queryBrowsePlants(
       supabase,
       facetState,
-      perPage
+      perPage,
+      genus
     );
 
     return apiSuccess(
