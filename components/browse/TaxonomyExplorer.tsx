@@ -6,9 +6,9 @@ import type { TaxonomyTree } from '@/lib/queries/taxonomy-tree';
 import { CategoryColumn } from '@/components/browse/CategoryColumn';
 import { GenusColumn } from '@/components/browse/GenusColumn';
 import {
-  SpeciesPreviewPanel,
-  type SpeciesPreviewData,
-} from '@/components/browse/SpeciesPreviewPanel';
+  GenusPreviewPanel,
+  type GenusPreviewData,
+} from '@/components/browse/GenusPreviewPanel';
 import { categoryColors, defaultColor } from '@/lib/category-colors';
 
 interface TaxonomyExplorerProps {
@@ -20,12 +20,12 @@ interface TaxonomyExplorerProps {
 // ---------------------------------------------------------------------------
 
 function useSpeciesFetcher() {
-  const cacheRef = useRef(new Map<string, SpeciesPreviewData>());
+  const cacheRef = useRef(new Map<string, GenusPreviewData>());
 
   const fetchSpecies = useCallback(
     async (
       slug: string,
-      setData: (d: SpeciesPreviewData) => void,
+      setData: (d: GenusPreviewData) => void,
       setLoading: (l: boolean) => void
     ) => {
       const cached = cacheRef.current.get(slug);
@@ -62,7 +62,7 @@ function MobileDrillDown({ taxonomyTree }: TaxonomyExplorerProps) {
   const [depth, setDepth] = useState(0);
   const [catIndex, setCatIndex] = useState(0);
   const [genusSlug, setGenusSlug] = useState<string | null>(null);
-  const [speciesData, setSpeciesData] = useState<SpeciesPreviewData | null>(null);
+  const [speciesData, setSpeciesData] = useState<GenusPreviewData | null>(null);
   const [loading, setLoading] = useState(false);
   const { fetchSpecies } = useSpeciesFetcher();
 
@@ -173,7 +173,7 @@ function MobileDrillDown({ taxonomyTree }: TaxonomyExplorerProps) {
 
       {/* Depth 2: Species */}
       {depth === 2 && (
-        <SpeciesPreviewPanel data={speciesData} loading={loading} />
+        <GenusPreviewPanel data={speciesData} loading={loading} />
       )}
     </div>
   );
@@ -189,7 +189,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
   const router = useRouter();
   const [activeCategoryIndex, setActiveCategoryIndex] = useState<number | null>(null);
   const [activeGenusSlug, setActiveGenusSlug] = useState<string | null>(null);
-  const [speciesPreview, setSpeciesPreview] = useState<SpeciesPreviewData | null>(null);
+  const [speciesPreview, setSpeciesPreview] = useState<GenusPreviewData | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [focusedColumn, setFocusedColumn] = useState<FocusedColumn>('categories');
 
@@ -369,7 +369,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
         className="flex flex-col overflow-hidden"
         onClick={() => setFocusedColumn('species')}
       >
-        <SpeciesPreviewPanel data={speciesPreview} loading={loadingPreview} />
+        <GenusPreviewPanel data={speciesPreview} loading={loadingPreview} />
       </div>
     </div>
   );
