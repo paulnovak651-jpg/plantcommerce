@@ -65,7 +65,7 @@ describe('getOfferStatsForSpecies', () => {
   it('returns empty stats when cultivarIds is empty', async () => {
     const supabase = createMockSupabase({ inventory_offers: [] });
     const stats = await getOfferStatsForSpecies(supabase, []);
-    expect(stats).toEqual({ nurseryCount: 0, perCultivar: {} });
+    expect(stats).toEqual({ nurseryCount: 0, perCultivar: {}, pricePerCultivar: {} });
   });
 
   it('counts unique nurseries for a single cultivar', async () => {
@@ -98,7 +98,7 @@ describe('getOfferStatsForSpecies', () => {
   it('returns empty stats when Supabase has no offers', async () => {
     const supabase = createMockSupabase({ inventory_offers: [] });
     const stats = await getOfferStatsForSpecies(supabase, ['c1', 'c2']);
-    expect(stats).toEqual({ nurseryCount: 0, perCultivar: {} });
+    expect(stats).toEqual({ nurseryCount: 0, perCultivar: {}, pricePerCultivar: {} });
   });
 });
 

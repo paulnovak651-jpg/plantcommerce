@@ -24,10 +24,7 @@ import { ListingCard } from '@/components/ListingCard';
 import { PriceComparisonTable } from '@/components/PriceComparisonTable';
 import type { TrustLevel } from '@/components/PriceComparisonTable';
 import { AlertSignupForm } from '@/components/AlertSignupForm';
-import { QuickFactsRibbon } from '@/components/QuickFactsRibbon';
 import { QuickFactsHero } from '@/components/QuickFactsHero';
-import { CultivarTabs } from '@/components/CultivarTabs';
-import type { TabId } from '@/components/CultivarTabs';
 import { ZoneBar } from '@/components/ZoneBar';
 import { HarvestCalendar } from '@/components/HarvestCalendar';
 import { HeightSilhouette } from '@/components/HeightSilhouette';
@@ -36,6 +33,7 @@ import { getApprovedListingsForCultivar } from '@/lib/queries/listings';
 import { getLatestPriceChanges, getPriceHistoryForOffers } from '@/lib/queries/price-history';
 import { formatPrice } from '@/lib/format';
 import { ZoneCompatibility } from '@/components/ZoneCompatibility';
+import { getCategoryIcon } from '@/lib/browse-categories';
 import type { GrowingProfile } from '@/lib/types';
 
 interface Props {
@@ -299,12 +297,13 @@ export default async function CultivarPage({ params }: Props) {
         ]}
       />
 
-      {/* HERO HEADER */}
+      {/* 1. HERO — above the fold */}
       <section className="rounded-[var(--radius-xl)] bg-accent-hover p-4 sm:p-6 text-surface-raised">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-          {/* Image placeholder - hidden on mobile */}
-          <div className="hidden sm:flex h-40 w-40 shrink-0 items-center justify-center rounded-[var(--radius-lg)] border-2 border-dashed border-surface-raised/30">
-            <span className="text-xs text-surface-raised/40">No image</span>
+          <div className="hidden sm:flex h-40 w-40 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-surface-raised/10">
+            <span className="text-4xl opacity-40">
+              {getCategoryIcon(species?.display_category)}
+            </span>
           </div>
 
           <div className="flex-1 min-w-0">
@@ -326,12 +325,10 @@ export default async function CultivarPage({ params }: Props) {
               </p>
             )}
 
-            {/* QuickFactsHero */}
             <div className="mt-4">
               <QuickFactsHero profile={growingProfile} />
             </div>
 
-            {/* Best price callout */}
             {bestOffer && (
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <span className="text-sm text-surface-raised/60">Best price:</span>
@@ -360,467 +357,275 @@ export default async function CultivarPage({ params }: Props) {
         </div>
       </section>
 
-      {/* TABBED LAYOUT */}
-      <CultivarTabs
-        tabs={[
-          { id: 'overview', label: 'Overview' },
-          { id: 'growing', label: 'Growing' },
-          ...(growingProfile?.harvest_season || growingProfile?.years_to_bearing_min != null
-            ? [{ id: 'production' as TabId, label: 'Production' }]
-            : []),
-          ...(growingProfile
-            ? [{ id: 'pollination' as TabId, label: 'Pollination' }]
-            : []),
-          { id: 'availability', label: 'Buy', count: offers.length },
-        ]}
-        children={{
-          /* ───────── OVERVIEW TAB ───────── */
-          overview: (
-            <div className="space-y-6">
-              {cultivar.notes && (
-                <Text variant="body" color="secondary">
-                  {cultivar.notes}
-                </Text>
-              )}
-
-              {/* ZoneBar + HeightSilhouette side-by-side */}
-              {(growingProfile?.usda_zone_min != null || growingProfile?.mature_height_min_ft != null) && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {growingProfile?.usda_zone_min != null && growingProfile?.usda_zone_max != null && (
-                    <Surface elevation="raised" padding="default">
-                      <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                        USDA Hardiness Zones
-                      </Text>
-                      <ZoneBar min={growingProfile.usda_zone_min} max={growingProfile.usda_zone_max} />
-                    </Surface>
-                  )}
-                  {(growingProfile?.mature_height_min_ft != null || growingProfile?.mature_height_max_ft != null) && (
-                    <Surface elevation="raised" padding="default">
-                      <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                        Size at Maturity
-                      </Text>
-                      <HeightSilhouette
-                        minFt={growingProfile?.mature_height_min_ft ?? null}
-                        maxFt={growingProfile?.mature_height_max_ft ?? null}
-                      />
-                    </Surface>
-                  )}
-                </div>
-              )}
-
-              {/* HarvestCalendar */}
-              {growingProfile?.harvest_season && (
-                <Surface elevation="raised" padding="default">
-                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                    Annual Calendar
-                  </Text>
-                  <HarvestCalendar harvestSeason={growingProfile.harvest_season} />
-                </Surface>
-              )}
-
-              {/* Metadata cards */}
-              {(cultivar.breeder || cultivar.origin_location || cultivar.year_released || cultivar.patent_status !== 'unknown') && (
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {cultivar.breeder && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Breeder</Text>
-                      <Text variant="body" className="font-medium">{cultivar.breeder}</Text>
-                    </Surface>
-                  )}
-                  {cultivar.origin_location && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Origin</Text>
-                      <Text variant="body" className="font-medium">{cultivar.origin_location}</Text>
-                    </Surface>
-                  )}
-                  {cultivar.year_released && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Released</Text>
-                      <Text variant="body" className="font-medium">{String(cultivar.year_released)}</Text>
-                    </Surface>
-                  )}
-                  {cultivar.patent_status !== 'unknown' && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Patent Status</Text>
-                      <Text variant="body" className="font-medium">{cultivar.patent_status.replace(/_/g, ' ')}</Text>
-                    </Surface>
-                  )}
-                </div>
-              )}
-
-              {/* Zone compatibility badge */}
-              <ZoneCompatibility
-                zoneMin={growingProfile?.usda_zone_min ?? null}
-                zoneMax={growingProfile?.usda_zone_max ?? null}
-              />
-
-              {/* Aliases & Legal */}
-              {(aliases.length > 0 || legal.length > 0) && (
-                <div className="space-y-2">
-                  {aliases.length > 0 && (
-                    <Disclosure
-                      title="Also Known As"
-                      badge={<Tag type="neutral" size="sm">{aliases.length}</Tag>}
-                    >
-                      <div className="flex flex-wrap gap-2">
-                        {aliases.map((a: any) => (
-                          <span
-                            key={a.id}
-                            className="rounded-full bg-surface-inset px-3 py-1 text-sm text-text-secondary"
-                          >
-                            {a.alias_text}
-                            <Text variant="caption" color="tertiary" as="span" className="ml-1">
-                              ({a.alias_type.replace(/_/g, ' ')})
-                            </Text>
-                          </span>
-                        ))}
-                      </div>
-                    </Disclosure>
-                  )}
-                  {legal.length > 0 && (
-                    <Disclosure
-                      title="Legal Identifiers"
-                      badge={<Tag type="neutral" size="sm">{legal.length}</Tag>}
-                    >
-                      <div className="space-y-1">
-                        {legal.map((l: any) => (
-                          <Text key={l.id} variant="sm" color="secondary" as="div">
-                            <span className="font-medium">{l.id_type}:</span> {l.value_raw}
-                            {l.status && (
-                              <Text variant="caption" color="tertiary" as="span" className="ml-2">
-                                ({l.status})
-                              </Text>
-                            )}
-                          </Text>
-                        ))}
-                      </div>
-                    </Disclosure>
-                  )}
-                </div>
-              )}
-            </div>
-          ),
-
-          /* ───────── GROWING TAB ───────── */
-          growing: (
-            <div className="space-y-6">
-              {growingProfile ? (
-                <>
-                  {growingProfile.usda_zone_min != null && growingProfile.usda_zone_max != null && (
-                    <Surface elevation="raised" padding="default">
-                      <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                        USDA Hardiness Zones
-                      </Text>
-                      <ZoneBar min={growingProfile.usda_zone_min} max={growingProfile.usda_zone_max} />
-                    </Surface>
-                  )}
-
-                  {(growingProfile.mature_height_min_ft != null || growingProfile.mature_height_max_ft != null) && (
-                    <Surface elevation="raised" padding="default">
-                      <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                        Size at Maturity
-                      </Text>
-                      <HeightSilhouette
-                        minFt={growingProfile.mature_height_min_ft ?? null}
-                        maxFt={growingProfile.mature_height_max_ft ?? null}
-                      />
-                      {(growingProfile.mature_spread_min_ft != null || growingProfile.mature_spread_max_ft != null) && (
-                        <Text variant="sm" color="secondary" className="mt-2">
-                          Spread: {growingProfile.mature_spread_min_ft ?? '?'}&ndash;{growingProfile.mature_spread_max_ft ?? '?'} ft
-                        </Text>
+      {/* 2. WHERE TO BUY — immediately visible */}
+      {comparisonOffers.length >= 2 ? (
+        <section>
+          <Text variant="h2" className="mb-4">Where to Buy ({comparisonOffers.length})</Text>
+          <PriceComparisonTable offers={comparisonOffers} lastCheckedAt={pricesLastCheckedLabel} />
+        </section>
+      ) : comparisonOffers.length === 1 ? (
+        <section>
+          <Text variant="h2" className="mb-4">Where to Buy</Text>
+          <div className="space-y-3">
+            {offers.slice(0, 1).map((offer: any) => {
+              const availability = getAvailabilityTag(offer.raw_availability);
+              const offerDetails = [offer.propagation_method, offer.sale_form]
+                .filter((value: string | null | undefined) => value && value !== 'unknown')
+                .map((value: string) => value.replace(/_/g, ' '));
+              const location = [offer.nurseries?.location_state, offer.nurseries?.location_country]
+                .filter(Boolean)
+                .join(', ');
+              return (
+                <Surface key={offer.id} elevation="raised" padding="default">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <Link href={`/nurseries/${offer.nurseries?.slug}`} className="font-medium text-accent hover:underline">
+                        {offer.nurseries?.name}
+                      </Link>
+                      {location && <Text variant="sm" color="secondary">{location}</Text>}
+                      {offerDetails.length > 0 && (
+                        <Text variant="caption" color="tertiary">{offerDetails.join(' \u00b7 ')}</Text>
                       )}
-                    </Surface>
-                  )}
-
-                  <TraitGrid profile={growingProfile} compact />
-                </>
-              ) : (
-                <EmptyState
-                  title="No growing data available yet"
-                  description={`Growing information for ${cultivar.canonical_name} hasn't been added yet. Check back soon.`}
-                />
-              )}
-            </div>
-          ),
-
-          /* ───────── PRODUCTION TAB ───────── */
-          production: (
-            <div className="space-y-6">
-              {growingProfile?.harvest_season && (
-                <Surface elevation="raised" padding="default">
-                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                    Seasonal Timeline
-                  </Text>
-                  <HarvestCalendar harvestSeason={growingProfile.harvest_season} />
+                      {availability && (
+                        <div className="mt-2">
+                          <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${availability.className}`}>
+                            {availability.label}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="sm:text-right">
+                      {offer.raw_price_text ? (
+                        <Text variant="price">{offer.raw_price_text}</Text>
+                      ) : (
+                        <Text variant="sm" color="tertiary">Contact nursery for pricing</Text>
+                      )}
+                      {offer.product_page_url && (
+                        <a href={offer.product_page_url} target="_blank" rel="noopener noreferrer"
+                          className="mt-2 inline-block rounded-[var(--radius-md)] bg-accent px-3 py-1.5 text-sm font-medium text-text-inverse hover:bg-accent-hover">
+                          View at nursery
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </Surface>
-              )}
+              );
+            })}
+            {pricesLastCheckedLabel && (
+              <Text variant="sm" color="tertiary">Prices last checked: {pricesLastCheckedLabel}</Text>
+            )}
+          </div>
+        </section>
+      ) : (
+        <section>
+          <EmptyState
+            title={`No tracked nurseries currently stock ${cultivar.canonical_name}`}
+            description="Get notified when it's available."
+          >
+            <div className="space-y-4">
+              <AlertSignupForm cultivarId={cultivar.id} plantEntityId={species?.id ?? null} cultivarName={cultivar.canonical_name} compact />
+              <div className="flex flex-col gap-2 text-sm">
+                <Link href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
+                  className="rounded-[var(--radius-md)] border border-border bg-surface-raised px-4 py-2 text-text-secondary transition-colors hover:bg-surface-inset">
+                  Know a nursery that carries this? Let us know
+                </Link>
+                <Link href={`/plants/${speciesSlug}`}
+                  className="rounded-[var(--radius-md)] border border-border bg-surface-raised px-4 py-2 text-text-secondary transition-colors hover:bg-surface-inset">
+                  Browse other {species?.canonical_name ?? 'species'} cultivars
+                </Link>
+              </div>
+            </div>
+          </EmptyState>
+        </section>
+      )}
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                {(growingProfile?.years_to_bearing_min != null || growingProfile?.years_to_bearing_max != null) && (
+      {/* 3. OVERVIEW — cultivar notes + zone compatibility */}
+      {(cultivar.notes || growingProfile) && (
+        <section className="space-y-4">
+          {cultivar.notes && (
+            <Text variant="body" color="secondary">{cultivar.notes}</Text>
+          )}
+          <ZoneCompatibility
+            zoneMin={growingProfile?.usda_zone_min ?? null}
+            zoneMax={growingProfile?.usda_zone_max ?? null}
+          />
+        </section>
+      )}
+
+      {/* 4. GROWING DETAILS — accordion, closed by default */}
+      {growingProfile && (
+        <Disclosure title="Growing Details" defaultOpen={false}>
+          <div className="space-y-6">
+            {(growingProfile.usda_zone_min != null || growingProfile.mature_height_min_ft != null) && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {growingProfile.usda_zone_min != null && growingProfile.usda_zone_max != null && (
                   <Surface elevation="raised" padding="default">
-                    <Text variant="caption" color="tertiary" className="mb-1 block uppercase tracking-wider font-semibold text-[11px]">
-                      Years to Bearing
+                    <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
+                      USDA Hardiness Zones
                     </Text>
-                    <Text variant="h2" className="text-accent">
-                      {growingProfile.years_to_bearing_min != null && growingProfile.years_to_bearing_max != null
-                        ? `${growingProfile.years_to_bearing_min}\u2013${growingProfile.years_to_bearing_max}`
-                        : String(growingProfile.years_to_bearing_min ?? growingProfile.years_to_bearing_max)}
-                    </Text>
-                    <Text variant="sm" color="tertiary">years</Text>
+                    <ZoneBar min={growingProfile.usda_zone_min} max={growingProfile.usda_zone_max} />
                   </Surface>
                 )}
-                {growingProfile?.harvest_season && (
+                {(growingProfile.mature_height_min_ft != null || growingProfile.mature_height_max_ft != null) && (
                   <Surface elevation="raised" padding="default">
-                    <Text variant="caption" color="tertiary" className="mb-1 block uppercase tracking-wider font-semibold text-[11px]">
-                      Harvest Season
+                    <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
+                      Size at Maturity
                     </Text>
-                    <Text variant="h2" className="text-accent capitalize">
-                      {growingProfile.harvest_season.replace(/_/g, ' ')}
-                    </Text>
-                  </Surface>
-                )}
-                {growingProfile?.growth_rate && (
-                  <Surface elevation="raised" padding="default">
-                    <Text variant="caption" color="tertiary" className="mb-1 block uppercase tracking-wider font-semibold text-[11px]">
-                      Growth Rate
-                    </Text>
-                    <Text variant="h2" className="text-accent capitalize">
-                      {growingProfile.growth_rate.replace(/_/g, ' ')}
-                    </Text>
+                    <HeightSilhouette
+                      minFt={growingProfile.mature_height_min_ft ?? null}
+                      maxFt={growingProfile.mature_height_max_ft ?? null}
+                    />
+                    {(growingProfile.mature_spread_min_ft != null || growingProfile.mature_spread_max_ft != null) && (
+                      <Text variant="sm" color="secondary" className="mt-2">
+                        Spread: {growingProfile.mature_spread_min_ft ?? '?'}&ndash;{growingProfile.mature_spread_max_ft ?? '?'} ft
+                      </Text>
+                    )}
                   </Surface>
                 )}
               </div>
+            )}
 
-              {cultivar.notes && (
-                <Surface elevation="raised" padding="default">
-                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                    Cultivar Notes
-                  </Text>
-                  <Text variant="body" color="secondary">{cultivar.notes}</Text>
-                </Surface>
-              )}
-            </div>
-          ),
-
-          /* ───────── POLLINATION TAB ───────── */
-          pollination: (
-            <div className="space-y-6">
-              <Surface elevation="raised" padding="default" className="border-l-4 border-l-community">
-                <Text variant="body" className="font-medium mb-2">Pollination data coming soon</Text>
-                <Text variant="sm" color="secondary">
-                  We&apos;re building detailed pollination compatibility data including S-allele groups,
-                  compatible pollinizers, and bloom overlap charts. Check back soon.
+            {growingProfile.harvest_season && (
+              <Surface elevation="raised" padding="default">
+                <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
+                  Seasonal Timeline
                 </Text>
-                {species && (
-                  <Link
-                    href={`/plants/${speciesSlug}`}
-                    className="mt-3 inline-block text-sm text-accent hover:underline"
-                  >
-                    View {species.canonical_name} species page &rarr;
-                  </Link>
-                )}
+                <HarvestCalendar harvestSeason={growingProfile.harvest_season} />
               </Surface>
+            )}
 
-              {growingProfile?.harvest_season && (
-                <Surface elevation="raised" padding="default">
-                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                    Bloom &amp; Harvest Timing
-                  </Text>
-                  <HarvestCalendar harvestSeason={growingProfile.harvest_season} bloomPeriod="mid" />
-                </Surface>
-              )}
-            </div>
-          ),
+            <TraitGrid profile={growingProfile} compact />
+          </div>
+        </Disclosure>
+      )}
 
-          /* ───────── AVAILABILITY TAB ───────── */
-          availability: (
-            <div className="space-y-6">
-              {/* Price comparison */}
-              <section>
-                <Text variant="h2" className="mb-4">
-                  Nursery Offers ({offers.length})
-                </Text>
-                {offers.length >= 2 ? (
-                  <PriceComparisonTable offers={comparisonOffers} lastCheckedAt={pricesLastCheckedLabel} />
-                ) : offers.length === 1 ? (
-                  <div className="space-y-3">
-                    {offers.slice(0, 1).map((offer: any) => {
-                      const availability = getAvailabilityTag(offer.raw_availability);
-                      const offerDetails = [
-                        offer.propagation_method,
-                        offer.sale_form,
-                      ]
-                        .filter(
-                          (value: string | null | undefined) =>
-                            value && value !== 'unknown'
-                        )
-                        .map((value: string) => value.replace(/_/g, ' '));
-                      const location = [
-                        offer.nurseries?.location_state,
-                        offer.nurseries?.location_country,
-                      ]
-                        .filter(Boolean)
-                        .join(', ');
-
-                      return (
-                        <Surface key={offer.id} elevation="raised" padding="default">
-                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                              <Link
-                                href={`/nurseries/${offer.nurseries?.slug}`}
-                                className="font-medium text-accent hover:underline"
-                              >
-                                {offer.nurseries?.name}
-                              </Link>
-                              {location && (
-                                <Text variant="sm" color="secondary">{location}</Text>
-                              )}
-                              {offerDetails.length > 0 && (
-                                <Text variant="caption" color="tertiary">
-                                  {offerDetails.join(' \u00b7 ')}
-                                </Text>
-                              )}
-                              {availability && (
-                                <div className="mt-2">
-                                  <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${availability.className}`}>
-                                    {availability.label}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="sm:text-right">
-                              {offer.raw_price_text ? (
-                                <Text variant="price">{offer.raw_price_text}</Text>
-                              ) : (
-                                <Text variant="sm" color="tertiary">Contact nursery for pricing</Text>
-                              )}
-                              {offer.product_page_url && (
-                                <a
-                                  href={offer.product_page_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="mt-2 inline-block rounded-[var(--radius-md)] bg-accent px-3 py-1.5 text-sm font-medium text-text-inverse hover:bg-accent-hover"
-                                >
-                                  View at nursery
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        </Surface>
-                      );
-                    })}
-                    {pricesLastCheckedLabel && (
-                      <Text variant="sm" color="tertiary">
-                        Prices last checked: {pricesLastCheckedLabel}
-                      </Text>
-                    )}
-                  </div>
-                ) : (
-                  <EmptyState
-                    title={`No tracked nurseries currently stock ${cultivar.canonical_name}`}
-                    description="Get notified when it's available."
-                  >
-                    <div className="space-y-4">
-                      <AlertSignupForm
-                        cultivarId={cultivar.id}
-                        plantEntityId={species?.id ?? null}
-                        cultivarName={cultivar.canonical_name}
-                        compact
-                      />
-                      <div className="flex flex-col gap-2 text-sm">
-                        <Link
-                          href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
-                          className="rounded-[var(--radius-md)] border border-border bg-surface-raised px-4 py-2 text-text-secondary transition-colors hover:bg-surface-inset"
-                        >
-                          Know a nursery that carries this? Let us know
-                        </Link>
-                        <Link
-                          href={`/plants/${speciesSlug}`}
-                          className="rounded-[var(--radius-md)] border border-border bg-surface-raised px-4 py-2 text-text-secondary transition-colors hover:bg-surface-inset"
-                        >
-                          Browse other {species?.canonical_name ?? 'species'} cultivars
-                        </Link>
-                      </div>
-                    </div>
-                  </EmptyState>
-                )}
-              </section>
-
-              {/* Price history sparklines */}
-              {sparklineData.length > 0 && (
-                <section>
-                  <Text variant="h3" className="mb-3">Price History</Text>
-                  <Surface elevation="raised" padding="default">
-                    <div className="space-y-2">
-                      {sparklineData.map((sd) => (
-                        <PriceSparkline
-                          key={sd.nurseryName}
-                          nurseryName={sd.nurseryName}
-                          points={sd.points}
-                        />
-                      ))}
-                    </div>
+      {/* 5. ABOUT THIS CULTIVAR — accordion, closed by default */}
+      {(cultivar.breeder || cultivar.origin_location || cultivar.year_released || cultivar.patent_status !== 'unknown' || aliases.length > 0 || legal.length > 0) && (
+        <Disclosure title="About This Cultivar" defaultOpen={false}>
+          <div className="space-y-4">
+            {(cultivar.breeder || cultivar.origin_location || cultivar.year_released || cultivar.patent_status !== 'unknown') && (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {cultivar.breeder && (
+                  <Surface elevation="raised" padding="compact">
+                    <Text variant="caption" color="tertiary">Breeder</Text>
+                    <Text variant="body" className="font-medium">{cultivar.breeder}</Text>
                   </Surface>
-                </section>
-              )}
-
-              {/* Stock alert */}
-              {offers.length > 0 && (
-                <AlertSignupForm
-                  cultivarId={cultivar.id}
-                  plantEntityId={species?.id ?? null}
-                  cultivarName={cultivar.canonical_name}
-                />
-              )}
-
-              {/* Nursery map */}
-              {nurseryPins.length > 0 && (
-                <section>
-                  <Text variant="h2" className="mb-3">Where to Buy</Text>
-                  <NurseryMap nurseries={nurseryPins} height="300px" />
-                </section>
-              )}
-
-              {/* Community listings */}
-              <section>
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <Text variant="h2">
-                    Community Listings
-                    {communityListings.length > 0 && (
-                      <span className="ml-2 text-base font-normal text-text-tertiary">
-                        ({communityListings.length})
-                      </span>
-                    )}
-                  </Text>
-                  <Link
-                    href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
-                    className="text-sm text-accent hover:underline"
-                  >
-                    + List {cultivar.canonical_name}
-                  </Link>
-                </div>
-                {communityListings.length > 0 ? (
-                  <div className="space-y-3">
-                    {communityListings.map((listing) => (
-                      <ListingCard key={listing.id} listing={listing} />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-text-tertiary">
-                    No community listings yet.{' '}
-                    <a
-                      href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
-                      className="text-accent hover:underline"
-                    >
-                      Be the first to list this cultivar &rarr;
-                    </a>
-                  </p>
                 )}
-              </section>
+                {cultivar.origin_location && (
+                  <Surface elevation="raised" padding="compact">
+                    <Text variant="caption" color="tertiary">Origin</Text>
+                    <Text variant="body" className="font-medium">{cultivar.origin_location}</Text>
+                  </Surface>
+                )}
+                {cultivar.year_released && (
+                  <Surface elevation="raised" padding="compact">
+                    <Text variant="caption" color="tertiary">Released</Text>
+                    <Text variant="body" className="font-medium">{String(cultivar.year_released)}</Text>
+                  </Surface>
+                )}
+                {cultivar.patent_status !== 'unknown' && (
+                  <Surface elevation="raised" padding="compact">
+                    <Text variant="caption" color="tertiary">Patent Status</Text>
+                    <Text variant="body" className="font-medium">{cultivar.patent_status.replace(/_/g, ' ')}</Text>
+                  </Surface>
+                )}
+              </div>
+            )}
+
+            {aliases.length > 0 && (
+              <div>
+                <Text variant="caption" color="tertiary" className="mb-2 block uppercase tracking-wider font-semibold text-[11px]">
+                  Also Known As
+                </Text>
+                <div className="flex flex-wrap gap-2">
+                  {aliases.map((a: any) => (
+                    <span key={a.id} className="rounded-full bg-surface-inset px-3 py-1 text-sm text-text-secondary">
+                      {a.alias_text}
+                      <Text variant="caption" color="tertiary" as="span" className="ml-1">
+                        ({a.alias_type.replace(/_/g, ' ')})
+                      </Text>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {legal.length > 0 && (
+              <div>
+                <Text variant="caption" color="tertiary" className="mb-2 block uppercase tracking-wider font-semibold text-[11px]">
+                  Legal Identifiers
+                </Text>
+                <div className="space-y-1">
+                  {legal.map((l: any) => (
+                    <Text key={l.id} variant="sm" color="secondary" as="div">
+                      <span className="font-medium">{l.id_type}:</span> {l.value_raw}
+                      {l.status && (
+                        <Text variant="caption" color="tertiary" as="span" className="ml-2">({l.status})</Text>
+                      )}
+                    </Text>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </Disclosure>
+      )}
+
+      {/* 6. PRICE HISTORY */}
+      {sparklineData.length > 0 && (
+        <section>
+          <Text variant="h3" className="mb-3">Price History</Text>
+          <Surface elevation="raised" padding="default">
+            <div className="space-y-2">
+              {sparklineData.map((sd) => (
+                <PriceSparkline key={sd.nurseryName} nurseryName={sd.nurseryName} points={sd.points} />
+              ))}
             </div>
-          ),
-        }}
-      />
+          </Surface>
+        </section>
+      )}
+
+      {/* 7. STOCK ALERT */}
+      {offers.length > 0 && (
+        <AlertSignupForm cultivarId={cultivar.id} plantEntityId={species?.id ?? null} cultivarName={cultivar.canonical_name} />
+      )}
+
+      {/* 8. NURSERY MAP */}
+      {nurseryPins.length > 0 && (
+        <section>
+          <Text variant="h2" className="mb-3">Where to Buy</Text>
+          <NurseryMap nurseries={nurseryPins} height="300px" />
+        </section>
+      )}
+
+      {/* 9. COMMUNITY LISTINGS */}
+      <section>
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <Text variant="h2">
+            Community Listings
+            {communityListings.length > 0 && (
+              <span className="ml-2 text-base font-normal text-text-tertiary">({communityListings.length})</span>
+            )}
+          </Text>
+          <Link href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`} className="text-sm text-accent hover:underline">
+            + List {cultivar.canonical_name}
+          </Link>
+        </div>
+        {communityListings.length > 0 ? (
+          <div className="space-y-3">
+            {communityListings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-text-tertiary">
+            No community listings yet.{' '}
+            <a href={`/marketplace/submit?cultivar=${encodeURIComponent(cultivar.canonical_name)}`} className="text-accent hover:underline">
+              Be the first to list this cultivar &rarr;
+            </a>
+          </p>
+        )}
+      </section>
 
       <JsonLd data={productJsonLd} />
       </div>

@@ -94,6 +94,15 @@ export const TOP_CATEGORIES: TopCategory[] = [
   },
 ];
 
+/** Get a category icon emoji for a display_category value. */
+export function getCategoryIcon(displayCategory: string | null | undefined): string {
+  if (!displayCategory) return '🌱';
+  const slug = CATEGORY_MAPPING[displayCategory];
+  if (!slug) return '🌱';
+  const cat = TOP_CATEGORIES.find((c) => c.slug === slug);
+  return cat?.icon ?? '🌱';
+}
+
 /** Lookup a top category by slug. */
 export function getTopCategory(slug: string): TopCategory | undefined {
   return TOP_CATEGORIES.find((c) => c.slug === slug);

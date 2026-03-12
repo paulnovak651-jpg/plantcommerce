@@ -33,7 +33,6 @@ export function MobileMenu() {
         <div className="absolute inset-x-0 top-full z-50 border-b border-border-subtle bg-surface-raised shadow-lg">
           <div className="px-4 py-3">
             <MobileLink href="/" onClick={close}>Browse</MobileLink>
-            <MobileLink href="/marketplace" onClick={close}>Marketplace</MobileLink>
             <MobileLink href="/nurseries" onClick={close}>Nurseries</MobileLink>
           </div>
         </div>

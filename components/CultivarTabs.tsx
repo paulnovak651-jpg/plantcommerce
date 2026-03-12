@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export type TabId = 'overview' | 'growing' | 'production' | 'pollination' | 'availability';
+export type TabId = 'overview' | 'growing' | 'production' | 'availability';
 
 interface Tab {
   id: TabId;

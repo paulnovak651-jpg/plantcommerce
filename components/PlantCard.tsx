@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import { PlantImage } from '@/components/ui/PlantImage';
 import { Tag } from '@/components/ui/Tag';
+import { useCompare, type CompareItem } from '@/components/compare/CompareContext';
 
 export interface PlantCardProps {
   slug: string;
@@ -14,14 +17,50 @@ export interface PlantCardProps {
   lowestPrice?: number | null;
   bestNursery?: string | null;
   hasGrowingProfile?: boolean;
+  cultivarId?: string;
 }
 
 export function PlantCard(props: PlantCardProps) {
+  const { add, remove, has } = useCompare();
+  const isComparing = props.cultivarId ? has(props.cultivarId) : false;
+
+  function handleCompareClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!props.cultivarId) return;
+    const item: CompareItem = {
+      id: props.cultivarId,
+      name: props.canonicalName,
+      speciesName: props.botanicalName ?? '',
+      speciesSlug: props.slug,
+      cultivarSlug: props.slug,
+      zoneMin: props.zoneMin ?? null,
+      zoneMax: props.zoneMax ?? null,
+      priceCents: props.lowestPrice ?? null,
+      nurseryCount: props.nurseryCount,
+    };
+    isComparing ? remove(props.cultivarId) : add(item);
+  }
+
   return (
     <Link
       href={`/plants/${props.slug}`}
-      className="group block plant-card-hover rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary"
+      className="group relative block plant-card-hover rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary"
     >
+      {props.cultivarId && (
+        <button
+          type="button"
+          onClick={handleCompareClick}
+          className={`absolute top-2 right-2 z-10 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all cursor-pointer ${
+            isComparing
+              ? 'bg-accent text-text-inverse'
+              : 'bg-surface-primary/80 text-text-tertiary opacity-0 group-hover:opacity-100 hover:bg-accent hover:text-text-inverse'
+          }`}
+          aria-label={isComparing ? 'Remove from comparison' : 'Add to comparison'}
+        >
+          {isComparing ? '\u2713' : '+'}
+        </button>
+      )}
       <div className="relative">
         <PlantImage src={props.imageUrl ?? null} alt={props.canonicalName} aspectRatio="3/4" />
         <div

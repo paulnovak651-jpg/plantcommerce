@@ -15,7 +15,7 @@ export interface SpeciesPageLoaderResult {
   cultivars: Cultivar[];
   taxonomyPath: TaxonomyNode[];
   growingProfile: GrowingProfile | null;
-  offerStats: { nurseryCount: number; perCultivar: Record<string, number> };
+  offerStats: { nurseryCount: number; perCultivar: Record<string, number>; pricePerCultivar: Record<string, number> };
   communityListings: CommunityListing[];
 }
 

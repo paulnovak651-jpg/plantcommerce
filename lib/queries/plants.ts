@@ -122,22 +122,30 @@ export async function listPlantEntitiesForBrowse(supabase: SupabaseClient) {
 export async function getOfferStatsForSpecies(
   supabase: SupabaseClient,
   cultivarIds: string[]
-): Promise<{ nurseryCount: number; perCultivar: Record<string, number> }> {
-  if (cultivarIds.length === 0) return { nurseryCount: 0, perCultivar: {} };
+): Promise<{ nurseryCount: number; perCultivar: Record<string, number>; pricePerCultivar: Record<string, number> }> {
+  if (cultivarIds.length === 0) return { nurseryCount: 0, perCultivar: {}, pricePerCultivar: {} };
 
   const { data } = await supabase
     .from('inventory_offers')
-    .select('cultivar_id, nursery_id')
+    .select('cultivar_id, nursery_id, price_cents')
     .in('cultivar_id', cultivarIds)
     .eq('offer_status', 'active');
 
   const perCultivar: Record<string, Set<string>> = {};
+  const pricePerCultivar: Record<string, number> = {};
   const allNurseries = new Set<string>();
 
   for (const offer of data ?? []) {
     if (!perCultivar[offer.cultivar_id]) perCultivar[offer.cultivar_id] = new Set();
     perCultivar[offer.cultivar_id].add(offer.nursery_id);
     allNurseries.add(offer.nursery_id);
+
+    if (offer.price_cents != null) {
+      const current = pricePerCultivar[offer.cultivar_id];
+      if (current == null || offer.price_cents < current) {
+        pricePerCultivar[offer.cultivar_id] = offer.price_cents;
+      }
+    }
   }
 
   return {
@@ -145,6 +153,7 @@ export async function getOfferStatsForSpecies(
     perCultivar: Object.fromEntries(
       Object.entries(perCultivar).map(([id, nurseries]) => [id, nurseries.size])
     ),
+    pricePerCultivar,
   };
 }
 

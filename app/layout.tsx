@@ -7,6 +7,9 @@ import { MobileMenu } from '@/components/MobileMenu';
 import { NavLinks } from '@/components/NavLinks';
 import { ZonePrompt, ZoneBanner } from '@/components/ZonePrompt';
 import { ToastProvider } from '@/components/ui/ToastProvider';
+import { HeaderSearch } from '@/components/HeaderSearch';
+import { CompareProvider } from '@/components/compare/CompareContext';
+import { CompareTray } from '@/components/compare/CompareTray';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -57,20 +60,9 @@ export default async function RootLayout({
           {/* Tier 1: Logo bar */}
           <div className="bg-surface-raised">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-              <form action="/" method="GET" role="search" className="hidden md:block">
-                <div className="flex items-center gap-2 rounded-full border border-border bg-surface-primary px-3 py-1.5">
-                  <svg className="h-4 w-4 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.35-4.35" />
-                  </svg>
-                  <input
-                    type="text"
-                    name="q"
-                    placeholder="Search plants..."
-                    className="w-40 bg-transparent text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none"
-                  />
-                </div>
-              </form>
+              <div className="hidden md:block w-56 lg:w-72">
+                <HeaderSearch />
+              </div>
 
               <Link href="/" className="whitespace-nowrap font-serif text-2xl font-semibold text-accent">
                 Plant Commerce
@@ -79,7 +71,6 @@ export default async function RootLayout({
               <div className="hidden items-center gap-4 text-xs text-text-tertiary md:flex">
                 <ZonePrompt />
                 <Link href="/nurseries" className="uppercase tracking-wide hover:text-accent">Nurseries</Link>
-                <Link href="/marketplace" className="uppercase tracking-wide hover:text-accent">Marketplace</Link>
               </div>
 
               <MobileMenu />
@@ -96,11 +87,14 @@ export default async function RootLayout({
 
         <ZoneBanner />
 
+        <CompareProvider>
         <ToastProvider>
         <main id="main-content" className="page-enter">
           {children}
         </main>
         </ToastProvider>
+        <CompareTray />
+        </CompareProvider>
 
         <footer className="bg-accent">
           <div className="mx-auto max-w-7xl px-4 py-12">

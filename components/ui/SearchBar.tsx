@@ -233,7 +233,7 @@ export function SearchBar({
     return (
       <div key={label}>
         <div className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
-          {label}
+          {label} ({items.length})
         </div>
         {items.map((item, index) => {
           const overallIndex = startIndex + index;
@@ -249,7 +249,7 @@ export function SearchBar({
                 event.preventDefault();
                 selectSuggestion(item);
               }}
-              className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm ${
+              className={`flex w-full items-center justify-between px-3 py-2.5 min-h-[44px] text-left text-sm ${
                 isActive
                   ? 'bg-surface-inset text-text-primary'
                   : 'text-text-secondary hover:bg-surface-inset'
@@ -350,6 +350,17 @@ export function SearchBar({
                   grouped.cultivars,
                   grouped.genera.length + grouped.species.length
                 )}
+                <button
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setDropdownOpen(false);
+                    router.push(`/?q=${encodeURIComponent(debouncedQuery)}`);
+                  }}
+                  className="flex w-full items-center px-3 py-2.5 min-h-[44px] text-left text-sm font-medium text-accent hover:bg-surface-inset border-t border-border-subtle"
+                >
+                  See all results for &lsquo;{debouncedQuery}&rsquo; &rarr;
+                </button>
               </>
             )}
           </div>
