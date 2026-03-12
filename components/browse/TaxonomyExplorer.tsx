@@ -366,7 +366,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
 
       {/* Column 3: Species preview */}
       <div
-        className="flex flex-col overflow-hidden"
+        className="flex flex-col overflow-y-auto overflow-x-hidden"
         onClick={() => setFocusedColumn('species')}
       >
         <GenusPreviewPanel data={speciesPreview} loading={loadingPreview} />
