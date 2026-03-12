@@ -47,7 +47,8 @@ export function HarvestCalendar({ harvestSeason, bloomPeriod }: HarvestCalendarP
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-[3px]">
+      <div className="overflow-x-auto">
+      <div className="flex items-center gap-[3px] min-w-[370px]">
         {MONTHS.map((m, i) => {
           const isHarvest = harvestRange ? i >= harvestRange[0] && i <= harvestRange[1] : false;
           const isBloom = bloomRange ? i >= bloomRange[0] && i <= bloomRange[1] : false;
@@ -84,6 +85,7 @@ export function HarvestCalendar({ harvestSeason, bloomPeriod }: HarvestCalendarP
             </div>
           );
         })}
+      </div>
       </div>
       <div className="flex gap-4 text-xs text-text-secondary">
         {bloomRange && (

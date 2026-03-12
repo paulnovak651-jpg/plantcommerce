@@ -28,7 +28,8 @@ export function ZoneBar({ min, max }: ZoneBarProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-end gap-[3px]">
+      <div className="overflow-x-auto">
+      <div className="flex items-end gap-[3px] min-w-[290px]">
         {ZONES.map((z) => {
           const inRange = z >= min && z <= max;
           const isUserZone = userZone === z;
@@ -76,6 +77,7 @@ export function ZoneBar({ min, max }: ZoneBarProps) {
             </div>
           );
         })}
+      </div>
       </div>
       {userZone !== null && (
         <span className="text-xs text-text-tertiary">

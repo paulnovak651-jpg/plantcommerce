@@ -27,8 +27,8 @@ export function CultivarTabs({ tabs, children }: CultivarTabsProps) {
   return (
     <>
       {/* Tab bar */}
-      <div className="border-b border-border-subtle mb-6">
-        <nav className="flex gap-0 -mb-px" aria-label="Cultivar detail tabs">
+      <div className="overflow-x-auto border-b border-border-subtle mb-6 -mx-4 px-4">
+        <nav className="flex gap-0 -mb-px flex-nowrap whitespace-nowrap" aria-label="Cultivar detail tabs">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (

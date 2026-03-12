@@ -11,6 +11,7 @@ interface PriceChangeInfo {
 export type TrustLevel = 'live' | 'tracked' | 'community';
 
 interface OfferItem {
+  id: string;
   nurseryName: string;
   nurserySlug: string;
   price: string | null;
@@ -112,7 +113,7 @@ export function PriceComparisonTable({ offers, lastCheckedAt }: PriceComparisonT
 
           return (
             <div
-              key={`mobile-${offer.nurserySlug}-${offer.productUrl ?? offer.nurseryName}`}
+              key={`mobile-${offer.id}`}
               className={`rounded-[var(--radius-lg)] border p-4 ${
                 isStale
                   ? 'border-border-subtle bg-surface-primary opacity-60'
@@ -205,7 +206,7 @@ export function PriceComparisonTable({ offers, lastCheckedAt }: PriceComparisonT
 
               return (
                 <tr
-                  key={`${offer.nurserySlug}-${offer.productUrl ?? offer.nurseryName}`}
+                  key={`desktop-${offer.id}`}
                   className={`border-b border-border-subtle ${
                     isStale
                       ? 'opacity-60'
