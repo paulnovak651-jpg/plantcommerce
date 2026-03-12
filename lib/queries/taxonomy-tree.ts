@@ -129,6 +129,26 @@ export async function getTaxonomyTree(
     if (plantId) plantsWithStock.add(plantId);
   }
 
+  // Category consolidation
+  const CATEGORY_REMAP: Record<string, string> = {
+    'Nut Trees': 'Nut Trees',
+    'Berries': 'Berries',
+    'Grapes': 'Berries',
+    'Mulberries': 'Berries',
+    'Persimmons': 'Tree Fruit',
+    'Pears': 'Tree Fruit',
+    'Apples & Crabapples': 'Tree Fruit',
+    'Pawpaw': 'Tree Fruit',
+    'Stone Fruit': 'Tree Fruit',
+    'Kiwi': 'Tree Fruit',
+    'Nitrogen Fixers': 'Support Species',
+    'Other': 'Support Species',
+  };
+
+  function remapCategory(raw: string): string {
+    return CATEGORY_REMAP[raw] ?? 'Support Species';
+  }
+
   // Accumulator: category → genus_slug → stats
   type GenusAcc = {
     genus_slug: string;
@@ -141,7 +161,8 @@ export async function getTaxonomyTree(
   const categoryMap = new Map<string, Map<string, GenusAcc>>();
 
   for (const plant of plants) {
-    const category = plant.display_category?.trim() || 'Other';
+    const rawCategory = plant.display_category?.trim() || 'Other';
+    const category = remapCategory(rawCategory);
     const genus = plant.taxonomy_node_id
       ? genusMap.get(plant.taxonomy_node_id)
       : null;
@@ -212,11 +233,12 @@ export async function getTaxonomyTree(
     };
   });
 
-  // Sort categories: cultivar_count desc
+  // Fixed category sort order
+  const CATEGORY_ORDER = ['Nut Trees', 'Berries', 'Tree Fruit', 'Support Species'];
   categories.sort((a, b) => {
-    if (b.total_cultivars !== a.total_cultivars)
-      return b.total_cultivars - a.total_cultivars;
-    return a.category.localeCompare(b.category);
+    const aIdx = CATEGORY_ORDER.indexOf(a.category);
+    const bIdx = CATEGORY_ORDER.indexOf(b.category);
+    return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
   });
 
   return { categories, total_species: totalSpecies, total_cultivars: totalCultivars };

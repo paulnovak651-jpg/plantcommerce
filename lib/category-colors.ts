@@ -9,6 +9,8 @@ export const categoryColors: Record<string, { from: string; to: string }> = {
   Pears: { from: '#9E9D24', to: '#827717' },
   Persimmons: { from: '#E65100', to: '#BF360C' },
   Quinces: { from: '#F9A825', to: '#F57F17' },
+  'Tree Fruit': { from: '#558B2F', to: '#33691E' },
+  'Support Species': { from: '#2d6a4f', to: '#1b4332' },
 };
 
 export const defaultColor = { from: '#2d6a4f', to: '#1b4332' };
