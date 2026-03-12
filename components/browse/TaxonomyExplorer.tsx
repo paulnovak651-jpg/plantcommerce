@@ -332,6 +332,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
       className="border border-border-subtle rounded-[var(--radius-lg)] bg-surface-primary overflow-hidden grid focus:outline-none"
       style={{
         gridTemplateColumns: '200px 250px 1fr',
+        gridTemplateRows: '1fr',
         minHeight: '480px',
         maxHeight: '600px',
       }}
@@ -366,7 +367,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
 
       {/* Column 3: Species preview */}
       <div
-        className="flex flex-col overflow-y-auto overflow-x-hidden"
+        className="flex flex-col overflow-hidden"
         onClick={() => setFocusedColumn('species')}
       >
         <GenusPreviewPanel data={speciesPreview} loading={loadingPreview} />
