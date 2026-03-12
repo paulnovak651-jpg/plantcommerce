@@ -125,7 +125,7 @@ export default async function SpeciesPage({ params }: Props) {
           if (species.display_category) {
             crumbs.push({
               label: species.display_category,
-              href: `/browse?category=${encodeURIComponent(species.display_category)}`,
+              href: `/?category=${encodeURIComponent(species.display_category)}`,
             });
           }
           if (genusNode) {

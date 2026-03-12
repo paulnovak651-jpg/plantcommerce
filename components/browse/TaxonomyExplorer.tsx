@@ -241,7 +241,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
 
   const handleCategoryClick = useCallback(
     (category: string) => {
-      router.push(`/browse?mode=refine&category=${encodeURIComponent(category)}`);
+      router.push(`/?category=${encodeURIComponent(category)}`);
     },
     [router]
   );

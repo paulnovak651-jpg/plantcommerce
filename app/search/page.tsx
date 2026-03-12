@@ -31,6 +31,6 @@ export default async function SearchPage({ searchParams }: Props) {
     params.set('available', 'true');
   }
 
-  const target = params.toString() ? `/browse?${params.toString()}` : '/browse';
+  const target = params.toString() ? `/?${params.toString()}` : '/';
   redirect(target);
 }

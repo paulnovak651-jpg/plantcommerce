@@ -35,7 +35,7 @@ export function SearchBar({
   defaultValue = '',
   value,
   onValueChange,
-  action = '/browse',
+  action = '/',
   className,
   inputId = 'search-input',
   onSubmit,
@@ -168,7 +168,7 @@ export function SearchBar({
     if (item.speciesSlug) {
       return `/plants/${item.speciesSlug}/${item.slug}`;
     }
-    return `/browse?q=${encodeURIComponent(item.name)}`;
+    return `/?q=${encodeURIComponent(item.name)}`;
   }
 
   function selectSuggestion(item: AutocompleteSuggestion) {

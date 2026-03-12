@@ -1,44 +1,26 @@
-import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import { createClient } from '@/lib/supabase/server';
-import { getAllBrowsePlants } from '@/lib/queries/browse';
-import { getTaxonomyTree } from '@/lib/queries/taxonomy-tree';
-import { Text } from '@/components/ui/Text';
-import { BrowsePageClient } from '@/components/browse/BrowsePageClient';
-import { BrowseGridSkeleton } from '@/components/PlantCardSkeleton';
+import { redirect } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: 'Browse All Plants',
-  description:
-    'Browse and filter all plants in the Plant Commerce catalog. Compare availability across nurseries.',
-};
+interface Props {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
 
-export default async function BrowsePage() {
-  const supabase = await createClient();
-  const [allPlants, taxonomyTree] = await Promise.all([
-    getAllBrowsePlants(supabase),
-    getTaxonomyTree(supabase),
-  ]);
+/**
+ * The /browse page now redirects to the homepage browse funnel.
+ * Query params are preserved so old bookmarks still work.
+ */
+export default async function BrowsePage({ searchParams }: Props) {
+  const sp = await searchParams;
+  const params = new URLSearchParams();
 
-  return (
-    <div>
-      {/* Compact page header — SEO h1 without wasting vertical space */}
-      <div className="border-b border-border-subtle bg-surface-primary px-4 py-4">
-        <div className="mx-auto max-w-7xl">
-          <Text variant="h2" as="h1">Browse All Plants</Text>
-        </div>
-      </div>
+  for (const [key, value] of Object.entries(sp)) {
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      for (const v of value) params.append(key, v);
+    } else {
+      params.set(key, value);
+    }
+  }
 
-      {/* Main content */}
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <Suspense fallback={
-          <div className="mx-auto max-w-7xl px-4 py-8">
-            <BrowseGridSkeleton />
-          </div>
-        }>
-          <BrowsePageClient allPlants={allPlants} taxonomyTree={taxonomyTree} />
-        </Suspense>
-      </div>
-    </div>
-  );
+  const qs = params.toString();
+  redirect(qs ? `/?${qs}` : '/');
 }

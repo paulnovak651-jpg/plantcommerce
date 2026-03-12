@@ -34,7 +34,7 @@ export function BrowsePageClient({
         params.set('mode', 'refine');
       }
       const qs = params.toString();
-      router.push(`/browse${qs ? `?${qs}` : ''}`);
+      router.push(`/${qs ? `?${qs}` : ''}`);
     },
     [router, searchParams]
   );
@@ -45,7 +45,7 @@ export function BrowsePageClient({
       const formData = new FormData(e.currentTarget);
       const q = (formData.get('q') as string)?.trim();
       if (q) {
-        router.push(`/browse?mode=refine&q=${encodeURIComponent(q)}`);
+        router.push(`/?mode=refine&q=${encodeURIComponent(q)}`);
       }
     },
     [router]

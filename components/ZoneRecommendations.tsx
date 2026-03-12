@@ -116,7 +116,7 @@ export function ZoneRecommendations({ species }: ZoneRecommendationsProps) {
           <Text variant="sm" color="secondary">
             No in-stock recommendations yet for Zone {zone}. Try browsing all plants.
           </Text>
-          <Link href="/browse" className="mt-3 inline-block text-sm text-accent hover:underline">
+          <Link href="/" className="mt-3 inline-block text-sm text-accent hover:underline">
             Browse all plants
           </Link>
         </div>

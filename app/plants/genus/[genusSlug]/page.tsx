@@ -155,8 +155,8 @@ export default async function GenusHubPage({ params }: Props) {
   const commonName = genusCommonName(genusSlug) ?? genus.name;
   const categoryName = genus.species[0]?.display_category ?? genus.family_name ?? 'Plants';
   const categoryParam = genus.species[0]?.display_category
-    ? `/browse?category=${encodeURIComponent(genus.species[0].display_category)}`
-    : '/browse';
+    ? `/?category=${encodeURIComponent(genus.species[0].display_category)}`
+    : '/';
 
   const speciesWithOffersCount = genus.species.filter((sp) => sp.nursery_count > 0).length;
   const categoryForRelatedGenera = genus.species[0]?.display_category ?? null;

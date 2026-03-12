@@ -210,6 +210,11 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     const genus = searchParams.get('genus');
     if (cat && genus) return 'cultivars';
     if (cat) return 'genera';
+    // Skip funnel if filter/search params are present (e.g. from "See all" links)
+    const hasFilters = searchParams.get('q') || searchParams.get('available') ||
+      searchParams.get('sort') || searchParams.get('category') ||
+      searchParams.get('zoneMin') || searchParams.get('zoneMax');
+    if (hasFilters) return 'cultivars';
     return 'categories';
   });
   const [selectedTopCategory, setSelectedTopCategory] = useState<string | null>(

@@ -13,7 +13,7 @@ function getSeasonalMessage(month: number): SeasonalMessage {
     return {
       title: 'Spring planning season',
       description: 'Browse bare root availability while planning spring plantings.',
-      href: '/browse?available=true',
+      href: '/?available=true',
       cta: 'Browse availability',
     };
   }
@@ -21,7 +21,7 @@ function getSeasonalMessage(month: number): SeasonalMessage {
     return {
       title: 'Spring planting',
       description: "See what's in stock now across tracked nurseries.",
-      href: '/browse?available=true&sort=available',
+      href: '/?available=true&sort=available',
       cta: 'See in-stock plants',
     };
   }
@@ -29,14 +29,14 @@ function getSeasonalMessage(month: number): SeasonalMessage {
     return {
       title: 'Fall planting prep',
       description: 'Research cultivars now and pre-order for autumn delivery.',
-      href: '/browse',
+      href: '/',
       cta: 'Research cultivars',
     };
   }
   return {
     title: 'Winter planning',
     description: 'Use winter to compare cultivars and plan for spring.',
-    href: '/browse',
+    href: '/',
     cta: 'Start planning',
   };
 }

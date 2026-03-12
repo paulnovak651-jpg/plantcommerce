@@ -1,18 +1,20 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import {
-  getHomepageCategories,
   getRecentlyRestocked,
   getBestDeals,
   getNewAdditions,
   getZoneRecommendationSpecies,
 } from '@/lib/queries/plants';
 import type { HomepagePlant } from '@/lib/queries/plants';
+import { getAllBrowsePlants } from '@/lib/queries/browse';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Text } from '@/components/ui/Text';
 import { JsonLd } from '@/components/JsonLd';
-import { CategoryCard } from '@/components/CategoryCard';
+import { BrowseContent } from '@/components/BrowseContent';
+import { BrowseGridSkeleton } from '@/components/PlantCardSkeleton';
 import { HomepageSection } from '@/components/HomepageSection';
 import { ScrollReveal } from '@/components/ScrollReveal';
 import { SeasonalBanner } from '@/components/SeasonalBanner';
@@ -63,7 +65,7 @@ function DealCard({ plant }: { plant: HomepagePlant }) {
 export default async function HomePage() {
   const supabase = await createClient();
   const [
-    categories,
+    allPlants,
     { data: nurseryOfferRows },
     { count: publishedCultivarCount },
     recentlyRestocked,
@@ -71,7 +73,7 @@ export default async function HomePage() {
     newAdditions,
     zoneRecommendationSpecies,
   ] = await Promise.all([
-    getHomepageCategories(supabase),
+    getAllBrowsePlants(supabase),
     supabase
       .from('inventory_offers')
       .select('nursery_id')
@@ -89,7 +91,7 @@ export default async function HomePage() {
   const trackedNurseryCount = new Set(
     ((nurseryOfferRows ?? []) as NurseryOfferRow[]).map((row) => row.nursery_id)
   ).size;
-  const totalSpecies = categories.reduce((sum, group) => sum + group.species_count, 0);
+  const totalSpecies = allPlants.length;
 
   return (
     <div>
@@ -146,28 +148,17 @@ export default async function HomePage() {
 
       <SeasonalBanner />
 
-      {/* Browse by Category */}
+      {/* Browse Funnel */}
       <section className="mx-auto max-w-7xl px-4 py-12">
-        <Text variant="h1">Browse by Category</Text>
-        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {categories.map((group) => (
-            <CategoryCard key={group.category} group={group} />
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          <Link
-            href="/browse"
-            className="inline-block rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
-          >
-            Browse All Plants
-          </Link>
-        </div>
+        <Suspense fallback={<BrowseGridSkeleton />}>
+          <BrowseContent allPlants={allPlants} />
+        </Suspense>
       </section>
 
       {/* Dynamic Sections */}
       {recentlyRestocked.length > 0 && (
         <ScrollReveal>
-          <HomepageSection title="Recently Restocked" seeAllHref="/browse?available=true&sort=available">
+          <HomepageSection title="Recently Restocked" seeAllHref="/?available=true&sort=available">
             {recentlyRestocked.map((plant) => (
               <DealCard key={plant.cultivarSlug} plant={plant} />
             ))}
@@ -177,7 +168,7 @@ export default async function HomePage() {
 
       {bestDeals.length > 0 && (
         <ScrollReveal>
-          <HomepageSection title="Best Deals" seeAllHref="/browse?available=true&sort=available">
+          <HomepageSection title="Best Deals" seeAllHref="/?available=true&sort=available">
             {bestDeals.map((plant) => (
               <DealCard key={plant.cultivarSlug} plant={plant} />
             ))}
@@ -187,7 +178,7 @@ export default async function HomePage() {
 
       {newAdditions.length > 0 && (
         <ScrollReveal>
-          <HomepageSection title="New to the Database" seeAllHref="/browse?sort=name-asc">
+          <HomepageSection title="New to the Database" seeAllHref="/?sort=name-asc">
             {newAdditions.map((plant) => (
               <DealCard key={plant.cultivarSlug} plant={plant} />
             ))}

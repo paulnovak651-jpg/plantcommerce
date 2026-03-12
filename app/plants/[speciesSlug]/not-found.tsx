@@ -12,7 +12,7 @@ export default function SpeciesNotFound() {
       />
       <div className="flex flex-wrap gap-3">
         <Link
-          href="/browse"
+          href="/"
           className="rounded-[var(--radius-md)] bg-accent px-4 py-2 text-sm font-medium text-text-inverse hover:bg-accent-hover"
         >
           Browse all species
