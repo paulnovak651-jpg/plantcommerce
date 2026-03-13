@@ -2,19 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { getUserZone } from '@/lib/zone-persistence';
 
 export function HomepageHero() {
   const router = useRouter();
-
-  const quickStarts = [
-    { label: 'Fruit trees', href: '/?cat=tree-fruit' },
-    { label: 'Nut trees', href: '/?cat=nut-trees' },
-    { label: 'Nitrogen fixers', href: '/?cat=support-species' },
-    { label: 'In stock now', href: '/?available=true' },
-  ];
-
-  const zone = typeof window !== 'undefined' ? getUserZone() : null;
 
   return (
     <section className="bg-surface-raised border-b border-border-subtle">
@@ -39,28 +29,6 @@ export function HomepageHero() {
               }
             }}
           />
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-          {zone && (
-            <button
-              type="button"
-              onClick={() => router.push(`/?zoneMin=${zone}&zoneMax=${zone}`)}
-              className="rounded-full border border-accent bg-accent-light px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-text-inverse cursor-pointer"
-            >
-              My zone ({zone})
-            </button>
-          )}
-          {quickStarts.map((qs) => (
-            <button
-              key={qs.label}
-              type="button"
-              onClick={() => router.push(qs.href)}
-              className="rounded-full border border-border-subtle bg-surface-primary px-3 py-1.5 text-sm text-text-secondary transition-colors hover:border-accent hover:text-accent cursor-pointer"
-            >
-              {qs.label}
-            </button>
-          ))}
         </div>
       </div>
     </section>

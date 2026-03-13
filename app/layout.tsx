@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { SkipNav } from '@/components/SkipNav';
 import { MobileMenu } from '@/components/MobileMenu';
 import { NavLinks } from '@/components/NavLinks';
-import { ZonePrompt, ZoneBanner } from '@/components/ZonePrompt';
+import { ZonePrompt } from '@/components/ZonePrompt';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import { HeaderSearch } from '@/components/HeaderSearch';
 import { CompareProvider } from '@/components/compare/CompareContext';
@@ -84,8 +84,6 @@ export default async function RootLayout({
             </div>
           </nav>
         </header>
-
-        <ZoneBanner />
 
         <CompareProvider>
         <ToastProvider>
