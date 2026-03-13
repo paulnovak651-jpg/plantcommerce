@@ -5,6 +5,13 @@ import { GENUS_COMMON_NAMES } from '@/lib/genus-names';
 // Public interfaces
 // ---------------------------------------------------------------------------
 
+export interface TaxonomyTreePlant {
+  zone_min: number | null;
+  zone_max: number | null;
+  cultivar_count: number;
+  has_stock: boolean;
+}
+
 export interface TaxonomyTreeGenus {
   genus_slug: string;
   genus_name: string;
@@ -12,6 +19,7 @@ export interface TaxonomyTreeGenus {
   species_count: number;
   cultivar_count: number;
   has_stock: boolean;
+  plants: TaxonomyTreePlant[];
 }
 
 export interface TaxonomyTreeCategory {
@@ -53,6 +61,12 @@ interface GenusRow {
   name: string;
 }
 
+interface ProfileRow {
+  plant_entity_id: string;
+  usda_zone_min: number | null;
+  usda_zone_max: number | null;
+}
+
 // ---------------------------------------------------------------------------
 // Query
 // ---------------------------------------------------------------------------
@@ -71,6 +85,7 @@ export async function getTaxonomyTree(
     { data: cultivarRows, error: cultivarError },
     { data: offerRows, error: offerError },
     { data: genusRows, error: genusError },
+    { data: profileRows, error: profileError },
   ] = await Promise.all([
     supabase
       .from('plant_entities')
@@ -88,12 +103,15 @@ export async function getTaxonomyTree(
       .from('taxonomy_nodes')
       .select('id, slug, name, taxonomy_ranks!inner(rank_name)')
       .eq('taxonomy_ranks.rank_name', 'genus'),
+    supabase
+      .from('species_growing_profiles')
+      .select('plant_entity_id, usda_zone_min, usda_zone_max'),
   ]);
 
-  if (plantError || cultivarError || offerError || genusError) {
+  if (plantError || cultivarError || offerError || genusError || profileError) {
     console.error(
       'getTaxonomyTree error:',
-      plantError ?? cultivarError ?? offerError ?? genusError
+      plantError ?? cultivarError ?? offerError ?? genusError ?? profileError
     );
     return { categories: [], total_species: 0, total_cultivars: 0 };
   }
@@ -102,6 +120,13 @@ export async function getTaxonomyTree(
   const cultivars = (cultivarRows ?? []) as CultivarRow[];
   const offers = (offerRows ?? []) as OfferRow[];
   const genera = (genusRows ?? []) as GenusRow[];
+  const profiles = (profileRows ?? []) as ProfileRow[];
+
+  // Build profile lookup: plant_entity_id → zone range
+  const profileMap = new Map<string, ProfileRow>();
+  for (const p of profiles) {
+    profileMap.set(p.plant_entity_id, p);
+  }
 
   // Build genus lookup: taxonomy_node_id → genus info
   const genusMap = new Map<string, GenusRow>();
@@ -156,6 +181,7 @@ export async function getTaxonomyTree(
     species_ids: Set<string>;
     cultivar_count: number;
     has_stock: boolean;
+    plants: TaxonomyTreePlant[];
   };
 
   const categoryMap = new Map<string, Map<string, GenusAcc>>();
@@ -167,9 +193,6 @@ export async function getTaxonomyTree(
       ? genusMap.get(plant.taxonomy_node_id)
       : null;
     if (!genus) continue;
-
-    // Strip prefix for common name lookup
-    const bareSlug = genus.slug.replace(/^genus-/, '');
 
     if (!categoryMap.has(category)) {
       categoryMap.set(category, new Map());
@@ -183,13 +206,24 @@ export async function getTaxonomyTree(
         species_ids: new Set(),
         cultivar_count: 0,
         has_stock: false,
+        plants: [],
       });
     }
 
     const acc = genusAccMap.get(genus.slug)!;
     acc.species_ids.add(plant.id);
-    acc.cultivar_count += plantCultivarCount.get(plant.id) ?? 0;
-    if (plantsWithStock.has(plant.id)) acc.has_stock = true;
+    const cvCount = plantCultivarCount.get(plant.id) ?? 0;
+    acc.cultivar_count += cvCount;
+    const hasStock = plantsWithStock.has(plant.id);
+    if (hasStock) acc.has_stock = true;
+
+    const profile = profileMap.get(plant.id);
+    acc.plants.push({
+      zone_min: profile?.usda_zone_min ?? null,
+      zone_max: profile?.usda_zone_max ?? null,
+      cultivar_count: cvCount,
+      has_stock: hasStock,
+    });
   }
 
   // Assemble final structure
@@ -210,6 +244,7 @@ export async function getTaxonomyTree(
         species_count: acc.species_ids.size,
         cultivar_count: acc.cultivar_count,
         has_stock: acc.has_stock,
+        plants: acc.plants,
       };
     });
 

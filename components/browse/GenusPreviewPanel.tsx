@@ -1,6 +1,8 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
+import type { BrowseFilters } from '@/lib/browse-filters';
 
 // ---------------------------------------------------------------------------
 // Types (matching the API response shape from /api/taxonomy/genus/[slug])
@@ -154,12 +156,31 @@ function PreviewCard({ item }: { item: PreviewItem }) {
 // Main panel
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Zone filter for preview items
+// ---------------------------------------------------------------------------
+
+function filterByZone(items: PreviewItem[], filters?: BrowseFilters): PreviewItem[] {
+  if (!filters?.zoneMin && !filters?.zoneMax) return items;
+  const selMin = filters.zoneMin ?? 1;
+  const selMax = filters.zoneMax ?? 13;
+  return items.filter((item) => {
+    if (item.zone_min == null || item.zone_max == null) return true;
+    return item.zone_min <= selMax && item.zone_max >= selMin;
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Main panel
+// ---------------------------------------------------------------------------
+
 interface GenusPreviewPanelProps {
   data: GenusPreviewData | null;
   loading: boolean;
+  zoneFilters?: BrowseFilters;
 }
 
-export function GenusPreviewPanel({ data, loading }: GenusPreviewPanelProps) {
+export function GenusPreviewPanel({ data, loading, zoneFilters }: GenusPreviewPanelProps) {
   if (loading) {
     return (
       <div className="flex flex-col h-full">
@@ -190,7 +211,8 @@ export function GenusPreviewPanel({ data, loading }: GenusPreviewPanelProps) {
     );
   }
 
-  const flatItems = flattenSpecies(data.species);
+  const allItems = useMemo(() => flattenSpecies(data.species), [data.species]);
+  const flatItems = useMemo(() => filterByZone(allItems, zoneFilters), [allItems, zoneFilters]);
   const genusHref = `/plants/genus/${data.genus_slug.replace(/^genus-/, '')}`;
 
   return (
@@ -201,7 +223,13 @@ export function GenusPreviewPanel({ data, loading }: GenusPreviewPanelProps) {
         </span>
       </div>
       <div className="overflow-y-auto flex-1 p-2 space-y-2">
-        {flatItems.map((item) => (
+        {flatItems.length === 0 ? (
+          <div className="flex items-center justify-center h-full px-4 py-8">
+            <p className="text-[13px] text-text-tertiary text-center leading-snug">
+              No plants match the selected zone range
+            </p>
+          </div>
+        ) : flatItems.map((item) => (
           <PreviewCard key={item.href} item={item} />
         ))}
       </div>

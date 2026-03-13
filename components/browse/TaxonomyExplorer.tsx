@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TaxonomyTree } from '@/lib/queries/taxonomy-tree';
+import type { BrowseFilters } from '@/lib/browse-filters';
 import { CategoryColumn } from '@/components/browse/CategoryColumn';
 import { GenusColumn } from '@/components/browse/GenusColumn';
 import {
@@ -13,6 +14,7 @@ import { categoryColors, defaultColor } from '@/lib/category-colors';
 
 interface TaxonomyExplorerProps {
   taxonomyTree: TaxonomyTree;
+  zoneFilters?: BrowseFilters;
 }
 
 // ---------------------------------------------------------------------------
@@ -58,7 +60,7 @@ function useSpeciesFetcher() {
 // Mobile drill-down
 // ---------------------------------------------------------------------------
 
-function MobileDrillDown({ taxonomyTree }: TaxonomyExplorerProps) {
+function MobileDrillDown({ taxonomyTree, zoneFilters }: TaxonomyExplorerProps) {
   const [depth, setDepth] = useState(0);
   const [catIndex, setCatIndex] = useState(0);
   const [genusSlug, setGenusSlug] = useState<string | null>(null);
@@ -173,7 +175,7 @@ function MobileDrillDown({ taxonomyTree }: TaxonomyExplorerProps) {
 
       {/* Depth 2: Species */}
       {depth === 2 && (
-        <GenusPreviewPanel data={speciesData} loading={loading} />
+        <GenusPreviewPanel data={speciesData} loading={loading} zoneFilters={zoneFilters} />
       )}
     </div>
   );
@@ -185,7 +187,7 @@ function MobileDrillDown({ taxonomyTree }: TaxonomyExplorerProps) {
 
 type FocusedColumn = 'categories' | 'genera' | 'species';
 
-function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
+function DesktopExplorer({ taxonomyTree, zoneFilters }: TaxonomyExplorerProps) {
   const router = useRouter();
   const [activeCategoryIndex, setActiveCategoryIndex] = useState<number | null>(null);
   const [activeGenusSlug, setActiveGenusSlug] = useState<string | null>(null);
@@ -210,6 +212,18 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
       if (genusTimerRef.current) clearTimeout(genusTimerRef.current);
     };
   }, []);
+
+  // Reset selections when filtered tree changes (e.g. zone filter applied)
+  useEffect(() => {
+    if (activeCategoryIndex != null && activeCategoryIndex >= categories.length) {
+      setActiveCategoryIndex(null);
+      setActiveGenusSlug(null);
+      setSpeciesPreview(null);
+    } else if (activeGenusSlug && genera && !genera.some(g => g.genus_slug === activeGenusSlug)) {
+      setActiveGenusSlug(null);
+      setSpeciesPreview(null);
+    }
+  }, [categories, genera, activeCategoryIndex, activeGenusSlug]);
 
   // ---------------------------------------------------------------------------
   // Hover handlers (with 150ms debounce)
@@ -370,7 +384,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
         className="flex flex-col overflow-hidden"
         onClick={() => setFocusedColumn('species')}
       >
-        <GenusPreviewPanel data={speciesPreview} loading={loadingPreview} />
+        <GenusPreviewPanel data={speciesPreview} loading={loadingPreview} zoneFilters={zoneFilters} />
       </div>
     </div>
   );
@@ -380,7 +394,7 @@ function DesktopExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
 // Main component: responsive switch
 // ---------------------------------------------------------------------------
 
-export function TaxonomyExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
+export function TaxonomyExplorer({ taxonomyTree, zoneFilters }: TaxonomyExplorerProps) {
   if (taxonomyTree.categories.length === 0) {
     return (
       <div className="border border-border-subtle rounded-[var(--radius-lg)] bg-surface-primary p-8 text-center">
@@ -395,11 +409,11 @@ export function TaxonomyExplorer({ taxonomyTree }: TaxonomyExplorerProps) {
     <>
       {/* Desktop: 3-column (lg and up) */}
       <div className="hidden lg:block">
-        <DesktopExplorer taxonomyTree={taxonomyTree} />
+        <DesktopExplorer taxonomyTree={taxonomyTree} zoneFilters={zoneFilters} />
       </div>
       {/* Mobile: drill-down (below lg) */}
       <div className="lg:hidden">
-        <MobileDrillDown taxonomyTree={taxonomyTree} />
+        <MobileDrillDown taxonomyTree={taxonomyTree} zoneFilters={zoneFilters} />
       </div>
     </>
   );
