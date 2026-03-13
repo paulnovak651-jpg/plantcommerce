@@ -13,15 +13,20 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Text } from '@/components/ui/Text';
 import { BotanicalName } from '@/components/ui/BotanicalName';
 import { Tag } from '@/components/ui/Tag';
+import { Surface } from '@/components/ui/Surface';
 import { TraitGrid } from '@/components/ui/TraitGrid';
 import { Disclosure } from '@/components/ui/Disclosure';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { JsonLd } from '@/components/JsonLd';
 import { ListingCard } from '@/components/ListingCard';
 import { QuickFactsRibbon } from '@/components/QuickFactsRibbon';
-import type { Cultivar } from '@/lib/types';
+import { QuickFactsHero } from '@/components/QuickFactsHero';
+import { ZoneBar } from '@/components/ZoneBar';
+import { HarvestCalendar } from '@/components/HarvestCalendar';
+import { HeightSilhouette } from '@/components/HeightSilhouette';
 import { ZoneCompatibility } from '@/components/ZoneCompatibility';
-import type { GrowingProfile } from '@/lib/types';
+import { getCategoryIcon } from '@/lib/browse-categories';
+import type { Cultivar, GrowingProfile } from '@/lib/types';
 
 interface Props {
   params: Promise<{ speciesSlug: string }>;
@@ -121,7 +126,6 @@ export default async function SpeciesPage({ params }: Props) {
       <Breadcrumbs
         items={(() => {
           const crumbs: Array<{ label: string; href?: string }> = [{ label: 'Home', href: '/' }];
-          // Category crumb from display_category
           if (species.display_category) {
             crumbs.push({
               label: species.display_category,
@@ -139,62 +143,125 @@ export default async function SpeciesPage({ params }: Props) {
         })()}
       />
 
-      <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
-        <Text variant="h1">{species.canonical_name}</Text>
-        <Text variant="body" color="secondary" className="mt-1">
-          <BotanicalName>{species.botanical_name}</BotanicalName>
-        </Text>
-        {taxonomyPath.length > 0 ? (
-          <Text variant="caption" color="tertiary" className="mt-1">
-            {taxonomyPath
-              .filter((n) => n.rank === 'family' || n.rank === 'genus')
-              .map((n) => n.name)
-              .join(' › ')}{' '}
-            &middot; <Tag type="neutral">{species.entity_type}</Tag>
-          </Text>
-        ) : (
-          <Text variant="sm" color="tertiary" className="mt-1">
-            {species.genus} &middot; {species.family} &middot;{' '}
-            <Tag type="neutral">{species.entity_type}</Tag>
-          </Text>
-        )}
+      {/* HERO HEADER — dark green, matching cultivar page */}
+      <section className="rounded-[var(--radius-xl)] bg-accent-hover p-4 sm:p-6 text-surface-raised">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+          <div className="hidden sm:flex h-40 w-40 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-surface-raised/10">
+            <span className="text-4xl opacity-40">
+              {getCategoryIcon(species.display_category)}
+            </span>
+          </div>
 
-        {/* Stats line */}
-        {(cultivars.length > 0 || offerStats.nurseryCount > 0) && (
-          <Text variant="sm" color="tertiary" className="mt-2">
-            {cultivars.length > 0 && (
-              <span>
-                <span className="font-medium text-text-secondary">{cultivars.length}</span> cultivars
-              </span>
-            )}
-            {cultivars.length > 0 && offerStats.nurseryCount > 0 && (
-              <span className="mx-2 text-border">&middot;</span>
-            )}
-            {offerStats.nurseryCount > 0 && (
-              <span>
-                <span className="font-medium text-text-secondary">{offerStats.nurseryCount}</span>{' '}
-                {offerStats.nurseryCount === 1 ? 'nursery' : 'nurseries'} with stock
-              </span>
-            )}
-          </Text>
-        )}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-surface-raised">
+                {species.canonical_name}
+              </h1>
+              <Tag type="neutral">{species.entity_type}</Tag>
+            </div>
+            <p className="mt-1 text-surface-raised/70">
+              <BotanicalName>{species.botanical_name}</BotanicalName>
+            </p>
 
+            {/* Taxonomy path */}
+            {taxonomyPath.length > 0 ? (
+              <Text variant="caption" color="tertiary" className="mt-1 text-surface-raised/50">
+                {taxonomyPath
+                  .filter((n) => n.rank === 'family' || n.rank === 'genus')
+                  .map((n) => n.name)
+                  .join(' › ')}
+              </Text>
+            ) : (
+              <Text variant="caption" color="tertiary" className="mt-1 text-surface-raised/50">
+                {species.genus} &middot; {species.family}
+              </Text>
+            )}
+
+            {/* Stats line */}
+            {(cultivars.length > 0 || offerStats.nurseryCount > 0) && (
+              <Text variant="sm" className="mt-2 text-surface-raised/70">
+                {cultivars.length > 0 && (
+                  <span>
+                    <span className="font-medium text-surface-raised">{cultivars.length}</span> cultivars
+                  </span>
+                )}
+                {cultivars.length > 0 && offerStats.nurseryCount > 0 && (
+                  <span className="mx-2 text-surface-raised/40">&middot;</span>
+                )}
+                {offerStats.nurseryCount > 0 && (
+                  <span>
+                    <span className="font-medium text-surface-raised">{offerStats.nurseryCount}</span>{' '}
+                    {offerStats.nurseryCount === 1 ? 'nursery' : 'nurseries'} with stock
+                  </span>
+                )}
+              </Text>
+            )}
+
+            {/* Quick facts in hero */}
+            {growingProfile && (
+              <div className="mt-4">
+                <QuickFactsHero profile={growingProfile} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Description in hero */}
         {species.description && (
-          <Text variant="body" color="secondary" className="mt-4">
+          <Text variant="body" className="mt-4 text-surface-raised/80">
             {species.description}
           </Text>
         )}
       </section>
 
+      {/* VISUAL GROWING DATA — immediately visible */}
       {growingProfile && (
-        <section className="border-b border-border-subtle pb-[var(--spacing-zone)]">
-          <QuickFactsRibbon facts={buildQuickFacts(growingProfile)} />
-          <div className="mt-3">
-            <ZoneCompatibility
-              zoneMin={growingProfile.usda_zone_min}
-              zoneMax={growingProfile.usda_zone_max}
-            />
-          </div>
+        <section className="space-y-6">
+          {/* Side-by-side: ZoneBar + HeightSilhouette */}
+          {(growingProfile.usda_zone_min != null || growingProfile.mature_height_min_ft != null) && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {growingProfile.usda_zone_min != null && growingProfile.usda_zone_max != null && (
+                <Surface elevation="raised" padding="default">
+                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
+                    USDA Hardiness Zones
+                  </Text>
+                  <ZoneBar min={growingProfile.usda_zone_min} max={growingProfile.usda_zone_max} />
+                </Surface>
+              )}
+              {(growingProfile.mature_height_min_ft != null || growingProfile.mature_height_max_ft != null) && (
+                <Surface elevation="raised" padding="default">
+                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
+                    Size at Maturity
+                  </Text>
+                  <HeightSilhouette
+                    minFt={growingProfile.mature_height_min_ft ?? null}
+                    maxFt={growingProfile.mature_height_max_ft ?? null}
+                  />
+                  {(growingProfile.mature_spread_min_ft != null || growingProfile.mature_spread_max_ft != null) && (
+                    <Text variant="sm" color="secondary" className="mt-2">
+                      Spread: {growingProfile.mature_spread_min_ft ?? '?'}&ndash;{growingProfile.mature_spread_max_ft ?? '?'} ft
+                    </Text>
+                  )}
+                </Surface>
+              )}
+            </div>
+          )}
+
+          {/* Harvest Calendar */}
+          {growingProfile.harvest_season && (
+            <Surface elevation="raised" padding="default">
+              <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
+                Annual Calendar
+              </Text>
+              <HarvestCalendar harvestSeason={growingProfile.harvest_season} />
+            </Surface>
+          )}
+
+          {/* Zone Compatibility */}
+          <ZoneCompatibility
+            zoneMin={growingProfile.usda_zone_min}
+            zoneMax={growingProfile.usda_zone_max}
+          />
         </section>
       )}
 
