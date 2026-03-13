@@ -7,6 +7,7 @@ const links = [
   { href: '/', label: 'Browse' },
   { href: '/compare', label: 'Compare' },
   { href: '/nurseries', label: 'Nurseries' },
+  { href: '/marketplace', label: 'Marketplace' },
 ];
 
 export function NavLinks() {

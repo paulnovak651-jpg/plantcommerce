@@ -1,14 +1,12 @@
 'use client';
 
-import type { BrowsePlant } from '@/lib/queries/browse';
+import type { TaxonomyTree } from '@/lib/queries/taxonomy-tree';
 import { BrowseContent } from '@/components/BrowseContent';
 
 interface BrowsePageClientProps {
-  allPlants: BrowsePlant[];
+  taxonomyTree: TaxonomyTree;
 }
 
-export function BrowsePageClient({
-  allPlants,
-}: BrowsePageClientProps) {
-  return <BrowseContent allPlants={allPlants} />;
+export function BrowsePageClient({ taxonomyTree }: BrowsePageClientProps) {
+  return <BrowseContent taxonomyTree={taxonomyTree} />;
 }
