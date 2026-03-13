@@ -8,10 +8,10 @@ export function HomepageHero() {
   const router = useRouter();
 
   const quickStarts = [
-    { label: 'Fruit trees', href: '/?mode=refine&category=Tree+Fruit' },
-    { label: 'Nut trees', href: '/?mode=refine&category=Nut+Trees' },
-    { label: 'Nitrogen fixers', href: '/?mode=refine&category=Support+Species' },
-    { label: 'In stock now', href: '/?mode=refine&available=true' },
+    { label: 'Fruit trees', href: '/?cat=tree-fruit' },
+    { label: 'Nut trees', href: '/?cat=nut-trees' },
+    { label: 'Nitrogen fixers', href: '/?cat=support-species' },
+    { label: 'In stock now', href: '/?available=true' },
   ];
 
   const zone = typeof window !== 'undefined' ? getUserZone() : null;
@@ -30,6 +30,14 @@ export function HomepageHero() {
           <SearchBar
             inputId="hero-search"
             className="w-full"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const q = (formData.get('q') as string)?.trim();
+              if (q) {
+                router.push(`/?q=${encodeURIComponent(q)}`);
+              }
+            }}
           />
         </div>
 
@@ -37,7 +45,7 @@ export function HomepageHero() {
           {zone && (
             <button
               type="button"
-              onClick={() => router.push(`/?mode=refine&zoneMin=${zone}&zoneMax=${zone}`)}
+              onClick={() => router.push(`/?zoneMin=${zone}&zoneMax=${zone}`)}
               className="rounded-full border border-accent bg-accent-light px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-text-inverse cursor-pointer"
             >
               My zone ({zone})

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 
 export interface CompareItem {
   id: string;
@@ -26,6 +26,30 @@ const CompareCtx = createContext<CompareContextValue | null>(null);
 
 export function CompareProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CompareItem[]>([]);
+
+  // Hydrate from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('compare-items');
+      if (stored) {
+        const parsed = JSON.parse(stored) as CompareItem[];
+        if (Array.isArray(parsed) && parsed.length <= 4) {
+          setItems(parsed);
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }, []);
+
+  // Sync to localStorage on change
+  useEffect(() => {
+    try {
+      localStorage.setItem('compare-items', JSON.stringify(items));
+    } catch {
+      // Ignore quota errors
+    }
+  }, [items]);
 
   const add = useCallback((item: CompareItem) => {
     setItems((prev) => {

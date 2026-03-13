@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { BrowsePlant } from '@/lib/queries/browse';
 import { groupBrowsePlantsByGenus } from '@/lib/queries/browse';
 import { filterWithFacets, type FacetCounts as QueryFacetCounts, type RecoveryHint } from '@/lib/queries/facet-query-builder';
@@ -15,9 +15,7 @@ import { getUserZone } from '@/lib/zone-persistence';
 import { BrowseShell } from '@/components/browse/BrowseShell';
 import { BrowseHeader } from '@/components/browse/BrowseHeader';
 import { BrowseGrid } from '@/components/browse/BrowseGrid';
-import { CategoryContext } from '@/components/browse/CategoryContext';
-import { CategoryCards } from '@/components/browse/CategoryCards';
-import { GenusCards } from '@/components/browse/GenusCards';
+import { CategoryTreeSidebar } from '@/components/browse/CategoryTreeSidebar';
 import { BrowseBreadcrumb } from '@/components/browse/BrowseBreadcrumb';
 import type { FilterPill } from '@/components/browse/ActiveFilterPills';
 import { FACET_REGISTRY } from '@/lib/facets/registry';
@@ -197,26 +195,21 @@ function getDisplayCategoriesForSlug(slug: string): string[] {
 // ---------------------------------------------------------------------------
 
 export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   // FacetState is the single source of truth for all filter state
-  const [facetState, setFacetState] = useState<FacetState>(() =>
-    parseFacetState(searchParams)
-  );
-
-  // ---- Funnel state ----
-  const [browseStep, setBrowseStep] = useState<'categories' | 'genera' | 'cultivars'>(() => {
-    const cat = searchParams.get('cat');
-    const genus = searchParams.get('genus');
-    if (cat && genus) return 'cultivars';
-    if (cat) return 'genera';
-    // Skip funnel if filter/search params are present (e.g. from "See all" links)
-    const hasFilters = searchParams.get('q') || searchParams.get('available') ||
-      searchParams.get('sort') || searchParams.get('category') ||
-      searchParams.get('zoneMin') || searchParams.get('zoneMax');
-    if (hasFilters) return 'cultivars';
-    return 'categories';
+  const [facetState, setFacetState] = useState<FacetState>(() => {
+    const initial = parseFacetState(searchParams);
+    // Pre-populate category filter from ?cat= URL param
+    const initialCat = searchParams.get('cat');
+    if (initialCat) {
+      const displayCats = getDisplayCategoriesForSlug(initialCat);
+      initial.multiSelect = { ...initial.multiSelect, category: displayCats };
+    }
+    return initial;
   });
+
   const [selectedTopCategory, setSelectedTopCategory] = useState<string | null>(
     () => searchParams.get('cat'),
   );
@@ -234,7 +227,11 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Track whether user has made changes (to know when to show API data vs seed data)
-  const [hasUserChanged, setHasUserChanged] = useState(false);
+  const [hasUserChanged, setHasUserChanged] = useState(() => {
+    // If URL has any filter params, consider it a "user change" to trigger API fetch
+    const sp = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+    return !!(sp.get('cat') || sp.get('genus') || sp.get('q') || sp.get('category') || sp.get('available'));
+  });
 
   // Pre-fill zone from localStorage if URL doesn't already have zone params
   useEffect(() => {
@@ -278,27 +275,9 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     else params.delete('genus');
 
     const finalQs = params.toString();
-    const url = finalQs ? `${window.location.pathname}?${finalQs}` : window.location.pathname;
-    window.history.replaceState(null, '', url);
-  }, [facetState, selectedTopCategory, selectedGenus]);
-
-  // Handle browser back/forward for funnel state
-  useEffect(() => {
-    function handlePopState() {
-      const sp = new URLSearchParams(window.location.search);
-      const cat = sp.get('cat');
-      const genus = sp.get('genus');
-
-      setSelectedTopCategory(cat);
-      setSelectedGenus(genus);
-
-      if (cat && genus) setBrowseStep('cultivars');
-      else if (cat) setBrowseStep('genera');
-      else setBrowseStep('categories');
-    }
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+    const url = finalQs ? `/?${finalQs}` : '/';
+    router.replace(url, { scroll: false });
+  }, [facetState, selectedTopCategory, selectedGenus, router]);
 
   // Scroll to top on page change
   useEffect(() => {
@@ -306,52 +285,37 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   }, [facetState.page]);
 
   // -------------------------------------------------------------------------
-  // Funnel navigation
+  // Category / genus navigation (sidebar-driven)
   // -------------------------------------------------------------------------
 
-  const navigateToCategory = useCallback((slug: string) => {
+  const handleCategorySelect = useCallback((slug: string | null) => {
     setSelectedTopCategory(slug);
     setSelectedGenus(null);
-    setBrowseStep('genera');
-
-    // Set the display_category facet filter for this top category
-    const displayCats = getDisplayCategoriesForSlug(slug);
     setHasUserChanged(true);
-    setFacetState((prev) => ({
-      ...prev,
-      multiSelect: { ...prev.multiSelect, category: displayCats },
-      page: 1,
-    }));
-  }, []);
-
-  const navigateToGenus = useCallback((genusSlug: string) => {
-    setSelectedGenus(genusSlug);
-    setBrowseStep('cultivars');
-    setHasUserChanged(true);
-    // Genus filtering happens via the facet state — we pass it to the API
-    setFacetState((prev) => ({
-      ...prev,
-      page: 1,
-      groupBy: 'species' as const,
-    }));
-  }, []);
-
-  const navigateToStep = useCallback((step: 'categories' | 'genera') => {
-    if (step === 'categories') {
-      setSelectedTopCategory(null);
-      setSelectedGenus(null);
-      setBrowseStep('categories');
-      // Clear category facet
-      setHasUserChanged(true);
+    if (slug) {
+      const displayCats = getDisplayCategoriesForSlug(slug);
+      setFacetState((prev) => ({
+        ...prev,
+        multiSelect: { ...prev.multiSelect, category: displayCats },
+        page: 1,
+      }));
+    } else {
+      // Clear category filter
       setFacetState((prev) => ({
         ...prev,
         multiSelect: { ...prev.multiSelect, category: [] },
         page: 1,
       }));
-    } else if (step === 'genera') {
-      setSelectedGenus(null);
-      setBrowseStep('genera');
     }
+  }, []);
+
+  const handleGenusSelect = useCallback((genusSlug: string | null) => {
+    setSelectedGenus(genusSlug);
+    setHasUserChanged(true);
+    setFacetState((prev) => ({
+      ...prev,
+      page: 1,
+    }));
   }, []);
 
   // -------------------------------------------------------------------------
@@ -360,8 +324,6 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
 
   useEffect(() => {
     if (!hasUserChanged) return;
-    // Only fetch from API when at the cultivar step
-    if (browseStep !== 'cultivars') return;
 
     // Cancel any pending debounce
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -405,7 +367,7 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [facetState, hasUserChanged, browseStep, selectedGenus]);
+  }, [facetState, hasUserChanged, selectedGenus]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -449,11 +411,11 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
     return groupBrowsePlantsByGenus(plants, GENUS_COMMON_NAMES);
   }, [facetState.groupBy, plants]);
 
-  // Genus counts for Step 2 genus cards
+  // Genus counts for sidebar tree
   const genusCounts = useMemo(() => {
-    if (browseStep !== 'genera' || !selectedTopCategory) return {};
+    if (!selectedTopCategory) return {};
     return getGenusCounts(allPlants, selectedTopCategory);
-  }, [browseStep, selectedTopCategory, allPlants]);
+  }, [selectedTopCategory, allPlants]);
 
   // Resolve top category and genus label for breadcrumb
   const topCategory = selectedTopCategory ? getTopCategory(selectedTopCategory) : undefined;
@@ -545,37 +507,9 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
   );
 
   // -------------------------------------------------------------------------
-  // Render
+  // Render — always show unified sidebar + grid layout
   // -------------------------------------------------------------------------
 
-  // Step 1: Category selection — no sidebar, no header, just cards
-  if (browseStep === 'categories') {
-    return (
-      <div className="max-w-3xl mx-auto">
-        <CategoryCards onCategorySelect={navigateToCategory} />
-      </div>
-    );
-  }
-
-  // Step 2: Genus selection — no sidebar, breadcrumb + genus cards
-  if (browseStep === 'genera' && topCategory) {
-    return (
-      <div className="max-w-3xl mx-auto">
-        <BrowseBreadcrumb
-          step="genera"
-          categoryLabel={topCategory.label}
-          onNavigate={navigateToStep}
-        />
-        <GenusCards
-          category={topCategory}
-          genusCounts={genusCounts}
-          onGenusSelect={navigateToGenus}
-        />
-      </div>
-    );
-  }
-
-  // Step 3: Cultivar browse — full layout with sidebar
   const headerTotal = facetState.groupBy === 'genus' ? genusGroups.length : total;
   const headerPage = facetState.groupBy === 'genus' ? 1 : facetState.page;
   const headerPerPage = facetState.groupBy === 'genus' ? genusGroups.length : PER_PAGE;
@@ -587,20 +521,35 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
         step="cultivars"
         categoryLabel={topCategory?.label}
         genusLabel={genusEntry?.commonName}
-        onNavigate={navigateToStep}
+        onNavigate={(step) => {
+          if (step === 'categories') {
+            handleCategorySelect(null);
+          } else if (step === 'genera') {
+            handleGenusSelect(null);
+          }
+        }}
       />
       <BrowseShell
         sidebar={
-          <PlantFilterSidebar
-            filterValues={toFilterValues(facetState)}
-            facetCounts={sidebarCounts}
-            totalResults={total}
-            selectedCategories={selectedCategories}
-            onMultiSelectToggle={handleMultiSelectToggle}
-            onBooleanToggle={handleBooleanToggle}
-            onRangeChange={handleRangeChange}
-            onClearAll={clearAll}
-          />
+          <div>
+            <CategoryTreeSidebar
+              selectedCategory={selectedTopCategory}
+              selectedGenus={selectedGenus}
+              genusCounts={genusCounts}
+              onCategorySelect={handleCategorySelect}
+              onGenusSelect={handleGenusSelect}
+            />
+            <PlantFilterSidebar
+              filterValues={toFilterValues(facetState)}
+              facetCounts={sidebarCounts}
+              totalResults={total}
+              selectedCategories={selectedCategories}
+              onMultiSelectToggle={handleMultiSelectToggle}
+              onBooleanToggle={handleBooleanToggle}
+              onRangeChange={handleRangeChange}
+              onClearAll={clearAll}
+            />
+          </div>
         }
       >
         <BrowseHeader
@@ -617,7 +566,7 @@ export function BrowseContent({ allPlants }: { allPlants: BrowsePlant[] }) {
           onCategorySelect={(cat) =>
             updateState({ multiSelect: { ...facetState.multiSelect, category: [cat] } })
           }
-          inFunnel={browseStep === 'cultivars'}
+          inFunnel={!!(selectedTopCategory || selectedGenus)}
         />
 
         {loading && (

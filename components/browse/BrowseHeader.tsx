@@ -39,7 +39,7 @@ export function BrowseHeader({
     <>
       {/* Hide category pills when user navigated via funnel or when a category is selected */}
       {!inFunnel && selectedCategories.length === 0 && (
-        <div className="mb-3 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="mb-3 flex gap-2 overflow-x-auto pb-1 scrollbar-hide lg:hidden">
           {CATEGORY_OPTIONS.map((cat) => (
             <button
               key={cat.value}

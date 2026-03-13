@@ -50,10 +50,14 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 text-center">
         <Text variant="h1" className="mb-4">Compare Cultivars</Text>
-        <Text variant="body" color="secondary">
-          Select 2-4 cultivars from the browse page to compare them side by side.
+        <Text variant="body" color="secondary" className="mb-2">
+          Select 2&ndash;4 cultivars from the browse page to compare them side by side.
         </Text>
-        <Link href="/" className="mt-6 inline-block rounded-[var(--radius-md)] bg-accent px-6 py-3 text-sm font-medium text-text-inverse hover:bg-accent-hover transition-colors">
+        <Text variant="caption" color="tertiary" className="mb-8">
+          Look for the compare checkbox on plant cards while browsing, or use the
+          compare tray at the bottom of the screen.
+        </Text>
+        <Link href="/#browse" className="inline-block rounded-[var(--radius-md)] bg-accent px-6 py-3 text-sm font-medium text-text-inverse hover:bg-accent-hover transition-colors">
           Browse Plants
         </Link>
       </div>
@@ -69,7 +73,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <Text variant="body" color="secondary">
           Please select at least 2 cultivars to compare.
         </Text>
-        <Link href="/" className="mt-6 inline-block rounded-[var(--radius-md)] bg-accent px-6 py-3 text-sm font-medium text-text-inverse hover:bg-accent-hover transition-colors">
+        <Link href="/#browse" className="mt-6 inline-block rounded-[var(--radius-md)] bg-accent px-6 py-3 text-sm font-medium text-text-inverse hover:bg-accent-hover transition-colors">
           Browse Plants
         </Link>
       </div>
@@ -93,7 +97,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <Text variant="body" color="secondary">
           Could not find the requested cultivars. They may have been removed.
         </Text>
-        <Link href="/" className="mt-6 inline-block rounded-[var(--radius-md)] bg-accent px-6 py-3 text-sm font-medium text-text-inverse hover:bg-accent-hover transition-colors">
+        <Link href="/#browse" className="mt-6 inline-block rounded-[var(--radius-md)] bg-accent px-6 py-3 text-sm font-medium text-text-inverse hover:bg-accent-hover transition-colors">
           Browse Plants
         </Link>
       </div>
