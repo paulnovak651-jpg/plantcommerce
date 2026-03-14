@@ -58,6 +58,15 @@ export interface GrowingProfile {
   years_to_bearing_max: number | null;
   harvest_season: string | null;
   native_range_description: string | null;
+  drought_tolerance: string | null;
+  shade_tolerance: string | null;
+  growth_habit: string | null;
+  deer_browse_pressure: string | null;
+  suckering_tendency: string | null;
+  pollination_requirement: string | null;
+  food_forest_layer: string | null;
+  wildlife_value: string | null;
+  pollinator_value: string | null;
 }
 
 export interface InventoryOffer {

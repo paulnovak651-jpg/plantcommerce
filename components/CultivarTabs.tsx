@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export type TabId = 'overview' | 'growing' | 'production' | 'availability';
+export type TabId = 'glance' | 'growing' | 'harvest' | 'buy';
 
 interface Tab {
   id: TabId;
@@ -22,7 +22,7 @@ interface CultivarTabsProps {
  * the server already rendered everything.
  */
 export function CultivarTabs({ tabs, children }: CultivarTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabId>(tabs[0]?.id ?? 'overview');
+  const [activeTab, setActiveTab] = useState<TabId>(tabs[0]?.id ?? 'glance');
 
   return (
     <>

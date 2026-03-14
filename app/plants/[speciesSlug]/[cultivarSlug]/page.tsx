@@ -34,6 +34,7 @@ import { getApprovedListingsForCultivar } from '@/lib/queries/listings';
 import { getLatestPriceChanges, getPriceHistoryForOffers } from '@/lib/queries/price-history';
 import { formatPrice } from '@/lib/format';
 import { ZoneCompatibility } from '@/components/ZoneCompatibility';
+import { Disclosure } from '@/components/ui/Disclosure';
 import { getCategoryIcon } from '@/lib/browse-categories';
 import type { GrowingProfile } from '@/lib/types';
 
@@ -285,14 +286,15 @@ export default async function CultivarPage({ params }: Props) {
     })),
   };
 
+  // "Available as" chips derived from offer sale_form values
+  const saleForms = [...new Set(offers.map((o: any) => o.sale_form).filter(Boolean))] as string[];
+
   // Build tabs array dynamically
   const tabs: { id: TabId; label: string; count?: number }[] = [
-    { id: 'overview' as TabId, label: 'Overview' },
-    { id: 'growing' as TabId, label: 'Growing' },
-    ...(growingProfile?.harvest_season || growingProfile?.years_to_bearing_min != null
-      ? [{ id: 'production' as TabId, label: 'Fruit & Nut' }]
-      : []),
-    { id: 'availability' as TabId, label: 'Buy', count: offers.length },
+    { id: 'glance', label: 'At a Glance' },
+    { id: 'growing', label: 'Growing' },
+    { id: 'harvest', label: 'Harvest & Ecosystem' },
+    { id: 'buy', label: 'Buy', count: offers.length },
   ];
 
   return (
@@ -371,95 +373,81 @@ export default async function CultivarPage({ params }: Props) {
       {/* 2. TABBED CONTENT */}
       <CultivarTabs tabs={tabs}>
         {{
-          /* ── OVERVIEW TAB ── */
-          overview: (
+          /* ── AT A GLANCE TAB ── */
+          glance: (
             <div className="space-y-6">
+              {/* Description */}
               {cultivar.notes && (
                 <Text variant="body" color="secondary">{cultivar.notes}</Text>
               )}
 
-              {/* Side-by-side: ZoneBar + HeightSilhouette */}
-              {growingProfile && (growingProfile.usda_zone_min != null || growingProfile.mature_height_min_ft != null) && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {growingProfile.usda_zone_min != null && growingProfile.usda_zone_max != null && (
-                    <Surface elevation="raised" padding="default">
-                      <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                        USDA Hardiness Zones
-                      </Text>
-                      <ZoneBar min={growingProfile.usda_zone_min} max={growingProfile.usda_zone_max} />
-                    </Surface>
-                  )}
-                  {(growingProfile.mature_height_min_ft != null || growingProfile.mature_height_max_ft != null) && (
-                    <Surface elevation="raised" padding="default">
-                      <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                        Size at Maturity
-                      </Text>
-                      <HeightSilhouette
-                        minFt={growingProfile.mature_height_min_ft ?? null}
-                        maxFt={growingProfile.mature_height_max_ft ?? null}
-                      />
-                      {(growingProfile.mature_spread_min_ft != null || growingProfile.mature_spread_max_ft != null) && (
-                        <Text variant="sm" color="secondary" className="mt-2">
-                          Spread: {growingProfile.mature_spread_min_ft ?? '?'}&ndash;{growingProfile.mature_spread_max_ft ?? '?'} ft
-                        </Text>
-                      )}
-                    </Surface>
-                  )}
-                </div>
-              )}
+              {/* Truth badges row */}
+              <div className="flex flex-wrap gap-2">
+                <Tag type="neutral">{cultivar.material_type.replace(/_/g, ' ')}</Tag>
+                {growingProfile?.native_range_description && (
+                  <Tag type="neutral">Native</Tag>
+                )}
+                {growingProfile?.pollination_requirement && growingProfile.pollination_requirement !== 'self_fertile' && (
+                  <Tag type="neutral">Needs pollinizer</Tag>
+                )}
+                {growingProfile?.suckering_tendency && growingProfile.suckering_tendency !== 'none' && (
+                  <Tag type="neutral">Suckers / colony-forming</Tag>
+                )}
+                {cultivar.patent_status && cultivar.patent_status !== 'none' && cultivar.patent_status !== 'unknown' && (
+                  <Tag type="neutral">{cultivar.patent_status.replace(/_/g, ' ')}</Tag>
+                )}
+              </div>
 
-              {/* Harvest Calendar */}
-              {growingProfile?.harvest_season && (
-                <Surface elevation="raised" padding="default">
-                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                    Annual Calendar
-                  </Text>
-                  <HarvestCalendar harvestSeason={growingProfile.harvest_season} />
-                </Surface>
-              )}
-
-              {/* Metadata cards */}
-              {(cultivar.breeder || cultivar.origin_location || cultivar.year_released || cultivar.patent_status !== 'unknown') && (
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {cultivar.breeder && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Breeder</Text>
-                      <Text variant="body" className="font-medium">{cultivar.breeder}</Text>
-                    </Surface>
-                  )}
-                  {cultivar.origin_location && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Origin</Text>
-                      <Text variant="body" className="font-medium">{cultivar.origin_location}</Text>
-                    </Surface>
-                  )}
-                  {cultivar.year_released && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Released</Text>
-                      <Text variant="body" className="font-medium">{String(cultivar.year_released)}</Text>
-                    </Surface>
-                  )}
-                  {cultivar.patent_status !== 'unknown' && (
-                    <Surface elevation="raised" padding="compact">
-                      <Text variant="caption" color="tertiary">Patent Status</Text>
-                      <Text variant="body" className="font-medium">{cultivar.patent_status.replace(/_/g, ' ')}</Text>
-                    </Surface>
-                  )}
-                </div>
-              )}
-
-              {/* Zone Compatibility */}
-              <ZoneCompatibility
-                zoneMin={growingProfile?.usda_zone_min ?? null}
-                zoneMax={growingProfile?.usda_zone_max ?? null}
-              />
-
-              {/* Aliases */}
-              {aliases.length > 0 && (
+              {/* "Available as" chips */}
+              {saleForms.length > 0 && (
                 <div>
                   <Text variant="caption" color="tertiary" className="mb-2 block uppercase tracking-wider font-semibold text-[11px]">
-                    Also Known As
+                    Available As
                   </Text>
+                  <div className="flex flex-wrap gap-2">
+                    {saleForms.map((form) => (
+                      <span key={form} className="rounded-full bg-accent-subtle px-3 py-1 text-sm font-medium text-accent">
+                        {form.replace(/_/g, ' ')}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 2-minute layer — expandable sections */}
+              {(cultivar.breeder || cultivar.origin_location || cultivar.year_released || (cultivar.patent_status && cultivar.patent_status !== 'unknown')) && (
+                <Disclosure title="Breeder & Origin">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {cultivar.breeder && (
+                      <Surface elevation="raised" padding="compact">
+                        <Text variant="caption" color="tertiary">Breeder</Text>
+                        <Text variant="body" className="font-medium">{cultivar.breeder}</Text>
+                      </Surface>
+                    )}
+                    {cultivar.origin_location && (
+                      <Surface elevation="raised" padding="compact">
+                        <Text variant="caption" color="tertiary">Origin</Text>
+                        <Text variant="body" className="font-medium">{cultivar.origin_location}</Text>
+                      </Surface>
+                    )}
+                    {cultivar.year_released && (
+                      <Surface elevation="raised" padding="compact">
+                        <Text variant="caption" color="tertiary">Released</Text>
+                        <Text variant="body" className="font-medium">{String(cultivar.year_released)}</Text>
+                      </Surface>
+                    )}
+                    {cultivar.patent_status && cultivar.patent_status !== 'unknown' && (
+                      <Surface elevation="raised" padding="compact">
+                        <Text variant="caption" color="tertiary">Patent Status</Text>
+                        <Text variant="body" className="font-medium">{cultivar.patent_status.replace(/_/g, ' ')}</Text>
+                      </Surface>
+                    )}
+                  </div>
+                </Disclosure>
+              )}
+
+              {aliases.length > 0 && (
+                <Disclosure title="Also Known As">
                   <div className="flex flex-wrap gap-2">
                     {aliases.map((a: any) => (
                       <span key={a.id} className="rounded-full bg-surface-inset px-3 py-1 text-sm text-text-secondary">
@@ -470,15 +458,11 @@ export default async function CultivarPage({ params }: Props) {
                       </span>
                     ))}
                   </div>
-                </div>
+                </Disclosure>
               )}
 
-              {/* Legal Identifiers */}
               {legal.length > 0 && (
-                <div>
-                  <Text variant="caption" color="tertiary" className="mb-2 block uppercase tracking-wider font-semibold text-[11px]">
-                    Legal Identifiers
-                  </Text>
+                <Disclosure title="Legal Identifiers">
                   <div className="space-y-1">
                     {legal.map((l: any) => (
                       <Text key={l.id} variant="sm" color="secondary" as="div">
@@ -489,7 +473,7 @@ export default async function CultivarPage({ params }: Props) {
                       </Text>
                     ))}
                   </div>
-                </div>
+                </Disclosure>
               )}
             </div>
           ),
@@ -497,6 +481,16 @@ export default async function CultivarPage({ params }: Props) {
           /* ── GROWING TAB ── */
           growing: growingProfile ? (
             <div className="space-y-6">
+              {/* ZoneBar — sole location */}
+              {growingProfile.usda_zone_min != null && growingProfile.usda_zone_max != null && (
+                <Surface elevation="raised" padding="default">
+                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
+                    USDA Hardiness Zones
+                  </Text>
+                  <ZoneBar min={growingProfile.usda_zone_min} max={growingProfile.usda_zone_max} />
+                </Surface>
+              )}
+
               {/* Growing requirements */}
               {(growingProfile.sun_requirement || growingProfile.soil_ph_min != null || growingProfile.soil_drainage) && (
                 <Surface elevation="raised" padding="default">
@@ -526,17 +520,7 @@ export default async function CultivarPage({ params }: Props) {
                 </Surface>
               )}
 
-              {/* ZoneBar full-width */}
-              {growingProfile.usda_zone_min != null && growingProfile.usda_zone_max != null && (
-                <Surface elevation="raised" padding="default">
-                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                    USDA Hardiness Zones
-                  </Text>
-                  <ZoneBar min={growingProfile.usda_zone_min} max={growingProfile.usda_zone_max} />
-                </Surface>
-              )}
-
-              {/* HeightSilhouette with spread */}
+              {/* HeightSilhouette + spread — sole location */}
               {(growingProfile.mature_height_min_ft != null || growingProfile.mature_height_max_ft != null) && (
                 <Surface elevation="raised" padding="default">
                   <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
@@ -554,8 +538,51 @@ export default async function CultivarPage({ params }: Props) {
                 </Surface>
               )}
 
-              {/* Full TraitGrid */}
-              <TraitGrid profile={growingProfile} compact />
+              {/* Growth habit badge */}
+              {growingProfile.growth_habit && (
+                <div>
+                  <Tag type="neutral">{growingProfile.growth_habit.replace(/_/g, ' ')}</Tag>
+                </div>
+              )}
+
+              {/* Zone Compatibility */}
+              <ZoneCompatibility
+                zoneMin={growingProfile.usda_zone_min ?? null}
+                zoneMax={growingProfile.usda_zone_max ?? null}
+              />
+
+              {/* 2-minute layer — expandable sections */}
+              {(growingProfile.drought_tolerance || growingProfile.shade_tolerance) && (
+                <Disclosure title="Site Tolerance">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {growingProfile.drought_tolerance && (
+                      <div>
+                        <Text variant="caption" color="tertiary">Drought Tolerance</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.drought_tolerance.replace(/_/g, ' ')}</Text>
+                      </div>
+                    )}
+                    {growingProfile.shade_tolerance && (
+                      <div>
+                        <Text variant="caption" color="tertiary">Shade Tolerance</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.shade_tolerance.replace(/_/g, ' ')}</Text>
+                      </div>
+                    )}
+                  </div>
+                </Disclosure>
+              )}
+
+              {growingProfile.deer_browse_pressure && (
+                <Disclosure title="Care & Maintenance">
+                  <div>
+                    <Text variant="caption" color="tertiary">Deer Browse Pressure</Text>
+                    <Text variant="body" className="font-medium">{growingProfile.deer_browse_pressure.replace(/_/g, ' ')}</Text>
+                  </div>
+                </Disclosure>
+              )}
+
+              <Disclosure title="Full Trait Details">
+                <TraitGrid profile={growingProfile} compact />
+              </Disclosure>
             </div>
           ) : (
             <EmptyState
@@ -564,16 +591,26 @@ export default async function CultivarPage({ params }: Props) {
             />
           ),
 
-          /* ── PRODUCTION (FRUIT & NUT) TAB ── */
-          production: growingProfile?.harvest_season || growingProfile?.years_to_bearing_min != null ? (
+          /* ── HARVEST & ECOSYSTEM TAB ── */
+          harvest: (
             <div className="space-y-6">
-              {/* Harvest Calendar */}
+              {/* HarvestCalendar — sole location */}
               {growingProfile?.harvest_season && (
                 <Surface elevation="raised" padding="default">
                   <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
                     Seasonal Timeline
                   </Text>
                   <HarvestCalendar harvestSeason={growingProfile.harvest_season} />
+                </Surface>
+              )}
+
+              {/* Pollination status */}
+              {growingProfile?.pollination_requirement && (
+                <Surface elevation="raised" padding="default">
+                  <Text variant="caption" color="tertiary" className="mb-1 block uppercase tracking-wider font-semibold text-[11px]">
+                    Pollination
+                  </Text>
+                  <Text variant="body" className="font-medium capitalize">{growingProfile.pollination_requirement.replace(/_/g, ' ')}</Text>
                 </Surface>
               )}
 
@@ -614,22 +651,47 @@ export default async function CultivarPage({ params }: Props) {
                 )}
               </div>
 
-              {/* Cultivar notes if relevant */}
-              {cultivar.notes && (
-                <Surface elevation="raised" padding="default">
-                  <Text variant="caption" color="tertiary" className="mb-3 block uppercase tracking-wider font-semibold text-[11px]">
-                    Cultivar Notes
-                  </Text>
-                  <Text variant="body" color="secondary">{cultivar.notes}</Text>
-                </Surface>
+              {/* 2-minute layer — expandable sections */}
+              {(growingProfile?.food_forest_layer || growingProfile?.wildlife_value || growingProfile?.pollinator_value || growingProfile?.native_range_description) && (
+                <Disclosure title="Ecosystem Role">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {growingProfile.food_forest_layer && (
+                      <div>
+                        <Text variant="caption" color="tertiary">Food Forest Layer</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.food_forest_layer.replace(/_/g, ' ')}</Text>
+                      </div>
+                    )}
+                    {growingProfile.wildlife_value && (
+                      <div>
+                        <Text variant="caption" color="tertiary">Wildlife Food Value</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.wildlife_value.replace(/_/g, ' ')}</Text>
+                      </div>
+                    )}
+                    {growingProfile.pollinator_value && (
+                      <div>
+                        <Text variant="caption" color="tertiary">Pollinator Value</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.pollinator_value.replace(/_/g, ' ')}</Text>
+                      </div>
+                    )}
+                    {growingProfile.native_range_description && (
+                      <div>
+                        <Text variant="caption" color="tertiary">Native Range</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.native_range_description}</Text>
+                      </div>
+                    )}
+                  </div>
+                </Disclosure>
+              )}
+
+              {/* Empty state when no harvest/ecosystem data */}
+              {!growingProfile?.harvest_season && !growingProfile?.years_to_bearing_min && !growingProfile?.pollination_requirement && (
+                <EmptyState title="No harvest data yet" description="Harvest and ecosystem information has not been catalogued for this cultivar." />
               )}
             </div>
-          ) : (
-            <EmptyState title="No production data yet" description="Production information has not been catalogued for this cultivar." />
           ),
 
-          /* ── AVAILABILITY (BUY) TAB ── */
-          availability: (
+          /* ── BUY TAB ── */
+          buy: (
             <div className="space-y-6">
               {/* Price Comparison Table */}
               {comparisonOffers.length >= 2 ? (
@@ -766,6 +828,14 @@ export default async function CultivarPage({ params }: Props) {
                   </p>
                 )}
               </section>
+
+              {/* Compare similar cultivars */}
+              <Link
+                href={`/compare?cultivar=${encodeURIComponent(cultivar.canonical_name)}`}
+                className="inline-block rounded-[var(--radius-md)] border border-border bg-surface-raised px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-surface-inset"
+              >
+                Compare similar cultivars
+              </Link>
             </div>
           ),
         }}
