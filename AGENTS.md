@@ -12,6 +12,40 @@
 
 ---
 
+## Source Of Truth
+
+- GitHub `master` is the shared source of truth.
+- The local repo is an execution and testing environment, not an alternate source of truth.
+- Always assume the remote may be ahead of local until you verify otherwise.
+
+---
+
+## Session Start Protocol
+
+Run these before substantial work:
+
+1. `git pull --rebase origin master`
+2. Confirm the working tree is clean or understand any existing changes with `git status --short`
+3. Read `AGENTS.md`, `CONTEXT.md`, and `ROADMAP.md`
+4. Only then start implementation, local testing, and review
+
+If local and GitHub disagree, GitHub wins unless Paul explicitly says otherwise.
+
+---
+
+## Development Workflow
+
+- Pull first from GitHub
+- Implement locally
+- Test locally on `localhost`
+- Review the actual diff
+- Commit only the intended files
+- Push back to GitHub when the change is ready
+
+Never treat unpushed local state as durable project truth.
+
+---
+
 ## What This Project Is
 
 A plant information and sourcing platform for the permaculture community. Users search for a cultivar, see which nurseries carry it, compare prices, and browse structured plant data. Also has a community marketplace for private sellers/buyers.
@@ -82,8 +116,10 @@ The UI is stable after significant iteration in Sprints 8–15. No active sprint
 
 | Document | Purpose |
 |----------|---------|
+| `README.md` | Human startup guide and canonical local-to-GitHub workflow |
 | `CONTEXT.md` | Technical state, schema, pipeline, sprint history |
 | `ROADMAP.md` | Priorities and what's next |
+| `docs/INDEX.md` | Documentation entrypoint and reading order |
 | `docs/architecture/DESIGN_SYSTEM.md` | Typography, colors, components ("The Field Guide") |
 | `docs/architecture/VISION.md` | Product vision for collaborators |
 | `docs/architecture/KNOWLEDGE_GRAPH_SCHEMA.md` | Taxonomy + growing profile migrations |
