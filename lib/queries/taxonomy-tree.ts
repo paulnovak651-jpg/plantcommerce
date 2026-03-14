@@ -10,6 +10,7 @@ export interface TaxonomyTreePlant {
   zone_max: number | null;
   cultivar_count: number;
   has_stock: boolean;
+  sale_forms: string[];
 }
 
 export interface TaxonomyTreeGenus {
@@ -53,6 +54,7 @@ interface CultivarRow {
 interface OfferRow {
   cultivar_id: string | null;
   nursery_id: string;
+  sale_form: string | null;
 }
 
 interface GenusRow {
@@ -97,7 +99,7 @@ export async function getTaxonomyTree(
       .eq('curation_status', 'published'),
     supabase
       .from('inventory_offers')
-      .select('cultivar_id, nursery_id')
+      .select('cultivar_id, nursery_id, sale_form')
       .eq('offer_status', 'active'),
     supabase
       .from('taxonomy_nodes')
@@ -146,12 +148,18 @@ export async function getTaxonomyTree(
     );
   }
 
-  // Build set of plant IDs that have active stock
+  // Build set of plant IDs that have active stock + track sale forms
   const plantsWithStock = new Set<string>();
+  const plantSaleForms = new Map<string, Set<string>>();
   for (const offer of offers) {
     if (!offer.cultivar_id) continue;
     const plantId = cultivarToPlant.get(offer.cultivar_id);
-    if (plantId) plantsWithStock.add(plantId);
+    if (!plantId) continue;
+    plantsWithStock.add(plantId);
+    if (offer.sale_form) {
+      if (!plantSaleForms.has(plantId)) plantSaleForms.set(plantId, new Set());
+      plantSaleForms.get(plantId)!.add(offer.sale_form);
+    }
   }
 
   // Category consolidation
@@ -223,6 +231,7 @@ export async function getTaxonomyTree(
       zone_max: profile?.usda_zone_max ?? null,
       cultivar_count: cvCount,
       has_stock: hasStock,
+      sale_forms: [...(plantSaleForms.get(plant.id) ?? [])],
     });
   }
 

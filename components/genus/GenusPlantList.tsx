@@ -88,11 +88,15 @@ function PlantCard({ item }: { item: GenusPlantItem }) {
             </Tag>
           )}
         </div>
-        {item.lowest_price_cents != null && (
+        {item.lowest_price_cents != null ? (
           <Text variant="caption" color="accent" as="p" className="mt-2 font-medium">
             From ${(item.lowest_price_cents / 100).toFixed(2)}
           </Text>
-        )}
+        ) : item.nursery_count === 0 ? (
+          <Text variant="caption" color="tertiary" as="p" className="mt-2">
+            No current listings
+          </Text>
+        ) : null}
       </div>
     </Link>
   );

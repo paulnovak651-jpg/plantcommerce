@@ -4,6 +4,7 @@ import type {
   TaxonomyTreeGenus,
   TaxonomyTreePlant,
 } from '@/lib/queries/taxonomy-tree';
+import type { StockTypeFilter } from '@/lib/zone-persistence';
 
 // ---------------------------------------------------------------------------
 // Filter state — extensible for future filters
@@ -12,20 +13,37 @@ import type {
 export interface BrowseFilters {
   zoneMin?: number;
   zoneMax?: number;
-  // Future filters:
-  // stockStatus?: 'in_stock' | 'all';
-  // sunExposure?: 'full_sun' | 'partial' | 'shade';
+  stockType?: StockTypeFilter;
+  forSaleNow?: boolean;
 }
 
 export function hasActiveFilters(filters: BrowseFilters): boolean {
-  return filters.zoneMin != null || filters.zoneMax != null;
+  return (
+    filters.zoneMin != null ||
+    filters.zoneMax != null ||
+    (filters.stockType != null && filters.stockType !== 'either') ||
+    filters.forSaleNow === true
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Stock type matching
+// ---------------------------------------------------------------------------
+
+const PLANT_SALE_FORMS = new Set(['bare_root', 'potted', 'cutting', 'grafted']);
+
+function plantMatchesStockType(
+  plant: TaxonomyTreePlant,
+  stockType?: StockTypeFilter
+): boolean {
+  if (!stockType || stockType === 'either') return true;
+  if (stockType === 'seed') return plant.sale_forms.includes('seed');
+  // 'plant' matches bare_root, potted, cutting, grafted
+  return plant.sale_forms.some((f) => PLANT_SALE_FORMS.has(f));
 }
 
 // ---------------------------------------------------------------------------
 // Zone overlap check
-// Plant is "in range" if its zone range overlaps the user's selected range.
-// plant.zone_min <= selected_max AND plant.zone_max >= selected_min
-// Plants with no zone data pass through (don't hide unknown data).
 // ---------------------------------------------------------------------------
 
 function plantMatchesZone(
@@ -61,9 +79,12 @@ export function filterTaxonomyTree(
     const genera: TaxonomyTreeGenus[] = [];
 
     for (const genus of cat.genera) {
-      const matchingPlants = genus.plants.filter((p) =>
-        plantMatchesZone(p, filters.zoneMin, filters.zoneMax)
-      );
+      const matchingPlants = genus.plants.filter((p) => {
+        if (!plantMatchesZone(p, filters.zoneMin, filters.zoneMax)) return false;
+        if (filters.forSaleNow && !p.has_stock) return false;
+        if (!plantMatchesStockType(p, filters.stockType)) return false;
+        return true;
+      });
 
       if (matchingPlants.length === 0) continue;
 

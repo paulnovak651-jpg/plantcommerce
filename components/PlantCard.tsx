@@ -80,11 +80,13 @@ export function PlantCard(props: PlantCardProps) {
         {props.botanicalName && (
           <p className="mt-0.5 font-serif text-sm italic text-text-secondary">{props.botanicalName}</p>
         )}
-        {props.lowestPrice != null && (
+        {props.lowestPrice != null ? (
           <p className="mt-1 text-sm font-semibold text-accent">
             from ${(props.lowestPrice / 100).toFixed(2)}
           </p>
-        )}
+        ) : props.nurseryCount === 0 ? (
+          <p className="mt-1 text-sm text-text-tertiary">No current listings</p>
+        ) : null}
         <div className="mt-1 flex flex-wrap items-center gap-1.5">
           {props.zoneMin != null && props.zoneMax != null && (
             <Tag type="zone">Z{props.zoneMin}{'\u2013'}{props.zoneMax}</Tag>
