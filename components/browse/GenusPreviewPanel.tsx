@@ -160,14 +160,26 @@ function PreviewCard({ item }: { item: PreviewItem }) {
 // Zone filter for preview items
 // ---------------------------------------------------------------------------
 
-function filterByZone(items: PreviewItem[], filters?: BrowseFilters): PreviewItem[] {
-  if (!filters?.zoneMin && !filters?.zoneMax) return items;
-  const selMin = filters.zoneMin ?? 1;
-  const selMax = filters.zoneMax ?? 13;
-  return items.filter((item) => {
-    if (item.zone_min == null || item.zone_max == null) return true;
-    return item.zone_min <= selMax && item.zone_max >= selMin;
-  });
+function filterPreviewItems(items: PreviewItem[], filters?: BrowseFilters): PreviewItem[] {
+  if (!filters) return items;
+  let result = items;
+
+  // Zone filter
+  if (filters.zoneMin || filters.zoneMax) {
+    const selMin = filters.zoneMin ?? 1;
+    const selMax = filters.zoneMax ?? 13;
+    result = result.filter((item) => {
+      if (item.zone_min == null || item.zone_max == null) return true;
+      return item.zone_min <= selMax && item.zone_max >= selMin;
+    });
+  }
+
+  // For sale now filter
+  if (filters.forSaleNow) {
+    result = result.filter((item) => item.nursery_count > 0);
+  }
+
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -212,7 +224,7 @@ export function GenusPreviewPanel({ data, loading, zoneFilters }: GenusPreviewPa
   }
 
   const allItems = useMemo(() => flattenSpecies(data.species), [data.species]);
-  const flatItems = useMemo(() => filterByZone(allItems, zoneFilters), [allItems, zoneFilters]);
+  const flatItems = useMemo(() => filterPreviewItems(allItems, zoneFilters), [allItems, zoneFilters]);
   const genusHref = `/plants/genus/${data.genus_slug.replace(/^genus-/, '')}`;
 
   return (
@@ -226,7 +238,7 @@ export function GenusPreviewPanel({ data, loading, zoneFilters }: GenusPreviewPa
         {flatItems.length === 0 ? (
           <div className="flex items-center justify-center h-full px-4 py-8">
             <p className="text-[13px] text-text-tertiary text-center leading-snug">
-              No plants match the selected zone range
+              No plants match your current filters
             </p>
           </div>
         ) : flatItems.map((item) => (
