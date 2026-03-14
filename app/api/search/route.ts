@@ -46,8 +46,9 @@ export const GET = withRateLimit(async function GET(request: NextRequest) {
 
   const supabase = await createClient();
 
-  // Fetch more results than requested so scoring can re-rank a broader set
-  const fetchLimit = Math.min(limit * 3, 100);
+  // Fetch enough results so scoring can re-rank and still fill the requested page.
+  // We always fetch from offset 0 since reranking changes the order.
+  const fetchLimit = Math.min(Math.max((offset + limit) * 2, limit * 3), 200);
 
   const { results, total } = await searchPlantsPaged(supabase, {
     q: dbQuery,
@@ -55,7 +56,7 @@ export const GET = withRateLimit(async function GET(request: NextRequest) {
     offset: 0,
     zone: effectiveZone,
     category,
-    inStock: inStock ?? (parsed.edibleOnly ? undefined : undefined),
+    inStock: inStock ?? undefined,
   });
 
   // Apply composite scoring and re-rank
@@ -70,7 +71,8 @@ export const GET = withRateLimit(async function GET(request: NextRequest) {
 
   // Apply pagination to scored results
   const paged = scored.slice(offset, offset + limit);
-  const scoredTotal = scored.length > total ? scored.length : total;
+  // Use DB total as the authoritative count (scored set is a subset)
+  const scoredTotal = total;
 
   const links = buildPaginationLinks(
     '/api/search',

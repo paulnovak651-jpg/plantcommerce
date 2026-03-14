@@ -2,9 +2,14 @@
 // Shows agent sessions, task queue, and dropped-session alerts.
 // Fetches fresh data on every load (force-dynamic).
 
+import { notFound } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
+
+interface Props {
+  searchParams: Promise<{ token?: string }>;
+}
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -194,7 +199,26 @@ function SessionRow({ session, isDropped }: { session: AgentSession; isDropped: 
 
 // ── Page ──────────────────────────────────────────────────────────────────
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: Props) {
+  const sp = await searchParams;
+  const token = sp.token?.trim() ?? '';
+  const secret = process.env.ADMIN_STATUS_SECRET ?? process.env.CRON_SECRET;
+
+  if (!secret) notFound();
+  if (!token || token !== secret) {
+    return (
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        <h1 style={{ fontSize: 16, fontWeight: 700, color: '#e8e0d4' }}>Command Center</h1>
+        <p style={{ fontSize: 13, color: '#8a8279', marginTop: 8 }}>
+          Unauthorized. Open this page with your admin token:
+        </p>
+        <pre style={{ fontSize: 12, color: '#5c554b', marginTop: 8 }}>
+          /dashboard?token=YOUR_ADMIN_STATUS_SECRET
+        </pre>
+      </div>
+    );
+  }
+
   const supabase = createServiceClient();
 
   const [{ data: tasks }, { data: sessions }] = await Promise.all([
@@ -237,7 +261,7 @@ export default async function DashboardPage() {
 
       {/* ── Auto-refresh every 30s ── */}
       {/* eslint-disable-next-line @next/next/no-head-element */}
-      <meta httpEquiv="refresh" content="30" />
+      <meta httpEquiv="refresh" content={`30;url=/dashboard?token=${token}`} />
 
       {/* ── Header ── */}
       <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -251,10 +275,10 @@ export default async function DashboardPage() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <a href="/system-map" style={{ fontSize: 11, color: C.muted, textDecoration: 'none', padding: '5px 10px', border: `1px solid ${C.border}`, borderRadius: 5 }}>
+          <a href={`/system-map?token=${token}`} style={{ fontSize: 11, color: C.muted, textDecoration: 'none', padding: '5px 10px', border: `1px solid ${C.border}`, borderRadius: 5 }}>
             System Map
           </a>
-          <a href="/dashboard" style={{ fontSize: 11, color: C.text, textDecoration: 'none', padding: '5px 10px', border: `1px solid ${C.border}`, borderRadius: 5 }}>
+          <a href={`/dashboard?token=${token}`} style={{ fontSize: 11, color: C.text, textDecoration: 'none', padding: '5px 10px', border: `1px solid ${C.border}`, borderRadius: 5 }}>
             Refresh
           </a>
         </div>
