@@ -552,13 +552,13 @@ export default async function CultivarPage({ params }: Props) {
               />
 
               {/* 2-minute layer — expandable sections */}
-              {(growingProfile.drought_tolerance || growingProfile.shade_tolerance) && (
+              {(growingProfile.drought_tolerance != null || growingProfile.shade_tolerance) && (
                 <Disclosure title="Site Tolerance">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    {growingProfile.drought_tolerance && (
+                    {growingProfile.drought_tolerance != null && (
                       <div>
                         <Text variant="caption" color="tertiary">Drought Tolerance</Text>
-                        <Text variant="body" className="font-medium">{growingProfile.drought_tolerance.replace(/_/g, ' ')}</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.drought_tolerance}/5</Text>
                       </div>
                     )}
                     {growingProfile.shade_tolerance && (
@@ -652,7 +652,7 @@ export default async function CultivarPage({ params }: Props) {
               </div>
 
               {/* 2-minute layer — expandable sections */}
-              {(growingProfile?.food_forest_layer || growingProfile?.wildlife_value || growingProfile?.pollinator_value || growingProfile?.native_range_description) && (
+              {(growingProfile?.food_forest_layer || (growingProfile?.wildlife_value && growingProfile.wildlife_value.length > 0) || growingProfile?.pollinator_value || growingProfile?.native_range_description) && (
                 <Disclosure title="Ecosystem Role">
                   <div className="grid gap-4 sm:grid-cols-2">
                     {growingProfile.food_forest_layer && (
@@ -661,10 +661,10 @@ export default async function CultivarPage({ params }: Props) {
                         <Text variant="body" className="font-medium">{growingProfile.food_forest_layer.replace(/_/g, ' ')}</Text>
                       </div>
                     )}
-                    {growingProfile.wildlife_value && (
+                    {growingProfile.wildlife_value && growingProfile.wildlife_value.length > 0 && (
                       <div>
                         <Text variant="caption" color="tertiary">Wildlife Food Value</Text>
-                        <Text variant="body" className="font-medium">{growingProfile.wildlife_value.replace(/_/g, ' ')}</Text>
+                        <Text variant="body" className="font-medium">{growingProfile.wildlife_value.map(v => v.replace(/_/g, ' ')).join(', ')}</Text>
                       </div>
                     )}
                     {growingProfile.pollinator_value && (
