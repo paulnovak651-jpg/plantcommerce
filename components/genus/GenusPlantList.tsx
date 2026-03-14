@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import type { GenusPlantItem } from '@/lib/types/genus-plants';
 import { Text } from '@/components/ui/Text';
 import { BotanicalName } from '@/components/ui/BotanicalName';
 import { Tag } from '@/components/ui/Tag';
+import { getForSaleNow, setForSaleNow as persistForSaleNow } from '@/lib/zone-persistence';
 
 type SortOption = 'name' | 'price_low' | 'price_high' | 'nursery_count';
 
@@ -112,6 +113,11 @@ export function GenusPlantList({
   const [inStockOnly, setInStockOnly] = useState(false);
   const [showCount, setShowCount] = useState(PAGE_SIZE);
 
+  // Initialize from persisted "For sale now" preference
+  useEffect(() => {
+    setInStockOnly(getForSaleNow());
+  }, []);
+
   const filtered = useMemo(() => {
     let result = initialItems;
     if (speciesFilter) {
@@ -178,6 +184,7 @@ export function GenusPlantList({
               checked={inStockOnly}
               onChange={(e) => {
                 setInStockOnly(e.target.checked);
+                persistForSaleNow(e.target.checked);
                 setShowCount(PAGE_SIZE);
               }}
               className="h-4 w-4 rounded border-border-subtle accent-accent"

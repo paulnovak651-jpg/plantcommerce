@@ -25,8 +25,9 @@ import { ZoneBar } from '@/components/ZoneBar';
 import { HarvestCalendar } from '@/components/HarvestCalendar';
 import { HeightSilhouette } from '@/components/HeightSilhouette';
 import { ZoneCompatibility } from '@/components/ZoneCompatibility';
+import { CultivarSection } from '@/components/CultivarSection';
 import { getCategoryIcon } from '@/lib/browse-categories';
-import type { Cultivar, GrowingProfile } from '@/lib/types';
+import type { GrowingProfile } from '@/lib/types';
 
 interface Props {
   params: Promise<{ speciesSlug: string }>;
@@ -400,60 +401,3 @@ export default async function SpeciesPage({ params }: Props) {
   );
 }
 
-function CultivarSection({
-  title,
-  items,
-  speciesSlug,
-  nurseryCountById,
-  priceById,
-}: {
-  title: string;
-  items: Cultivar[];
-  speciesSlug: string;
-  nurseryCountById: Record<string, number>;
-  priceById: Record<string, number>;
-}) {
-  return (
-    <section>
-      <Text variant="h2" className="mb-4">
-        {title} ({items.length})
-      </Text>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((cv) => {
-          const nurseryCount = nurseryCountById[cv.id] ?? 0;
-          const priceCents = priceById[cv.id] ?? null;
-          return (
-            <Link key={cv.id} href={`/plants/${speciesSlug}/${cv.slug}`}>
-              <div className="h-full rounded-[var(--radius-lg)] border border-border-subtle bg-surface-primary px-4 py-3 cultivar-card-hover hover:bg-surface-raised hover:border-border cursor-pointer">
-                <div className="flex items-start justify-between gap-2">
-                  <Text variant="h3" color="accent">{cv.canonical_name}</Text>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {priceCents != null && (
-                      <span className="text-sm font-medium text-accent">
-                        From ${(priceCents / 100).toFixed(2)}
-                      </span>
-                    )}
-                    {nurseryCount > 0 && (
-                      <span className="rounded-full bg-accent-light px-2 py-0.5 text-xs font-semibold text-accent">
-                        {nurseryCount} {nurseryCount === 1 ? 'nursery' : 'nurseries'}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                {cv.breeder && <Text variant="caption" color="tertiary">{cv.breeder}</Text>}
-                {cv.notes && (
-                  <Text variant="caption" color="secondary" className="mt-1 line-clamp-2">
-                    {cv.notes}
-                  </Text>
-                )}
-                {cv.patent_status !== 'unknown' && cv.patent_status !== 'none' && cv.patent_status && (
-                  <Tag type="community" size="sm">{cv.patent_status.replace(/_/g, ' ')}</Tag>
-                )}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
