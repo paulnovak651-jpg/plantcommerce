@@ -43,6 +43,11 @@ function expectNotContains(relativePath, fragment) {
   'PROJECT_REORG_PLAN.md',
   'docs/INDEX.md',
   'docs/sprints/INDEX.md',
+  'app/api/ready/route.ts',
+  'scripts/heartbeat-session.sh',
+  'scripts/heartbeat-session.ps1',
+  'scripts/lib/session-config.sh',
+  'scripts/lib/session-config.ps1',
   'scripts/register-session.sh',
   'scripts/register-session.ps1',
   'scripts/end-session.sh',
@@ -56,8 +61,11 @@ expectContains('AGENTS.md', '/api/dashboard/sessions');
 expectContains('docs/INDEX.md', 'Task Routing');
 expectContainsCaseInsensitive('docs/sprints/INDEX.md', 'historical reference only');
 
-expectContains('scripts/register-session.sh', 'http://localhost:3000');
+expectContains('scripts/lib/session-config.sh', 'http://localhost:3000');
+expectContains('scripts/register-session.sh', '/api/ready');
 expectContains('scripts/register-session.sh', '/api/dashboard/sessions');
+expectContains('scripts/lib/session-config.ps1', 'http://localhost:3000');
+expectContains('scripts/register-session.ps1', '/api/ready');
 expectContains('scripts/register-session.ps1', '/api/dashboard/sessions');
 expectContains('scripts/end-session.sh', '/api/dashboard/sessions/');
 expectContains('scripts/end-session.ps1', '/api/dashboard/sessions/');
@@ -65,8 +73,10 @@ expectContains('scripts/dashboard-snapshot.ps1', 'Authorization');
 
 expectNotContains('scripts/register-session.sh', 'http://localhost:3001');
 expectNotContains('scripts/register-session.sh', '/api/sessions');
+expectNotContains('scripts/register-session.sh', '/api/status');
 expectNotContains('scripts/register-session.ps1', 'http://localhost:3001');
 expectNotContains('scripts/register-session.ps1', '/api/sessions');
+expectNotContains('scripts/register-session.ps1', '/api/status');
 expectNotContains('scripts/end-session.sh', 'http://localhost:3001');
 expectNotContains('scripts/end-session.sh', '/api/sessions');
 expectNotContains('scripts/end-session.ps1', 'http://localhost:3001');

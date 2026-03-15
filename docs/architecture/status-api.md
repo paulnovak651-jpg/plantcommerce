@@ -4,6 +4,22 @@ This document defines the integration contract for machine-readable status endpo
 
 ## Endpoints
 
+### `GET /api/ready`
+
+- Auth: none
+- Purpose: lightweight readiness probe for local repo scripts
+- Response envelope: `{ ok, data, links? }`
+
+Data shape:
+
+```json
+{
+  "app": "plantcommerce",
+  "ready": true,
+  "time_utc": "ISO-8601 string"
+}
+```
+
 ### `GET /api/status`
 
 - Auth: none

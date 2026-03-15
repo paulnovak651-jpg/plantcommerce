@@ -3,25 +3,9 @@ param(
   [string]$Secret = $env:ADMIN_STATUS_SECRET
 )
 
-if (-not $Secret) {
-  $Secret = $env:CRON_SECRET
-}
+. (Join-Path $PSScriptRoot "lib/session-config.ps1")
 
-if (-not $Secret -and (Test-Path ".env.local")) {
-  $envLines = Get-Content ".env.local"
-  $adminLine = $envLines | Where-Object { $_ -match '^ADMIN_STATUS_SECRET=' } | Select-Object -Last 1
-  $cronLine = $envLines | Where-Object { $_ -match '^CRON_SECRET=' } | Select-Object -Last 1
-
-  if ($adminLine) {
-    $Secret = ($adminLine -replace '^ADMIN_STATUS_SECRET=', '').Trim()
-  } elseif ($cronLine) {
-    $Secret = ($cronLine -replace '^CRON_SECRET=', '').Trim()
-  }
-}
-
-if (-not $Secret) {
-  $Secret = "dev-local-secret-plantcommerce-2026"
-}
+$Secret = Get-CommandCenterSecret -PreferredSecret $Secret
 
 try {
   $resp = Invoke-RestMethod -Uri $ApiUrl -Method Get -TimeoutSec 15 `

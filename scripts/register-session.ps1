@@ -6,28 +6,12 @@ param(
   [string]$Secret = $env:ADMIN_STATUS_SECRET
 )
 
-if (-not $Secret) {
-  $Secret = $env:CRON_SECRET
-}
+. (Join-Path $PSScriptRoot "lib/session-config.ps1")
 
-if (-not $Secret -and (Test-Path ".env.local")) {
-  $envLines = Get-Content ".env.local"
-  $adminLine = $envLines | Where-Object { $_ -match '^ADMIN_STATUS_SECRET=' } | Select-Object -Last 1
-  $cronLine = $envLines | Where-Object { $_ -match '^CRON_SECRET=' } | Select-Object -Last 1
-
-  if ($adminLine) {
-    $Secret = ($adminLine -replace '^ADMIN_STATUS_SECRET=', '').Trim()
-  } elseif ($cronLine) {
-    $Secret = ($cronLine -replace '^CRON_SECRET=', '').Trim()
-  }
-}
-
-if (-not $Secret) {
-  $Secret = "dev-local-secret-plantcommerce-2026"
-}
+$Secret = Get-CommandCenterSecret -PreferredSecret $Secret
 
 try {
-  Invoke-RestMethod -Uri "$ApiBase/api/status" -Method Get `
+  Invoke-RestMethod -Uri "$ApiBase/api/ready" -Method Get `
     -TimeoutSec 15 | Out-Null
 } catch {
   Write-Error "[command-center] App not ready at $ApiBase. Start the local dev server and confirm it is responding."
@@ -62,5 +46,22 @@ if (-not $sessionId) {
 }
 
 $env:SESSION_ID = $sessionId
+$runtimeFile = Get-CommandCenterRuntimeFile -SessionId $sessionId
+$heartbeatScript = Join-Path $PSScriptRoot "heartbeat-session.ps1"
+$heartbeatProc = Start-Process -FilePath "powershell.exe" `
+  -ArgumentList @(
+    "-NoProfile",
+    "-ExecutionPolicy", "Bypass",
+    "-File", $heartbeatScript,
+    "-SessionId", $sessionId,
+    "-ApiBase", $ApiBase,
+    "-ParentProcessId", $PID
+  ) `
+  -WindowStyle Hidden `
+  -PassThru
+
+$heartbeatProc.Id | Set-Content $runtimeFile
+$env:SESSION_HEARTBEAT_PID = [string]$heartbeatProc.Id
 Write-Output "[command-center] Session registered: $sessionId  agent=$Agent"
+Write-Output "[command-center] Heartbeat started: pid=$($heartbeatProc.Id)"
 Write-Output "SESSION_ID=$sessionId"

@@ -28,14 +28,16 @@ export async function PATCH(
     };
 
     const supabase = createServiceClient();
+    const now = new Date().toISOString();
     const { data, error } = await supabase
       .from('agent_sessions')
       .update({
         ...(body.status && { status: body.status }),
         ...(body.summary !== undefined && { summary: body.summary }),
         ...(body.task_id !== undefined && { task_id: body.task_id }),
+        last_seen_at: now,
         ...(body.status && body.status !== 'active' && {
-          ended_at: new Date().toISOString(),
+          ended_at: now,
         }),
       })
       .eq('id', id)

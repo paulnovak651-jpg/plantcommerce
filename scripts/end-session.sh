@@ -2,21 +2,14 @@
 # Mark a session as completed or dropped.
 # Usage: bash scripts/end-session.sh "$SESSION_ID" "completed" "What was accomplished"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/session-config.sh"
+
 SESSION_ID="${1:-$SESSION_ID}"
 STATUS="${2:-completed}"
 SUMMARY="${3:-Session ended}"
-API_BASE="${API_BASE:-http://localhost:3000}"
-
-load_dotenv_value() {
-  local key="$1"
-  if [ -f .env.local ]; then
-    sed -n "s/^${key}=//p" .env.local | tail -n 1 | tr -d '\r'
-  fi
-}
-
-ENV_ADMIN_STATUS_SECRET="${ENV_ADMIN_STATUS_SECRET:-$(load_dotenv_value ADMIN_STATUS_SECRET)}"
-ENV_CRON_SECRET="${ENV_CRON_SECRET:-$(load_dotenv_value CRON_SECRET)}"
-SECRET="${ADMIN_STATUS_SECRET:-${ENV_ADMIN_STATUS_SECRET:-${CRON_SECRET:-${ENV_CRON_SECRET:-dev-local-secret-plantcommerce-2026}}}}"
+API_BASE="${API_BASE:-$COMMAND_CENTER_DEFAULT_API_BASE}"
+SECRET="$(command_center_secret)"
 SESSION_URL="$API_BASE/api/dashboard/sessions/$SESSION_ID"
 
 abort() {
@@ -37,6 +30,8 @@ json_escape() {
 if [ -z "$SESSION_ID" ]; then
   abort "[command-center] Error: SESSION_ID is required (pass as arg or set env var)"
 fi
+
+command_center_stop_heartbeat "$SESSION_ID"
 
 PAYLOAD="{\"status\":\"$(json_escape "$STATUS")\",\"summary\":\"$(json_escape "$SUMMARY")\"}"
 

@@ -3,22 +3,15 @@
 # Usage: source scripts/register-session.sh "claude-code" "Starting X" [task-uuid]
 # On success, exports SESSION_ID to the current shell.
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/session-config.sh"
+
 AGENT="${1:-claude-code}"
 SUMMARY="${2:-Starting session}"
 TASK_ID="${3:-}"
-API_BASE="${API_BASE:-http://localhost:3000}"
-
-load_dotenv_value() {
-  local key="$1"
-  if [ -f .env.local ]; then
-    sed -n "s/^${key}=//p" .env.local | tail -n 1 | tr -d '\r'
-  fi
-}
-
-ENV_ADMIN_STATUS_SECRET="${ENV_ADMIN_STATUS_SECRET:-$(load_dotenv_value ADMIN_STATUS_SECRET)}"
-ENV_CRON_SECRET="${ENV_CRON_SECRET:-$(load_dotenv_value CRON_SECRET)}"
-SECRET="${ADMIN_STATUS_SECRET:-${ENV_ADMIN_STATUS_SECRET:-${CRON_SECRET:-${ENV_CRON_SECRET:-dev-local-secret-plantcommerce-2026}}}}"
-STATUS_URL="$API_BASE/api/status"
+API_BASE="${API_BASE:-$COMMAND_CENTER_DEFAULT_API_BASE}"
+SECRET="$(command_center_secret)"
+READY_URL="$API_BASE/api/ready"
 SESSION_URL="$API_BASE/api/dashboard/sessions"
 
 abort() {
@@ -36,7 +29,7 @@ json_escape() {
   printf '%s' "$value"
 }
 
-if ! curl -fsS --max-time 15 "$STATUS_URL" > /dev/null 2>&1; then
+if ! curl -fsS --max-time 15 "$READY_URL" > /dev/null 2>&1; then
   abort "[command-center] App not ready at $API_BASE. Start the app and confirm the local dev server is responding."
 fi
 
@@ -56,6 +49,12 @@ SESSION_ID=$(printf '%s' "$RESPONSE" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p' | he
 if [ -z "$SESSION_ID" ]; then
   abort "[command-center] Could not parse a session id from $SESSION_URL"
 else
+  command_center_ensure_runtime_dir
+  bash "$SCRIPT_DIR/heartbeat-session.sh" "$SESSION_ID" "$API_BASE" "$$" > /dev/null 2>&1 &
+  SESSION_HEARTBEAT_PID="$!"
+  printf '%s' "$SESSION_HEARTBEAT_PID" > "$(command_center_runtime_file "$SESSION_ID")"
   export SESSION_ID
+  export SESSION_HEARTBEAT_PID
   echo "[command-center] Session registered: $SESSION_ID  agent=$AGENT"
+  echo "[command-center] Heartbeat started: pid=$SESSION_HEARTBEAT_PID"
 fi

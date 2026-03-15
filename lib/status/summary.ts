@@ -1,4 +1,5 @@
 import { createServiceClient } from '@/lib/supabase/server';
+import { isSessionDropped } from '@/lib/status/session-health';
 
 interface ImportRunSummary {
   id: string;
@@ -13,6 +14,7 @@ interface ImportRunSummary {
 interface SessionRow {
   status: string;
   started_at: string;
+  last_seen_at: string | null;
 }
 
 interface TaskSummary {
@@ -62,17 +64,13 @@ async function getSessionSummary(
 ): Promise<{ active: number; dropped: number } | null> {
   const { data, error } = await supabase
     .from('agent_sessions')
-    .select('status, started_at')
+    .select('status, started_at, last_seen_at')
     .eq('status', 'active');
 
   if (error) return null;
 
   const sessions = (data ?? []) as SessionRow[];
-  const ONE_HOUR_MS = 60 * 60 * 1000;
-  const now = Date.now();
-  const dropped = sessions.filter(
-    (s) => now - new Date(s.started_at).getTime() > ONE_HOUR_MS
-  ).length;
+  const dropped = sessions.filter((s) => isSessionDropped(s)).length;
 
   return {
     active: sessions.length,
@@ -136,4 +134,3 @@ export async function getStatusSummary() {
     },
   };
 }
-

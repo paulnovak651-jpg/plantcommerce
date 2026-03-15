@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { apiSuccess, apiError } from '@/lib/api-helpers';
 import { createServiceClient } from '@/lib/supabase/server';
 import { requireAdminStatusAuth } from '@/lib/pipeline/auth';
+import { isSessionDropped, type SessionHealthRow } from '@/lib/status/session-health';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
           .order('created_at', { ascending: true }),
         supabase
           .from('agent_sessions')
-          .select('id, agent, project, task_id, started_at, ended_at, status, summary, tasks(title)')
+          .select('id, agent, project, task_id, started_at, last_seen_at, ended_at, status, summary, tasks(title)')
           .order('started_at', { ascending: false })
           .limit(30),
       ]);
@@ -34,12 +35,10 @@ export async function GET(request: NextRequest) {
     if (tasksError) return apiError('DB_ERROR', tasksError.message, 500);
     if (sessionsError) return apiError('DB_ERROR', sessionsError.message, 500);
 
-    type SessionRow = { status: string; started_at: string; [key: string]: unknown };
-    const ONE_HOUR_MS = 60 * 60 * 1000;
-    const now = Date.now();
+    type SessionRow = SessionHealthRow & { [key: string]: unknown };
     const activeSessions = (sessions ?? []).filter((s: SessionRow) => s.status === 'active');
     const droppedSessions = activeSessions.filter(
-      (s: SessionRow) => now - new Date(s.started_at).getTime() > ONE_HOUR_MS
+      (s: SessionRow) => isSessionDropped(s)
     );
 
     return apiSuccess({

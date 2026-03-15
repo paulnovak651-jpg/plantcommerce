@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createServiceClient();
+    const now = new Date().toISOString();
     const { data, error } = await supabase
       .from('agent_sessions')
       .insert({
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
         summary: body.summary ?? null,
         context_snapshot: body.context_snapshot ?? null,
         status: 'active',
+        last_seen_at: now,
       })
       .select()
       .single();

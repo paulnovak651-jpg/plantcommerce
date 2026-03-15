@@ -67,6 +67,7 @@ The Command Center is a small internal coordination tool for sessions and tasks.
   - `scripts/end-session.sh`
   - `scripts/end-session.ps1`
   - `scripts/dashboard-snapshot.ps1`
+- The session scripts use `/api/ready` for preflight and manage session heartbeats automatically.
 
 ## Task Routing
 

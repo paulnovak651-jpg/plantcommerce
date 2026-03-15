@@ -15,7 +15,7 @@ NNN_description.sql       e.g. 018_patch_castanea_sun_requirement.sql
 - Descriptive slug uses underscores, lowercase.
 - File lives in `sql/migrations/`.
 
-**Current sequence:** 001 … 024. Next available: **025**
+**Current sequence:** 002 … 051 with historical gaps and one `015a` one-off. Next available: **052**
 
 ---
 

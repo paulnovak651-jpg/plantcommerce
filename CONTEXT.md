@@ -77,7 +77,9 @@ Historical sprint docs are not startup truth.
 - base URL: `http://localhost:3000`
 - namespace: `/api/dashboard/*`
 - auth: `ADMIN_STATUS_SECRET` primary, `CRON_SECRET` fallback
+- readiness probe: `/api/ready`
 - preferred scripts: `scripts/register-session.*`, `scripts/end-session.*`, `scripts/dashboard-snapshot.ps1`
+- session scripts manage `last_seen_at` heartbeats automatically
 
 ### Key structural decisions
 

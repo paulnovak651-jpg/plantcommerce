@@ -1,9 +1,14 @@
-// Command Center — dev-only tool, not linked in public nav.
+// Command Center - dev-only tool, not linked in public nav.
 // Shows agent sessions, task queue, and dropped-session alerts.
 // Fetches fresh data on every load (force-dynamic).
 
 import { notFound } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/server';
+import {
+  getSessionLastSeenAt,
+  isSessionDropped,
+  type SessionHealthRow,
+} from '@/lib/status/session-health';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +38,7 @@ interface AgentSession {
   project: string;
   task_id: string | null;
   started_at: string;
+  last_seen_at: string | null;
   ended_at: string | null;
   status: 'active' | 'completed' | 'dropped';
   summary: string | null;
@@ -229,16 +235,13 @@ export default async function DashboardPage({ searchParams }: Props) {
       .order('created_at', { ascending: true }),
     supabase
       .from('agent_sessions')
-      .select('id, agent, project, task_id, started_at, ended_at, status, summary, tasks(title)')
+      .select('id, agent, project, task_id, started_at, last_seen_at, ended_at, status, summary, tasks(title)')
       .order('started_at', { ascending: false })
       .limit(30),
   ]);
 
   const allTasks   = (tasks ?? []) as Task[];
   const allSessions = (sessions ?? []) as AgentSession[];
-
-  const ONE_HOUR_MS = 60 * 60 * 1000;
-  const now = Date.now();
 
   const inProgress = allTasks.filter((t) => t.status === 'in_progress');
   const todo       = allTasks.filter((t) => t.status === 'todo');
@@ -247,10 +250,10 @@ export default async function DashboardPage({ searchParams }: Props) {
 
   const activeSessions  = allSessions.filter((s) => s.status === 'active');
   const droppedSessions = activeSessions.filter(
-    (s) => now - new Date(s.started_at).getTime() > ONE_HOUR_MS
+    (s) => isSessionDropped(s)
   );
   const healthySessions = activeSessions.filter(
-    (s) => now - new Date(s.started_at).getTime() <= ONE_HOUR_MS
+    (s) => !isSessionDropped(s)
   );
 
   const nowStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -303,7 +306,7 @@ export default async function DashboardPage({ searchParams }: Props) {
                     {taskRef?.title && <> was working on <span style={{ color: C.amber }}>"{taskRef.title}"</span></>}
                   </div>
                   <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>
-                    Started {timeAgo(s.started_at)} — session ended unexpectedly
+                    Started {timeAgo(s.started_at)} - last heartbeat {timeAgo(getSessionLastSeenAt(s as SessionHealthRow))} - session ended unexpectedly
                     {s.summary && <> · Last note: "{s.summary}"</>}
                   </div>
                   <div style={{ fontSize: 11, color: C.red, marginTop: 3 }}>
@@ -388,7 +391,7 @@ export default async function DashboardPage({ searchParams }: Props) {
                   ))}
                 </div>
                 {allSessions.map((s) => {
-                  const isDropped = s.status === 'active' && now - new Date(s.started_at).getTime() > ONE_HOUR_MS;
+                  const isDropped = isSessionDropped(s);
                   return <SessionRow key={s.id} session={s} isDropped={isDropped} />;
                 })}
               </div>
@@ -413,7 +416,7 @@ export default async function DashboardPage({ searchParams }: Props) {
 # or
 ./scripts/end-session.ps1 -SessionId $env:SESSION_ID -Status completed -Summary "Did X, Y, Z"`}</pre>
                 <div style={{ fontSize: 10, color: C.dim, lineHeight: 1.6 }}>
-                  Auth for dashboard routes is `ADMIN_STATUS_SECRET` with `CRON_SECRET` fallback. If you drop without ending your session, the next session will see it flagged above and know to pick up your work.
+                  Auth for dashboard routes is `ADMIN_STATUS_SECRET` with `CRON_SECRET` fallback. The repo session scripts keep heartbeats updated automatically and dropped sessions are based on last heartbeat, not just start time.
                 </div>
               </div>
             </div>

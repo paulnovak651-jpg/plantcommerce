@@ -73,6 +73,7 @@ Do not use production or Vercel previews to discover whether a change works.
   - `scripts/end-session.sh`
   - `scripts/end-session.ps1`
   - `scripts/dashboard-snapshot.ps1`
+- Session scripts use `/api/ready` for preflight and keep `agent_sessions.last_seen_at` fresh automatically.
 
 Session handoffs should leave:
 
