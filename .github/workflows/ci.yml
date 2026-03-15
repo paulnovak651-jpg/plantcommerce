@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check current doc contract
+        run: node scripts/check-current-doc-contract.mjs
+
       - name: Type check
         run: npx tsc --noEmit
 

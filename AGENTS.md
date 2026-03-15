@@ -1,6 +1,7 @@
 # Plant Commerce — Agent Instructions
 
-> Auto-loaded by agents on startup. Read before doing any work.
+> **Label:** Current agent operating contract
+> Auto-loaded by agents on startup. Read before doing substantial work.
 
 ---
 
@@ -8,7 +9,7 @@
 
 - Paul pre-approves all non-critical permissions and escalations needed for normal work.
 - Do not pause for permission chat on non-critical execution; proceed directly.
-- Discuss decisions (scope/architecture/tradeoffs) before changing direction.
+- Discuss decisions about scope, architecture, or tradeoffs before changing direction.
 
 ---
 
@@ -17,6 +18,7 @@
 - GitHub `master` is the shared source of truth.
 - The local repo is an execution and testing environment, not an alternate source of truth.
 - Always assume the remote may be ahead of local until you verify otherwise.
+- Never treat unpushed local state as durable project truth.
 
 ---
 
@@ -25,52 +27,83 @@
 Run these before substantial work:
 
 1. `git pull --rebase origin master`
-2. Confirm the working tree is clean or understand any existing changes with `git status --short`
-3. Read `AGENTS.md`, `CONTEXT.md`, and `ROADMAP.md`
-4. Only then start implementation, local testing, and review
+2. Confirm the working tree is clean or understand any local changes with `git status --short`
+3. Read `AGENTS.md`, `CONTEXT.md`, `ROADMAP.md`, and `docs/INDEX.md`
+4. Start local dev on `http://localhost:3000` when the task needs the app or Command Center
+5. Register a Command Center session with `scripts/register-session.sh` or `scripts/register-session.ps1`
+
+If `git pull --rebase origin master` is blocked by local changes, stop and understand the local state before proceeding.
 
 If local and GitHub disagree, GitHub wins unless Paul explicitly says otherwise.
 
 ---
 
-## Development Workflow
+## Local-First Workflow
 
-- Pull first from GitHub
-- Implement locally
-- Test locally on `localhost`
-- Review the actual diff
-- Commit only the intended files
-- Push back to GitHub when the change is ready
+Use this order every time:
 
-Never treat unpushed local state as durable project truth.
+1. Pull latest shared state
+2. Check local status
+3. Read only the current startup docs
+4. Run locally on `localhost`
+5. Make changes locally
+6. Test locally before wrapping up
+7. Review the actual diff
+8. Commit only the intended files
+9. Push to GitHub
+10. Deploy separately when appropriate
+
+Do not use production or Vercel previews to discover whether a change works.
+
+---
+
+## Command Center Contract
+
+- Local base URL: `http://localhost:3000`
+- Dashboard API namespace: `/api/dashboard/*`
+- Canonical routes:
+  - `GET /api/dashboard`
+  - `POST /api/dashboard/sessions`
+  - `PATCH /api/dashboard/sessions/[id]`
+  - existing task routes stay under `/api/dashboard/*`
+- Auth: `ADMIN_STATUS_SECRET` primary, `CRON_SECRET` fallback
+- Preferred scripts:
+  - `scripts/register-session.sh`
+  - `scripts/register-session.ps1`
+  - `scripts/end-session.sh`
+  - `scripts/end-session.ps1`
+  - `scripts/dashboard-snapshot.ps1`
+
+Session handoffs should leave:
+
+- touched surfaces
+- current state
+- next step
 
 ---
 
 ## What This Project Is
 
-A plant information and sourcing platform for the permaculture community. Users search for a cultivar, see which nurseries carry it, compare prices, and browse structured plant data. Also has a community marketplace for private sellers/buyers.
+A plant information and sourcing platform for the permaculture community. Users search for a cultivar, see which nurseries carry it, compare prices, and browse structured plant data. The app also includes a community marketplace for private sellers and buyers.
 
 - **Business entity:** Even Flow Nursery LLC
 - **Stack:** Next.js 16.1.6 (App Router), React 19, TypeScript 5.9.3 strict, Tailwind CSS 4.2.1, Supabase PostgreSQL, Cheerio
 - **Tests:** Vitest, 230+ tests (must stay passing)
 - **Live:** https://plantfinder-cyan.vercel.app
-- **Deploy:** `npx vercel --prod` from project root (linked to `plantfinder` Vercel project)
+- **Deploy:** `npx vercel --prod` from project root
 
 ---
 
-## Current State (Sprint 15 complete, 2026-03-13)
+## Current State (2026-03-14)
 
-The UI is stable after significant iteration in Sprints 8–15. No active sprint.
+- No active sprint. The UI is stable after the Sprint 8–18 browse/page iterations.
+- The homepage taxonomy explorer is the canonical browse entrypoint.
+- `/browse` redirects to `/` and preserves query params for old links.
+- Facet/query/API browse surfaces still exist in the repo, but they are secondary infrastructure, not the primary user entrypoint.
+- Species pages, cultivar tabs, compare flow, nursery pages, stock alerts, and the marketplace are live.
+- 3 nurseries are live: Burnt Ridge, Grimo, and Raintree.
 
-**What's working:**
-- Three-column taxonomy explorer as homepage
-- Species pages with dark green hero, growing guide, cultivar cards
-- Cultivar pages with tabbed layout (Overview / Growing / Fruit & Nut / Buy)
-- Faceted browse, compare flow, price comparison, nursery maps
-- 3 nurseries live (Burnt Ridge, Grimo, Raintree), 15+ genera seeded
-- 230+ tests passing, TypeScript strict, CI green
-
-**Current priorities:** See `ROADMAP.md` — nursery consent outreach, data quality, empty-state CTAs.
+Current priorities are in `ROADMAP.md`.
 
 ---
 
@@ -88,41 +121,29 @@ The UI is stable after significant iteration in Sprints 8–15. No active sprint
 
 ---
 
-## Key File Locations
+## Task Routing
 
-| What | Where |
-|------|-------|
-| Homepage | `app/page.tsx` → `components/browse/TaxonomyExplorer.tsx` |
-| Species page | `app/plants/[speciesSlug]/page.tsx` |
-| Cultivar page | `app/plants/[speciesSlug]/[cultivarSlug]/page.tsx` |
-| Cultivar tabs | `components/CultivarTabs.tsx` |
-| Browse page | `app/browse/page.tsx` → `components/browse/BrowsePageClient.tsx` |
-| Genus hub | `app/plants/genus/[genusSlug]/page.tsx` |
-| Facet registry | `lib/facets/registry.ts` |
-| Facet query builder | `lib/queries/facet-query-builder.ts` |
-| Browse API | `app/api/browse/route.ts` |
-| Scraper registry | `lib/scraper/index.ts` |
-| Resolver (12-method chain) | `lib/resolver/resolver.ts` |
-| Parser | `lib/resolver/parser.ts` |
-| Supabase client | `lib/supabase/server.ts` |
-| API helpers | `lib/api-helpers.ts` |
-| Design system components | `components/ui/` |
-| Category colors | `lib/category-colors.ts` |
-| Zone persistence | `lib/zone-persistence.ts` |
+| Work Type | Start Here |
+|-----------|------------|
+| Homepage / taxonomy | `app/page.tsx` -> `components/browse/BrowsePageClient.tsx` -> `components/BrowseContent.tsx` |
+| Species / cultivar pages | `app/plants/[speciesSlug]/page.tsx`, `app/plants/[speciesSlug]/[cultivarSlug]/page.tsx`, `components/CultivarTabs.tsx` |
+| Browse filters / queries / API | `app/browse/page.tsx`, `lib/facets/registry.ts`, `lib/queries/facet-query-builder.ts`, `app/api/browse/route.ts` |
+| Scraper / resolver / pipeline | `lib/scraper/`, `lib/resolver/`, `lib/pipeline/`, `app/api/pipeline/scrape/route.ts` |
+| Dashboard / sessions / status | `app/dashboard/page.tsx`, `app/api/dashboard/`, `lib/status/`, `scripts/` |
+| Schema / data / migrations | `sql/migrations/`, `sql/MIGRATION_GUIDE.md`, `docs/architecture/KNOWLEDGE_GRAPH_SCHEMA.md` |
 
 ---
 
 ## Documentation Map
 
-| Document | Purpose |
-|----------|---------|
-| `README.md` | Human startup guide and canonical local-to-GitHub workflow |
-| `CONTEXT.md` | Technical state, schema, pipeline, sprint history |
-| `ROADMAP.md` | Priorities and what's next |
-| `docs/INDEX.md` | Documentation entrypoint and reading order |
-| `docs/architecture/DESIGN_SYSTEM.md` | Typography, colors, components ("The Field Guide") |
-| `docs/architecture/VISION.md` | Product vision for collaborators |
-| `docs/architecture/KNOWLEDGE_GRAPH_SCHEMA.md` | Taxonomy + growing profile migrations |
-| `docs/sprints/` | All sprint specs (archived, for reference) |
-| `docs/research/` | Genus research data and protocols |
-| `docs/operations/` | Scraper playbook, outreach template, parser audit |
+| Label | Document | Purpose |
+|-------|----------|---------|
+| Current | `README.md` | Human startup guide and canonical local workflow |
+| Current | `CONTEXT.md` | Technical state and key structural decisions |
+| Current | `ROADMAP.md` | Active priorities |
+| Current | `docs/INDEX.md` | Doc map and task routing |
+| Operational | `docs/operations/` | Playbooks and operational reference |
+| Architecture | `docs/architecture/` | Design system, vision, schema, and API reference |
+| Historical | `docs/sprints/` | Archived sprint and bugfix history only |
+
+Key structural decisions should be recorded in `CONTEXT.md`, not in a separate ADR system.

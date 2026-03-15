@@ -27,7 +27,7 @@ export function requireCronAuth(request: NextRequest) {
 }
 
 /**
- * Admin status auth:
+ * Internal dashboard/admin auth:
  * - primary secret: ADMIN_STATUS_SECRET
  * - fallback secret: CRON_SECRET
  */

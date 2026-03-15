@@ -1,6 +1,7 @@
 # PlantCommerce — Project Context
 
-> **Last updated:** 2026-03-13
+> **Label:** Current technical snapshot
+> **Last updated:** 2026-03-14
 > **Owner:** Paul Novak / Even Flow Nursery LLC
 > **Repo:** github.com/paulnovak651-jpg/plantcommerce (private)
 > **Supabase project:** plantfinder (id: bwfhdyjjuubpzwjngquo, region: us-west-2)
@@ -12,36 +13,77 @@
 ## What This Is
 
 A plant information and sourcing platform for the permaculture community. Combines:
+
 - **Plant database** — taxonomy, growing profiles, pollination data across 15+ genera
 - **Nursery inventory aggregator** — automated scrapers pull live pricing from 3 nurseries
 - **Community marketplace** — anonymous WTS/WTB listings, admin-moderated
 
-No user accounts (v1). No payments. Nursery offers are read-only aggregated data.
+No user accounts in v1. No payments. Nursery offers are read-only aggregated data.
 
 ---
 
-## Current State (Sprint 15 complete)
+## Current Product State
 
-### What's live at plantfinder-cyan.vercel.app
-- **Three-column taxonomy explorer** as homepage (Category → Genus → Species/Cultivar)
-- **Species pages** with dark green hero header, growing guide, cultivar cards
-- **Cultivar pages** with tabbed layout (Overview / Growing / Fruit & Nut / Buy)
-- **Faceted browse** at `/browse` with 10 filters, cross-facet counts, recovery hints
-- **Price comparison** tables with best-price tags, trust badges, sparklines
-- **Nursery pages** with Leaflet maps, inventory listings
-- **Community marketplace** (WTS/WTB listings, admin moderation)
-- **Stock alerts** and **pollination checker**
-- **Compare** flow with tray + comparison table
+### What is live
 
-### Data
-- 15+ genera: hazelnuts, chestnuts, walnuts, hickories, apples, pears, stone fruit, persimmons, mulberries, elderberries, grapes, blueberries, figs, gooseberries/currants, raspberries/blackberries, kiwi, goumi, sea buckthorn, hackberry
-- 3 nurseries live: Burnt Ridge, Grimo, Raintree (consent-gated pipeline, cron Monday 6am UTC)
+- Homepage taxonomy explorer as the canonical browse entrypoint
+- Species pages with dark green hero headers, growing guides, and cultivar cards
+- Cultivar pages with tabs for Overview, Growing, Fruit & Nut, and Buy
+- Price comparison tables, nursery pages, community marketplace, stock alerts, and compare flow
+- Homepage browse filters for zone, stock type, and "for sale now"
+
+### Browse truth
+
+- `app/page.tsx` is the live browse entrypoint
+- `components/BrowseContent.tsx` owns the homepage browse funnel
+- `app/browse/page.tsx` redirects to `/` and preserves query params for old links
+- `app/api/browse/route.ts`, `lib/facets/`, and `lib/queries/facet-query-builder.ts` remain in the repo as secondary browse/query infrastructure
+- Current docs should not describe `/browse` as the primary user-facing entrypoint
+
+### Data and foundation
+
+- 3 nurseries live: Burnt Ridge, Grimo, Raintree
 - 49+ SQL migrations applied
-
-### Foundation
-- 230+ tests passing (Vitest)
-- TypeScript strict, CI green
+- 230+ tests passing
+- TypeScript strict and CI green
 - Next.js 16 App Router, React 19, Tailwind CSS 4
+
+---
+
+## Current Operating Contracts
+
+### Startup truth
+
+Read in this order:
+
+1. `README.md`
+2. `AGENTS.md`
+3. `CONTEXT.md`
+4. `ROADMAP.md`
+5. `docs/INDEX.md`
+
+Historical sprint docs are not startup truth.
+
+### Local workflow
+
+- GitHub `master` is canonical
+- work locally first
+- test on `http://localhost:3000`
+- review diff before commit
+- deploy separately after the local change is verified
+
+### Command Center
+
+- base URL: `http://localhost:3000`
+- namespace: `/api/dashboard/*`
+- auth: `ADMIN_STATUS_SECRET` primary, `CRON_SECRET` fallback
+- preferred scripts: `scripts/register-session.*`, `scripts/end-session.*`, `scripts/dashboard-snapshot.ps1`
+
+### Key structural decisions
+
+- Keep the current monolith shape: `app/`, `components/`, `lib/`, `docs/`, `scripts/`, `sql/`
+- Do not introduce a `features/` directory reorganization in this cleanup
+- Record key structural decisions in current docs instead of introducing ADR files
 
 ---
 
@@ -52,69 +94,55 @@ No user accounts (v1). No payments. Nursery offers are read-only aggregated data
 | Database | Supabase PostgreSQL |
 | Frontend | Next.js 16.1.6 (App Router), React 19.2.4, TypeScript 5.9.3 strict |
 | Styling | Tailwind CSS 4.2.1, "The Field Guide" design system |
-| Hosting | Vercel (Hobby) — plantfinder-cyan.vercel.app |
+| Hosting | Vercel (Hobby) |
 | Scraping | Cheerio 1.2.0, config-driven registry |
-| External | Supabase only. No Stripe, auth, email, or search infra. |
+| External | Supabase only |
 
 ---
 
 ## Database Schema
 
-### Core: `plant_entities` → `cultivars` → `aliases` → `legal_identifiers`
-### Commerce: `nurseries` (with lat/lng) → `inventory_offers`
-### Community: `community_listings` (anon v1, admin-moderated, 90-day expiry, RLS)
-### Pipeline: `import_runs` → `raw_inventory_rows` → `unmatched_names`
-### Taxonomy: `taxonomy_ranks` (6) → `taxonomy_nodes` (37+, self-referential tree)
-### Growing: `species_growing_profiles` (zones, chill hours, height, pH, sun, bearing age)
-### Search: `material_search_index` (materialized view, trigram + alias_names)
+### Core: `plant_entities` -> `cultivars` -> `aliases` -> `legal_identifiers`
+### Commerce: `nurseries` -> `inventory_offers`
+### Community: `community_listings`
+### Pipeline: `import_runs` -> `raw_inventory_rows` -> `unmatched_names`
+### Taxonomy: `taxonomy_ranks` -> `taxonomy_nodes`
+### Growing: `species_growing_profiles`
+### Search: `material_search_index`
 
 ---
 
 ## The Pipeline
 
-```
-Scraper (fetches nursery HTML via config-driven registry)
-  → Parser (decomposes product name into structured fields)
-    → Resolver (12-method priority chain against alias index)
-      → Writer (upserts to Supabase)
+```text
+Scraper -> Parser -> Resolver -> Writer
 ```
 
 - Triggered via protected cron endpoint
-- Generic Shopify + WooCommerce scrapers available — new nurseries need only a config entry
-- 3 of 10 nurseries live; others blocked on consent
+- Generic Shopify and WooCommerce scrapers are available
+- New scrapers still require nursery consent
 
 ---
 
-## Key File Locations
+## Task Routing
 
-| What | Where |
-|------|-------|
-| Homepage (taxonomy explorer) | `app/page.tsx` → `components/browse/TaxonomyExplorer.tsx` |
-| Species page | `app/plants/[speciesSlug]/page.tsx` |
-| Cultivar page | `app/plants/[speciesSlug]/[cultivarSlug]/page.tsx` |
-| Cultivar tabs component | `components/CultivarTabs.tsx` |
-| Browse page | `app/browse/page.tsx` → `components/browse/BrowsePageClient.tsx` |
-| Genus hub | `app/plants/genus/[genusSlug]/page.tsx` |
-| Facet registry | `lib/facets/registry.ts` |
-| Facet query builder | `lib/queries/facet-query-builder.ts` |
-| Browse API | `app/api/browse/route.ts` |
-| Scraper registry | `lib/scraper/index.ts` |
-| Resolver | `lib/resolver/resolver.ts` |
-| Parser | `lib/resolver/parser.ts` |
-| Supabase client | `lib/supabase/server.ts` |
-| API helpers | `lib/api-helpers.ts` |
-| Design system components | `components/ui/` |
-| Category colors | `lib/category-colors.ts` |
-| Zone persistence | `lib/zone-persistence.ts` |
+| Work Type | Start Here |
+|-----------|------------|
+| Homepage / taxonomy | `app/page.tsx`, `components/BrowseContent.tsx`, `components/browse/TaxonomyExplorer.tsx` |
+| Species / cultivar | `app/plants/[speciesSlug]/page.tsx`, `app/plants/[speciesSlug]/[cultivarSlug]/page.tsx`, `components/CultivarTabs.tsx` |
+| Browse query / filters / API | `app/browse/page.tsx`, `lib/facets/registry.ts`, `lib/queries/facet-query-builder.ts`, `app/api/browse/route.ts` |
+| Pipeline / scraper / resolver | `lib/scraper/`, `lib/resolver/`, `lib/pipeline/`, `app/api/pipeline/scrape/route.ts` |
+| Dashboard / sessions | `app/dashboard/page.tsx`, `app/api/dashboard/`, `scripts/` |
+| Schema / data | `sql/migrations/`, `sql/MIGRATION_GUIDE.md`, `docs/architecture/KNOWLEDGE_GRAPH_SCHEMA.md` |
 
 ---
 
 ## Nursery Consent Strategy
 
-**Policy: Consent first, scrape second.** No new scrapers without nursery approval.
+**Policy: Consent first, scrape second.**
 
-- Existing 3 nurseries need retroactive consent outreach
-- `consent_status` column exists on `nurseries` table (pending/approved/declined/no_response)
+- Existing live nurseries still need retroactive consent outreach
+- `consent_status` exists on `nurseries`
 - Pipeline skips `declined` nurseries
 - Outreach template: `docs/operations/nursery-outreach-template.md`
 
@@ -122,47 +150,16 @@ Scraper (fetches nursery HTML via config-driven registry)
 
 ## Known Gaps
 
-1. **No user accounts** — zone persistence via localStorage, listings are anonymous
-2. **Nursery consent outreach** — not yet sent to any nursery
-3. **Data enrichment** — many cultivars have sparse attribute data
-4. **Parser** — works well but has hazelnut-centric patterns; generalizing is ongoing
+1. No user accounts yet
+2. Nursery consent outreach still needs execution
+3. Many cultivars still need data enrichment
+4. Parser generalization is still ongoing
 
 ---
 
-## Sprint History
+## Documentation Labels
 
-All sprint specs archived in `docs/sprints/`. Key progression:
-
-| Sprint | Focus | Outcome |
-|--------|-------|---------|
-| 1–3 | Foundation, schema, pipeline, scrapers | Core platform working |
-| 4 | Homepage, marketplace, maps, alerts | User-facing features |
-| 5 | Genus hub pages | Hierarchical browsing |
-| 6 | Faceted browse, autocomplete | Discovery UX |
-| 7 | Nav cleanup, typography | Consistency |
-| 8 | Taxonomy explorer | Three-panel compact browse |
-| 9 | Visual cultivar components | Rich data display |
-| 10 | Browse redesign | Multiple iterations (see rework note) |
-| 11 | Flatten genus browse | Remove species grouping layer |
-| 12 | Progressive disclosure | Decompose pages, compare flow |
-| 13 | Unified browse | Consolidate browse approaches |
-| 14 | Browse restore | Back to three-column taxonomy explorer |
-| 15 | Visual restore | Tabbed cultivar pages, species hero headers |
-
-**Rework pattern (Sprints 10–15):** Browse and page layout went through significant churn. The browse surface was redesigned (S10), flattened (S11), restructured with progressive disclosure (S12), unified (S13), then restored to the three-column explorer (S14). Cultivar pages were decomposed (S12) then visually restored (S15). The current state is stable — future UI work should be incremental, not wholesale redesigns.
-
----
-
-## Documentation
-
-| Document | Location |
-|----------|----------|
-| Agent instructions | `AGENTS.md` |
-| Product roadmap | `ROADMAP.md` |
-| Design system | `docs/architecture/DESIGN_SYSTEM.md` |
-| Vision (for collaborators) | `docs/architecture/VISION.md` |
-| Knowledge graph schema | `docs/architecture/KNOWLEDGE_GRAPH_SCHEMA.md` |
-| Sprint specs (all) | `docs/sprints/` |
-| Genus research | `docs/research/` |
-| Scraper playbook | `docs/operations/nursery-scraper-playbook.md` |
-| Outreach template | `docs/operations/nursery-outreach-template.md` |
+- **Current:** `README.md`, `AGENTS.md`, `CONTEXT.md`, `ROADMAP.md`, `docs/INDEX.md`
+- **Operational:** `docs/operations/`
+- **Architecture reference:** `docs/architecture/`
+- **Historical:** `docs/sprints/`

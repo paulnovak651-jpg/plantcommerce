@@ -1,9 +1,31 @@
 param(
-  [string]$ApiUrl = "http://localhost:3000/api/dashboard"
+  [string]$ApiUrl = "http://localhost:3000/api/dashboard",
+  [string]$Secret = $env:ADMIN_STATUS_SECRET
 )
 
+if (-not $Secret) {
+  $Secret = $env:CRON_SECRET
+}
+
+if (-not $Secret -and (Test-Path ".env.local")) {
+  $envLines = Get-Content ".env.local"
+  $adminLine = $envLines | Where-Object { $_ -match '^ADMIN_STATUS_SECRET=' } | Select-Object -Last 1
+  $cronLine = $envLines | Where-Object { $_ -match '^CRON_SECRET=' } | Select-Object -Last 1
+
+  if ($adminLine) {
+    $Secret = ($adminLine -replace '^ADMIN_STATUS_SECRET=', '').Trim()
+  } elseif ($cronLine) {
+    $Secret = ($cronLine -replace '^CRON_SECRET=', '').Trim()
+  }
+}
+
+if (-not $Secret) {
+  $Secret = "dev-local-secret-plantcommerce-2026"
+}
+
 try {
-  $resp = Invoke-RestMethod -Uri $ApiUrl -Method Get -TimeoutSec 15
+  $resp = Invoke-RestMethod -Uri $ApiUrl -Method Get -TimeoutSec 15 `
+    -Headers @{ Authorization = "Bearer $Secret" }
 } catch {
   Write-Error "[dashboard] Failed to fetch $ApiUrl : $($_.Exception.Message)"
   exit 1

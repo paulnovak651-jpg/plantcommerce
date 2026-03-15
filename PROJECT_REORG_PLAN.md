@@ -1,512 +1,197 @@
-# PlantCommerce Project Reorganization Plan
+# PlantCommerce Lean Reorganization Plan
 
-*Last updated: 2026-03-14*
+> **Label:** Current repo hygiene plan
+> **Last updated:** 2026-03-14
 
 ## Purpose
 
-This document is the working plan for making PlantCommerce easier to operate, easier to extend, and safer for both humans and agents to work in.
+This plan makes PlantCommerce faster for humans and agents to enter, safer for parallel work, and clearer about what is current without large folder moves or platform churn.
 
-The goal is not to change the core product architecture. The product should remain a disciplined monolith. The goal is to eliminate drift, reduce duplicate sources of truth, clarify ownership, and make the repo reflect the system that actually exists.
+The project remains a disciplined monolith. GitHub `master` remains the shared source of truth. Local clones remain execution, testing, and review environments.
 
----
+## What This Plan Optimizes For
 
-## Executive Summary
+- one trustworthy startup path
+- one local-first workflow
+- one internal Command Center contract
+- one clear distinction between current docs and historical docs
+- one explicit statement of the live browse architecture
 
-PlantCommerce already has a strong product and technical base:
+## What This Plan Does Not Do
 
-- Next.js app is live and healthy
-- TypeScript is strict
-- Vitest suite is passing
-- Supabase-backed data model is substantial
-- scraper, resolver, and browse systems are already valuable
+- no `features/` directory migration
+- no ADR system
+- no broad "docs contradict implementation" CI policy
+- no new orchestration layer outside the repo
 
-The main problem is not raw code quality. The main problem is organizational drift:
-
-- operations docs disagree with the implemented command-center APIs
-- multiple docs claim to be the source of truth
-- sprint state is stale in key agent-facing files
-- browse architecture exists in both live and shadow forms
-- system visualization and migration docs are outdated
-
-This slows execution, increases agent error rate, and makes review harder than it should be.
-
-The right target state is:
-
-- one source of truth for operations
-- one source of truth for current product priorities
-- one canonical browse architecture
-- one documented repo structure organized by feature ownership
-- one lightweight decision process for structural changes
-
----
-
-## Audit Summary
-
-## What is strong
-
-- `npm test` passes with 230 tests
-- `npx tsc --noEmit` is clean
-- core monolith architecture is still the right choice
-- the data pipeline, browse model, and API layers are sufficiently mature to scale inside one repo
-
-## What is weak
+## Current Drift To Fix
 
 ### 1. Command Center contract drift
 
-Current operational surfaces disagree:
+- scripts were still pointing at `http://localhost:3001/api/sessions`
+- the app actually implements `/api/dashboard/*`
+- dashboard/session auth expectations were not described consistently
 
-- `AGENTS.md` points to `http://localhost:3001/dashboard`
-- `scripts/dashboard-snapshot.ps1` points to `http://localhost:3000/api/dashboard`
-- session scripts post to `/api/sessions`
-- app routes actually implement `/api/dashboard` and `/api/dashboard/sessions`
+### 2. Current-doc drift
 
-Result:
+- root docs were not clearly labeled as current startup truth
+- historical sprint docs still looked active in places
+- workflow guidance was present, but not consistently treated as the required operating contract
 
-- agents cannot reliably register sessions
-- humans cannot trust the docs without checking the code
-- internal automation is fragile
+### 3. Browse-truth drift
 
-### 2. Repo truth drift
+- the homepage taxonomy explorer is the canonical browse entrypoint
+- `/browse` and `/search` redirect back to `/` while preserving params
+- older facet/query/API surfaces still exist, but they are not the primary user entrypoint
 
-Key planning and status docs are inconsistent:
-
-- `AGENTS.md` still marks Sprint 12 active
-- root docs include Sprint 13 and Sprint 14 work
-- `app/system-map/page.tsx` contains stale counts and stale risk statements
-- `sql/MIGRATION_GUIDE.md` is behind the actual migration sequence
-
-Result:
-
-- onboarding is slower
-- review context is noisy
-- agents spend time reconciling history instead of executing work
-
-### 3. Shadow browse architecture
-
-The app currently routes `/browse` and `/search` back to `/`, while older browse and facet surfaces still exist in the repo:
-
-- live path: homepage + taxonomy explorer
-- shadow path: facet-driven browse header/grid/sidebar/API stack
-
-Result:
-
-- unclear canonical UX
-- unnecessary maintenance surface
-- docs and code both overstate what is actually in use
-
-### 4. Documentation sprawl
-
-There are many root-level strategy and sprint docs plus a second `docs/` tree, but no explicit index, archive policy, or canonical reading order.
-
-Result:
-
-- too much context to load
-- too many stale documents remain "active"
-- human and agent context windows get wasted
-
-### 5. Ownership boundaries are weak
-
-The repo has good primitives, but live code ownership is still split across generic top-level folders with some old compatibility layers.
-
-Result:
-
-- feature work crosses too many unrelated files
-- cleanup work is harder than it needs to be
-- dead code can survive longer than it should
-
----
-
-## Target System
-
-## Core principle
-
-PlantCommerce should remain a single product monolith with strong internal boundaries.
-
-Do not split into microservices.
-Do not add infrastructure for its own sake.
-Do not create separate agent orchestration systems outside the repo.
-
-## Target architecture
-
-### 1. Product monolith
-
-- Next.js App Router frontend
-- internal API routes
-- Supabase data and auth surfaces
-- scraper/resolver/pipeline system
-- internal admin and dashboard tools
-
-### 2. Control plane
-
-One internal contract for:
-
-- task status
-- agent sessions
-- status/health endpoints
-- command-center scripts
-- auth secrets for internal ops
-
-This must be versioned by code, not implied by old docs.
-
-### 3. Knowledge plane
-
-One documentation hierarchy:
-
-- current state
-- active roadmap
-- architecture decisions
-- playbooks
-- archived sprints
-
-### 4. Feature boundaries
-
-The repo should make ownership obvious:
-
-- browse
-- plants
-- nurseries
-- pipeline
-- marketplace
-- dashboard
-- shared UI/contracts/utils
-
----
-
-## Proposed Repository Shape
-
-This is the target organization, not an all-at-once move:
-
-```text
-app/                      routes only
-features/
-  browse/
-    components/
-    queries/
-    state/
-    api/
-  dashboard/
-    components/
-    scripts-contract/
-    status/
-  marketplace/
-  nurseries/
-  pipeline/
-    scrapers/
-    resolver/
-    health/
-  plants/
-shared/
-  ui/
-  lib/
-  contracts/
-  types/
-docs/
-  index.md
-  current/
-  playbooks/
-  adr/
-  archive/
-sql/
-  migrations/
-  guides/
-scripts/
-  ops/
-  quality/
-  scaffolds/
-```
-
-## Directory rules
-
-- `app/` owns routes, metadata, and route composition only
-- `features/` owns domain logic and feature UI
-- `shared/` owns cross-feature primitives only
-- `docs/current/` contains only active reference docs
-- `docs/archive/` contains completed sprint docs and superseded plans
-- `scripts/ops/` contains runtime-operational scripts
-- `scripts/quality/` contains linters, checks, and validation tools
-- `scripts/scaffolds/` contains generators and scaffolds
-
----
-
-## Operating Model For Humans And Agents
-
-## Single Source of Truth Rules
-
-### Current execution truth
-
-The following should exist and remain current:
-
-- `README.md` for how to start and navigate the repo
-- `AGENTS.md` for agent operating rules only
-- `CONTEXT.md` for current state snapshot only
-- `ROADMAP.md` for active priorities only
-- `docs/index.md` for the doc map
-
-Anything not current belongs in archive.
-
-### Decision truth
-
-Major structural decisions should be written as short ADRs in `docs/adr/`.
-
-Use ADRs for:
-
-- route model changes
-- feature ownership changes
-- command-center contract changes
-- browse architecture changes
-- data model governance decisions
-
-### Operational truth
-
-One command-center contract must define:
-
-- base URL and port
-- route names
-- auth secrets
-- session lifecycle
-- dropped-session rules
-- task lifecycle
-
-That contract should be represented in:
-
-- code
-- scripts
-- docs
-- tests
-
-not separately invented in each place.
-
----
-
-## Phased Execution Plan
+## Lean Phases
 
 ## Phase 0: Truth Reset
 
 ### Goal
 
-Stop the drift before any deeper refactor.
+Make the repo truthful before changing anything structural.
 
 ### Changes
 
-- create `README.md` with canonical startup and repo map
-- update `AGENTS.md` to match the implemented system
-- update `CONTEXT.md` and `ROADMAP.md` to current reality
-- remove stale "active sprint" references
-- decide whether `system-map` remains a maintained tool
+- keep root startup truth in `README.md`, `AGENTS.md`, `CONTEXT.md`, and `ROADMAP.md`
+- label current docs, operational docs, and historical docs explicitly
+- update current docs so they agree on workflow, browse truth, and Command Center routes
+- keep key structural decisions in current docs instead of introducing ADRs
 
-### Acceptance criteria
+### Acceptance Criteria
 
-- a new contributor can determine the current state from three files max
-- no root-level planning doc contradicts `AGENTS.md`, `CONTEXT.md`, or `ROADMAP.md`
-- one current milestone is clearly named
+- a new agent can determine current state from the root docs without scanning sprint files
+- root docs do not contradict one another on workflow, priorities, or browse truth
+- historical docs are clearly labeled as historical reference only
 
-### Cleanup targets
-
-- stale sprint markers in `AGENTS.md`
-- stale counts in `app/system-map/page.tsx`
-- stale migration guidance in `sql/MIGRATION_GUIDE.md`
-
-## Phase 1: Command Center Stabilization
+## Phase 1: Local Workflow and Command Center Stabilization
 
 ### Goal
 
-Make human/agent collaboration reliable.
+Make human and agent collaboration reliable on the existing app contract.
+
+### Canonical Workflow
+
+1. `git pull --rebase origin master`
+2. `git status --short`
+3. read the current root docs only
+4. run the app locally on `http://localhost:3000`
+5. make changes locally
+6. test locally before wrapping up
+7. review the diff
+8. commit only intended files
+9. push to GitHub
+10. deploy separately when appropriate
+
+Do not use production to discover whether a change works.
+
+### Canonical Command Center Contract
+
+- base URL: `http://localhost:3000`
+- dashboard API namespace: `/api/dashboard/*`
+- session routes:
+  - `GET /api/dashboard`
+  - `POST /api/dashboard/sessions`
+  - `PATCH /api/dashboard/sessions/[id]`
+- task routes stay under `/api/dashboard/*`
+- auth: `ADMIN_STATUS_SECRET` primary, `CRON_SECRET` fallback
 
 ### Changes
 
-- standardize one local ops port
-- standardize one route namespace for dashboard APIs
-- align PowerShell and bash scripts with actual route implementations
-- align auth naming around one internal secret model
-- add a health-check step for local dashboard availability
-- add a heartbeat/update mechanism for active sessions
+- align bash and PowerShell scripts to the canonical dashboard routes
+- add a lightweight readiness check before session registration
+- keep session lifecycle simple: start, update/end, dropped if stale
+- keep the Command Center small and repo-local
 
-### Acceptance criteria
+### Acceptance Criteria
 
-- session start works from both PowerShell and bash
-- session end works from both PowerShell and bash
-- dashboard snapshot uses the same API contract as the app
-- dropped sessions reflect actual stale sessions, not guessed failures
+- session start works from bash and PowerShell
+- session end works from bash and PowerShell
+- dashboard snapshot uses the same auth and route contract as the app
+- no current script or doc points to `/api/sessions` or port `3001`
 
-### Recommended decisions
-
-- keep dashboard routes under `/api/dashboard/*`
-- avoid a second "legacy" `/api/sessions` contract
-- make local development default to the same app port used by Next unless there is a strong reason not to
-
-## Phase 2: Documentation Architecture
+## Phase 2: Documentation as Agent Navigation
 
 ### Goal
 
-Reduce context load and make documentation maintainable.
+Reduce search time and clarify what to ignore.
 
-### Changes
+### Rules
 
-- create `docs/index.md`
-- move active docs into `docs/current/`
-- move procedural docs into `docs/playbooks/`
-- move completed sprint docs into `docs/archive/`
-- keep only a minimal set of root-level docs
+- root docs are the only startup truth
+- operational playbooks live under `docs/operations/`
+- architecture references live under `docs/architecture/`
+- research stays under `docs/research/`
+- sprint docs are historical reference only
 
-### Root-level docs that should remain
+### Required Routing Coverage
 
-- `README.md`
-- `AGENTS.md`
-- `CONTEXT.md`
-- `ROADMAP.md`
-- `VISION.md`
-- `PROJECT_REORG_PLAN.md`
+- homepage and taxonomy work
+- species and cultivar page work
+- browse/filter/query/API work
+- scraper/resolver/pipeline work
+- dashboard/session/status work
+- schema/data/migration work
 
-### Acceptance criteria
+### Handoff Contract
 
-- no one needs to scan the root directory to understand project state
-- completed sprint docs are archived, not mixed with current strategy
-- every active doc has an explicit owner and update purpose
+When work is unfinished, record:
 
-## Phase 3: Browse Architecture Decision
+- touched surfaces
+- current state
+- next step
 
-### Goal
+### Acceptance Criteria
 
-Choose one canonical browse system and remove the shadow path.
+- an agent can identify the right starting files for a common task in under five minutes
+- an agent can tell which docs are safe to ignore for normal execution
+- the docs index points operators toward current truth first and historical material last
 
-### Decision required
-
-Pick one of these as the primary PlantCommerce browse architecture:
-
-1. homepage-first taxonomy explorer model
-2. facet-driven browse model
-3. hybrid model, but with one clearly owned orchestration layer
-
-### Recommended choice
-
-Use the hybrid model only if the homepage explorer and facet browse share one real state/query layer. Otherwise, choose one canonical model and archive the other.
-
-### Changes
-
-- document the chosen browse architecture in one ADR
-- remove or archive unused browse components
-- either wire `/api/browse` into the live UX or formally downgrade it to future work
-- eliminate compatibility comments that preserve dead surfaces without ownership
-
-### Acceptance criteria
-
-- one browse entrypoint is canonical
-- one set of browse components is live and maintained
-- docs do not describe unused browse orchestration as current architecture
-
-## Phase 4: Feature Boundary Refactor
+## Phase 3: Browse Architecture Truth
 
 ### Goal
 
-Make the repo map match the product domains.
+Document the live browse model without redesigning it.
 
-### Changes
+### Current Truth
 
-- move route-adjacent feature code out of generic top-level folders into `features/`
-- keep shared primitives separate from domain-specific logic
-- collapse backwards-compatibility exports where they no longer add value
+- the homepage taxonomy explorer is the canonical browse entrypoint
+- `/browse` redirects to `/` and preserves query params for old links
+- facet/query/API surfaces still exist as secondary/internal browse infrastructure
+- no current doc should describe `/browse` as the primary user entrypoint
 
-### Initial move candidates
+### Acceptance Criteria
 
-- `components/browse/*` -> `features/browse/components/*`
-- `lib/facets/*` -> `features/browse/state/*`
-- `lib/queries/browse.ts` and related browse query code -> `features/browse/queries/*`
-- `lib/scraper/*`, `lib/resolver/*`, `lib/pipeline/*` -> `features/pipeline/*`
-- dashboard-related status code -> `features/dashboard/*`
+- current docs describe the same browse entrypoint users actually hit
+- secondary browse surfaces are documented as secondary, redirected, or future-facing
+- no code move is required to clarify the architecture
 
-### Acceptance criteria
-
-- a change to one feature rarely requires touching unrelated top-level areas
-- unused compatibility wrappers are removed
-- feature ownership is obvious from paths alone
-
-## Phase 5: Governance Automation
+## Phase 4: Lightweight Guardrails
 
 ### Goal
 
-Prevent drift from coming back.
+Reduce drift without building brittle process overhead.
 
 ### Changes
 
-- add repo checks for stale sprint references
-- add repo checks for command-center route drift
-- add repo checks for migration numbering mistakes
-- add doc index validation so archived docs are not linked as active
-- add lightweight architecture review checklist to PR process
+- add a short PR/review checklist
+- add one or two cheap smoke checks for route/doc contract drift
+- make doc index maintenance explicit
 
-### Acceptance criteria
+### Non-Goals
 
-- CI fails when docs contradict implementation on core operational contracts
-- migration guide cannot silently fall behind sequence reality
-- agent startup docs cannot drift without detection
-
----
-
-## Specific Cleanup Backlog
-
-## Immediate
-
-- fix command-center scripts and docs
-- update `AGENTS.md`
-- update `sql/MIGRATION_GUIDE.md`
-- decide fate of `app/system-map/page.tsx`
-- create `README.md`
-- create `docs/index.md`
-
-## Short-term
-
-- archive completed sprint docs
-- decide canonical browse architecture
-- remove unused browse surfaces
-- normalize internal ops secret names and port assumptions
-
-## Medium-term
-
-- feature-boundary refactor
-- ADR system adoption
-- governance automation in CI
-
-## After reorganization
-
-- parser generalization
-- consent workflow tightening
-- data quality completion
-- admin tooling expansion
-
----
+- no broad semantic "docs match code" enforcement
+- no large governance framework
+- no folder reorganization campaign
 
 ## Definition of Done
 
-This reorganization is complete when:
+This effort is complete when:
 
-- humans and agents use one trustworthy operational contract
-- the repo has one clear entrypoint and one clear doc map
-- current priorities are visible without archaeology
-- live architecture and described architecture match
-- dead or shadow systems are removed or explicitly archived
-- future drift is prevented by automation, not memory
-
----
-
-## Recommended Execution Order
-
-1. Truth reset
-2. command-center stabilization
-3. documentation architecture
-4. browse architecture decision
-5. feature boundary refactor
-6. governance automation
-
-Do not start with large folder moves.
-Start by making the repo truthful.
-
----
-
-## Notes
-
-This plan is intentionally conservative.
-
-PlantCommerce does not need more infrastructure.
-It needs tighter internal contracts, less duplicated truth, and cleaner ownership boundaries.
-
-The project is already strong enough that these changes should increase execution speed without introducing platform risk.
+- humans and agents use one trustworthy workflow
+- the Command Center uses one trustworthy route and auth contract
+- current docs are easy to identify and fast to read
+- historical docs are clearly labeled and easy to ignore
+- the homepage taxonomy explorer is explicitly documented as the live browse entrypoint
+- agents can work in parallel with low risk of walking into the wrong surfaces

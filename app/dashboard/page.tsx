@@ -401,25 +401,19 @@ export default async function DashboardPage({ searchParams }: Props) {
               </div>
               <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.7 }}>
                 <div style={{ marginBottom: 8 }}>
-                  <span style={{ color: C.green }}>1. Session start</span> — register yourself:
+                  <span style={{ color: C.green }}>1. Session start</span> — prefer the repo scripts:
                 </div>
-                <pre style={{ fontSize: 10, background: C.bg, padding: '8px 10px', borderRadius: 4, overflowX: 'auto', color: C.text, margin: '0 0 10px', lineHeight: 1.5 }}>{`curl -X POST /api/dashboard/sessions \\
-  -H "Authorization: Bearer $CRON_SECRET" \\
-  -H "Content-Type: application/json" \\
-  -d '{"agent":"claude-code",
-       "task_id":"<uuid>",
-       "summary":"Starting X"}'
-# → save the returned id`}</pre>
+                <pre style={{ fontSize: 10, background: C.bg, padding: '8px 10px', borderRadius: 4, overflowX: 'auto', color: C.text, margin: '0 0 10px', lineHeight: 1.5 }}>{`source scripts/register-session.sh "codex" "Starting X"
+# or
+./scripts/register-session.ps1 -Agent codex -Summary "Starting X"`}</pre>
                 <div style={{ marginBottom: 8 }}>
                   <span style={{ color: C.green }}>2. Session end</span> — mark complete:
                 </div>
-                <pre style={{ fontSize: 10, background: C.bg, padding: '8px 10px', borderRadius: 4, overflowX: 'auto', color: C.text, margin: '0 0 10px', lineHeight: 1.5 }}>{`curl -X PATCH /api/dashboard/sessions/<id> \\
-  -H "Authorization: Bearer $CRON_SECRET" \\
-  -H "Content-Type: application/json" \\
-  -d '{"status":"completed",
-       "summary":"Did X, Y, Z"}'`}</pre>
+                <pre style={{ fontSize: 10, background: C.bg, padding: '8px 10px', borderRadius: 4, overflowX: 'auto', color: C.text, margin: '0 0 10px', lineHeight: 1.5 }}>{`bash scripts/end-session.sh "$SESSION_ID" "completed" "Did X, Y, Z"
+# or
+./scripts/end-session.ps1 -SessionId $env:SESSION_ID -Status completed -Summary "Did X, Y, Z"`}</pre>
                 <div style={{ fontSize: 10, color: C.dim, lineHeight: 1.6 }}>
-                  If you drop without PATCHing, the next session will see this session flagged above and know to pick up your work.
+                  Auth for dashboard routes is `ADMIN_STATUS_SECRET` with `CRON_SECRET` fallback. If you drop without ending your session, the next session will see it flagged above and know to pick up your work.
                 </div>
               </div>
             </div>

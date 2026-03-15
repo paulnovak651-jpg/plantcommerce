@@ -2,12 +2,28 @@ param(
   [string]$SessionId = $env:SESSION_ID,
   [ValidateSet("completed", "dropped")][string]$Status = "completed",
   [string]$Summary = "Session ended",
-  [string]$ApiBase = "http://localhost:3001",
-  [string]$Secret = $env:DASHBOARD_SECRET
+  [string]$ApiBase = "http://localhost:3000",
+  [string]$Secret = $env:ADMIN_STATUS_SECRET
 )
 
 if (-not $Secret) {
-  $Secret = "dev-local-secret-dashboard-2026"
+  $Secret = $env:CRON_SECRET
+}
+
+if (-not $Secret -and (Test-Path ".env.local")) {
+  $envLines = Get-Content ".env.local"
+  $adminLine = $envLines | Where-Object { $_ -match '^ADMIN_STATUS_SECRET=' } | Select-Object -Last 1
+  $cronLine = $envLines | Where-Object { $_ -match '^CRON_SECRET=' } | Select-Object -Last 1
+
+  if ($adminLine) {
+    $Secret = ($adminLine -replace '^ADMIN_STATUS_SECRET=', '').Trim()
+  } elseif ($cronLine) {
+    $Secret = ($cronLine -replace '^CRON_SECRET=', '').Trim()
+  }
+}
+
+if (-not $Secret) {
+  $Secret = "dev-local-secret-plantcommerce-2026"
 }
 
 if (-not $SessionId) {
@@ -21,8 +37,9 @@ $payload = @{
 }
 
 try {
-  Invoke-RestMethod -Uri "$ApiBase/api/sessions/$SessionId" -Method Patch `
+  Invoke-RestMethod -Uri "$ApiBase/api/dashboard/sessions/$SessionId" -Method Patch `
     -Headers @{ Authorization = "Bearer $Secret" } `
+    -TimeoutSec 30 `
     -ContentType "application/json" `
     -Body ($payload | ConvertTo-Json) | Out-Null
 } catch {

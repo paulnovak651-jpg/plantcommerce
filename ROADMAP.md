@@ -1,64 +1,80 @@
 # PlantCommerce — Product Roadmap
 
-> **Last updated:** 2026-03-13
-> **Status:** Sprint 15 complete. UI stable. Focus shifting to data quality, outreach, and engagement.
+> **Label:** Current priorities
+> **Last updated:** 2026-03-14
+> **Status:** Sprint 18 shipped. UI stable. Operational truth reset is in progress alongside product priorities.
 
 ---
 
 ## Completed Work
 
-### Foundation (Sprints 1–3)
-- Supabase schema, pipeline (scraper → parser → resolver → writer), 3 nurseries live
-- 15+ genera seeded, 49+ SQL migrations, shared types, API envelope pattern
+### Foundation
 
-### Features (Sprints 4–7)
-- Homepage, price comparison, maps, community marketplace, stock alerts, pollination checker
-- Genus hub pages, faceted browse (10 facets, cross-facet counts, recovery hints)
-- Alias-aware autocomplete, zone persistence, nav cleanup, typography audit
+- Supabase schema and the scraper -> parser -> resolver -> writer pipeline
+- 3 nurseries live
+- 15+ genera seeded
+- shared types, API envelope pattern, and migration history in place
 
-### Browse & Page Design (Sprints 8–15)
-- **Note:** Sprints 8–15 involved significant iteration on browse layout and page structure. The browse surface went through 5 redesigns before settling on the current three-column taxonomy explorer. Cultivar pages were decomposed then restored with tabs. This rework is now complete — the UI is stable.
-- Three-column taxonomy explorer (Category → Genus → Species/Cultivar) as homepage
-- Species pages: dark green hero, growing guide, cultivar cards
-- Cultivar pages: tabbed layout (Overview / Growing / Fruit & Nut / Buy)
-- Compare flow with tray + comparison table
+### Product features
+
+- Homepage taxonomy explorer
+- Species pages, cultivar pages, compare flow, nursery maps, marketplace, stock alerts, and pollination checker
+- Zone, stock type, and "for sale now" browse filtering on the homepage funnel
+
+### Browse and page design
+
+- The browse/page layout went through major iteration in Sprints 8–18
+- The current UX is stable
+- The homepage taxonomy explorer is the canonical browse entrypoint
+- `/browse` now redirects to `/` while preserving params for old links
 
 ### Technical
-- 230+ tests (Vitest), TypeScript strict, CI green
-- Config-driven scraper registry (Shopify + WooCommerce generic scrapers)
-- Registry-driven facet system (single source of truth for sidebar, URL state, queries, counts)
+
+- 230+ tests
+- TypeScript strict
+- CI green
+- Config-driven scraper registry
+- Secondary facet/query/API browse infrastructure still present in the repo
 
 ---
 
 ## Current Priorities
 
-### 1. Nursery Consent & Outreach
-**Status:** Ready to execute — outreach template written (`docs/operations/nursery-outreach-template.md`)
+### 0. Operational Truth Reset
+**Status:** In progress
 
-- [ ] Contact Burnt Ridge, Grimo, Raintree for retroactive consent
-- [ ] Update `consent_status` in nurseries table based on responses
+- [ ] Keep root docs aligned on workflow, browse truth, and dashboard/session routes
+- [ ] Keep Command Center scripts aligned with `/api/dashboard/*`
+- [ ] Maintain task-routing guidance for common work types
+- [ ] Keep historical docs labeled as historical reference only
+
+### 1. Nursery Consent & Outreach
+**Status:** Ready to execute
+
+- [ ] Contact Burnt Ridge, Grimo, and Raintree for retroactive consent
+- [ ] Update `consent_status` in the nurseries table based on responses
 - [ ] Gate pipeline to only scrape `approved` nurseries
 
 ### 2. Data Quality & Enrichment
-**Status:** Ongoing — the biggest bottleneck for useful discovery
+**Status:** Ongoing
 
-- [ ] Populate missing cultivar attributes: height, pH, chill hours, pollination, sun exposure
+- [ ] Populate missing cultivar attributes: height, pH, chill hours, pollination, and sun exposure
 - [ ] Ensure every species has common alias names mapped
-- [ ] Seed cultivar data for underrepresented genera (Pyrus, Ribes, Rubus)
-- [ ] Flag invasive species with warning badge
+- [ ] Seed cultivar data for underrepresented genera
+- [ ] Flag invasive species with a warning badge
 
 ### 3. Cultivar Empty-State CTAs
 **Status:** Not started
 
-- [ ] "Get notified when available" CTA on zero-offer cultivar pages
-- [ ] "Know a nursery that carries this?" community link
-- [ ] "Browse related cultivars" cross-links on sparse pages
+- [ ] Add "Get notified when available" on zero-offer cultivar pages
+- [ ] Add a "Know a nursery that carries this?" community link
+- [ ] Add related-cultivar cross-links on sparse pages
 
-### 4. Build Remaining Scrapers
-**Status:** Blocked on consent (#1)
+### 4. Remaining Scrapers
+**Status:** Blocked on consent
 
-- [ ] One Green World + additional nurseries from audit list
-- [ ] Generic scrapers ready — just need config entries after consent
+- [ ] Add One Green World and other audited nurseries after consent
+- [ ] Use the existing generic scraper infrastructure after approval
 
 ### 5. Auth & Engagement
 **Status:** Not started
@@ -67,36 +83,36 @@
 - [ ] User profiles with USDA zone
 - [ ] Tie community listings to authenticated accounts
 - [ ] Saved searches / wishlist
-- [ ] Trust tier progression (new → verified → trusted)
+- [ ] Trust tier progression
 
 ### 6. SEO & Content
 **Status:** Not started
 
-- [ ] "Best [category] trees for Zone X" guide pages
-- [ ] Structured data improvements (JSON-LD already in place)
-- [ ] Sitemap completeness audit
+- [ ] Build guide pages such as "Best [category] trees for Zone X"
+- [ ] Improve structured data where useful
+- [ ] Audit sitemap completeness
 
 ---
 
-## What NOT to Do
+## What Not To Do
 
-- **No more wholesale UI redesigns** — the browse/page layout is settled after 6 sprints of iteration
-- **No ElasticSearch/Redis/BullMQ** — current stack handles the volume
-- **No microservice split** — monolith until traffic demands otherwise
-- **No new scrapers without consent**
-- **No auth complexity until consent outreach is done** — it's the higher-leverage task
+- No more wholesale UI redesigns
+- No `features/` directory refactor as part of this cleanup
+- No ElasticSearch, Redis, BullMQ, or microservice split
+- No new scrapers without consent
+- No auth-complexity work before consent outreach is handled
 
 ---
 
 ## Strategic Questions
 
-1. What's the user retention story beyond v1? (Notifications? Seasonal emails?)
-2. First concrete growth loop to reach 50 recurring users?
-3. Nursery partnership/affiliate model positioning?
-4. When to invest in SEO content?
+1. What is the user-retention story beyond v1?
+2. What is the first repeatable growth loop to 50 recurring users?
+3. How should nursery partnership and affiliate positioning work?
+4. When should SEO content become a major focus?
 
 ---
 
 ## Documentation
 
-All sprint specs archived in `docs/sprints/`. See `CONTEXT.md` for current technical state.
+See `CONTEXT.md` for current technical state and `docs/sprints/` for historical sprint documents.

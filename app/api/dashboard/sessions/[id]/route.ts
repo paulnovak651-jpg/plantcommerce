@@ -1,14 +1,14 @@
 import { NextRequest } from 'next/server';
 import { apiSuccess, apiError } from '@/lib/api-helpers';
 import { createServiceClient } from '@/lib/supabase/server';
-import { requireCronAuth } from '@/lib/pipeline/auth';
+import { requireAdminStatusAuth } from '@/lib/pipeline/auth';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * PATCH /api/dashboard/sessions/[id]
  * End or update a session. Call this when work is complete or on graceful exit.
- * Protected by CRON_SECRET bearer token.
+ * Protected by ADMIN_STATUS_SECRET bearer token (fallback: CRON_SECRET).
  *
  * Body: { status?, summary?, task_id? }
  */
@@ -16,7 +16,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = requireCronAuth(request);
+  const auth = requireAdminStatusAuth(request);
   if (!auth.ok) return auth.response;
 
   try {

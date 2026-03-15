@@ -6,24 +6,55 @@
 AGENT="${1:-claude-code}"
 SUMMARY="${2:-Starting session}"
 TASK_ID="${3:-}"
-SECRET="${DASHBOARD_SECRET:-dev-local-secret-dashboard-2026}"
+API_BASE="${API_BASE:-http://localhost:3000}"
 
-PAYLOAD="{\"agent\":\"$AGENT\",\"project_slug\":\"plantcommerce\",\"summary\":\"$SUMMARY\""
+load_dotenv_value() {
+  local key="$1"
+  if [ -f .env.local ]; then
+    sed -n "s/^${key}=//p" .env.local | tail -n 1 | tr -d '\r'
+  fi
+}
+
+ENV_ADMIN_STATUS_SECRET="${ENV_ADMIN_STATUS_SECRET:-$(load_dotenv_value ADMIN_STATUS_SECRET)}"
+ENV_CRON_SECRET="${ENV_CRON_SECRET:-$(load_dotenv_value CRON_SECRET)}"
+SECRET="${ADMIN_STATUS_SECRET:-${ENV_ADMIN_STATUS_SECRET:-${CRON_SECRET:-${ENV_CRON_SECRET:-dev-local-secret-plantcommerce-2026}}}}"
+STATUS_URL="$API_BASE/api/status"
+SESSION_URL="$API_BASE/api/dashboard/sessions"
+
+abort() {
+  echo "$1" >&2
+  return 1 2>/dev/null || exit 1
+}
+
+json_escape() {
+  local value="$1"
+  value=${value//\\/\\\\}
+  value=${value//\"/\\\"}
+  value=${value//$'\n'/\\n}
+  value=${value//$'\r'/\\r}
+  value=${value//$'\t'/\\t}
+  printf '%s' "$value"
+}
+
+if ! curl -fsS --max-time 15 "$STATUS_URL" > /dev/null 2>&1; then
+  abort "[command-center] App not ready at $API_BASE. Start the app and confirm the local dev server is responding."
+fi
+
+PAYLOAD="{\"agent\":\"$(json_escape "$AGENT")\",\"project\":\"plantcommerce\",\"summary\":\"$(json_escape "$SUMMARY")\""
 if [ -n "$TASK_ID" ]; then
-  PAYLOAD="$PAYLOAD,\"task_id\":\"$TASK_ID\""
+  PAYLOAD="$PAYLOAD,\"task_id\":\"$(json_escape "$TASK_ID")\""
 fi
 PAYLOAD="$PAYLOAD}"
 
-RESPONSE=$(curl -s -X POST "http://localhost:3001/api/sessions" \
+RESPONSE=$(curl -fsS --max-time 30 -X POST "$SESSION_URL" \
   -H "Authorization: Bearer $SECRET" \
   -H "Content-Type: application/json" \
-  -d "$PAYLOAD" 2>/dev/null)
+  -d "$PAYLOAD" 2>/dev/null) || abort "[command-center] Session registration failed against $SESSION_URL"
 
-SESSION_ID=$(echo "$RESPONSE" | node -e \
-  "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const r=JSON.parse(d);console.log(r.data?.id||'')}catch{console.log('')}})" 2>/dev/null)
+SESSION_ID=$(printf '%s' "$RESPONSE" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p' | head -n 1)
 
 if [ -z "$SESSION_ID" ]; then
-  echo "[command-center] Warning: Could not register session (is dashboard running on port 3001?)" >&2
+  abort "[command-center] Could not parse a session id from $SESSION_URL"
 else
   export SESSION_ID
   echo "[command-center] Session registered: $SESSION_ID  agent=$AGENT"
