@@ -11,6 +11,13 @@ PlantCommerce is a plant information and sourcing platform for the permaculture 
 - Do not let local drift become project truth.
 - Do not use production to discover whether a change works.
 
+## Proposal Lifecycle
+
+- New plans that are still under review belong in `docs/proposals/`.
+- Proposal docs are safe to read and review, but they do not authorize implementation by themselves.
+- Do not implement from a proposal doc unless Paul explicitly says to do it or the work is promoted into the current root-doc flow.
+- `docs/sprints/` is historical reference only. Do not use it for new active drafts.
+
 ## Standard Workflow
 
 Use this order every time:
@@ -85,7 +92,7 @@ The Command Center is a small internal coordination tool for sessions and tasks.
 - `lib/` data access, pipeline, resolver, search, and shared logic
 - `sql/` schema and migration guidance
 - `scripts/` operational and quality scripts
-- `docs/` architecture, operations, research, and historical sprint docs
+- `docs/` architecture, operations, research, proposal drafts, and historical sprint docs
 
 ## Key Documents
 
@@ -94,6 +101,7 @@ The Command Center is a small internal coordination tool for sessions and tasks.
 - `ROADMAP.md`: current priorities
 - `PROJECT_REORG_PLAN.md`: current repo hygiene plan
 - `docs/INDEX.md`: doc map and task routing
+- `docs/proposals/INDEX.md`: safe review-only location for proposed changes
 
 ## Non-Negotiables
 

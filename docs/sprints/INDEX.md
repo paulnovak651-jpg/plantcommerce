@@ -5,6 +5,12 @@
 Quick reference for sprint and bugfix documents. This folder is history, not startup truth.
 
 > **Rule:** If a sprint doc says "active," "upcoming," or "ready," that reflects the document's state when it was written. It is not a current task board.
+> **New drafts:** Put review-only plans in `../proposals/`, not here.
+
+## Before You Add A New Doc
+
+- If the work is proposed, under review, or not approved for implementation yet, put it in `../proposals/`.
+- If the work is current and approved, express that in the root-doc flow (`README.md`, `CONTEXT.md`, `ROADMAP.md`, and other explicitly current docs), not as a new active sprint here.
 
 ---
 
@@ -14,6 +20,7 @@ Quick reference for sprint and bugfix documents. This folder is history, not sta
 |-----|-------|-------------------|
 | [BUGFIX_CASCADING_AVAILABILITY](./BUGFIX_CASCADING_AVAILABILITY.md) | Fix "For sale now" filter to cascade through genus → species → cultivar | Ready at the time |
 | [SPRINT17_CULTIVAR_PAGE_RESTRUCTURE](./SPRINT17_CULTIVAR_PAGE_RESTRUCTURE.md) | Restructure cultivar page tabs + progressive disclosure | Ready at the time |
+| [SPRINT19_SEARCH_COMPARE_MOBILE_FIXES](./SPRINT19_SEARCH_COMPARE_MOBILE_FIXES.md) | Early draft for search, compare, and mobile repair work | Superseded by proposal doc |
 
 ## Deployed
 

@@ -108,6 +108,23 @@ Current priorities are in `ROADMAP.md`.
 
 ---
 
+## Proposal Lifecycle
+
+- New plans that are still under review belong in `docs/proposals/`, not `docs/sprints/`.
+- Proposal docs must label themselves as proposed / review-only / not implementation-ready.
+- Reading a proposal doc does not make it current work.
+- Do not implement a proposal unless Paul explicitly says to execute it or the work is promoted into the current root-doc flow.
+- If a proposal conflicts with `README.md`, `AGENTS.md`, `CONTEXT.md`, `ROADMAP.md`, or `docs/INDEX.md`, treat the root docs as current and the proposal as unapproved.
+
+When handing off proposed work, always include:
+
+- proposal path
+- review status
+- blockers or open questions
+- confirmation that no code changes were made unless explicitly requested
+
+---
+
 ## Hard Rules — Do Not Violate
 
 - TypeScript strict mode: no `any`, no `@ts-ignore`
@@ -143,6 +160,7 @@ Current priorities are in `ROADMAP.md`.
 | Current | `CONTEXT.md` | Technical state and key structural decisions |
 | Current | `ROADMAP.md` | Active priorities |
 | Current | `docs/INDEX.md` | Doc map and task routing |
+| Proposed | `docs/proposals/INDEX.md` | Review-only plans that must not be treated as approved work |
 | Operational | `docs/operations/` | Playbooks and operational reference |
 | Architecture | `docs/architecture/` | Design system, vision, schema, and API reference |
 | Historical | `docs/sprints/` | Archived sprint and bugfix history only |

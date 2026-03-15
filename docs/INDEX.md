@@ -17,6 +17,13 @@ Optional after that:
 
 - `../PROJECT_REORG_PLAN.md` for repo hygiene and workflow cleanup context
 
+## Proposed / Review-Only Drafts
+
+- `proposals/INDEX.md`
+- Use this folder for plans that agents should be able to read and review safely.
+- Proposal docs are not current work just because they exist.
+- A proposal becomes actionable only when Paul explicitly approves it or it is promoted into the current root-doc flow.
+
 ## Task Routing
 
 - Homepage and taxonomy: `../app/page.tsx`, `../components/BrowseContent.tsx`, `../components/browse/TaxonomyExplorer.tsx`
@@ -56,6 +63,8 @@ Optional after that:
 ## Rules
 
 - Current operating truth lives in the root docs.
+- New draft plans belong in `proposals/`, not `sprints/`.
+- Proposal docs are review-only and must not be treated as implementation approval.
 - `docs/sprints/` is historical reference only, not startup truth.
 - If a document conflicts with `README.md`, `AGENTS.md`, `CONTEXT.md`, or `ROADMAP.md`, fix the conflict instead of guessing.
 - Keep this index current when startup docs, task routing, or doc labels change.
